@@ -4,9 +4,9 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm i -g @nestjs/cli
+RUN npm i -g @nestjs/cli pnpm
 
-RUN npm install
+RUN pnpm install
 
 COPY . .
 

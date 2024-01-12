@@ -4,21 +4,19 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
+import { AuthModule } from './auth/auth.module';
+import { DatabaseModule } from './database/database.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: process.env.DB_TYPE as any,
-      host: process.env.DB_HOST,
-      port: +process.env.DB_PORT,
-      username: process.env.DB_USER,
-      password: process.env.DB_PASS,
-      database: process.env.DB_NAME,
-      entities: [User],
-      synchronize: process.env.NODE_ENV == 'development', // Only for development mode
-      autoLoadEntities: true,
-    }),
     UsersModule,
+    AuthModule,
+    DatabaseModule,
+    ConfigModule.forRoot({
+      envFilePath: ['.env', '.local.env'],
+      isGlobal: true,
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
