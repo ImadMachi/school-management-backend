@@ -11,17 +11,23 @@ export class AuthService {
   ) {}
 
   async signIn(email, pass) {
-    const user = await this.usersService.findOne(email);
-    
-    const isMatch = await bcrypt.compare(pass, user?.password)
+    const user = await this.usersService.findByEmail(email, {
+      relations: ['role'],
+    });
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+    const isMatch = await bcrypt.compare(pass, user?.password);
 
     if (!isMatch) {
       throw new UnauthorizedException();
     }
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email: user.email, role: user.role };
 
     return {
       access_token: await this.jwtService.signAsync(payload),
+      user,
     };
   }
 }

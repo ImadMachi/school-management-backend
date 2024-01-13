@@ -2,11 +2,11 @@ FROM node:20-alpine3.18
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json ./
 
-RUN npm i -g @nestjs/cli pnpm
+RUN npm i -g @nestjs/cli 
 
-RUN pnpm install
+RUN npm install
 
 COPY . .
 

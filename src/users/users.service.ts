@@ -11,14 +11,17 @@ export class UsersService {
   ) {}
 
   async findAll(): Promise<User[]> {
-    return this.usersRepository.find(); 
+    return this.usersRepository.find({ relations: ['role'] });
   }
 
-  findOne(email): Promise<User | null> {
-    return this.usersRepository.findOneBy({ email });
+  findByEmail(email: string, options = {}): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { email }, ...options });
   }
 
-  async remove(id: number): Promise<void> {
-    await this.usersRepository.delete(id);
+  findOne(id: number): Promise<User | null> {
+    return this.usersRepository.findOne({
+      where: { id },
+      relations: ['role', 'administrator', 'teacher', 'student'],
+    });
   }
 }
