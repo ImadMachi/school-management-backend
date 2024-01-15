@@ -6,10 +6,11 @@ import {
   InferSubjects,
 } from '@casl/ability';
 import { Injectable } from '@nestjs/common';
+import { Administrator } from 'src/administrators/entities/administrator.entity';
 import { RoleName } from 'src/auth/enums/RoleName';
 import { User } from 'src/users/entities/user.entity';
 
-type Subjects = InferSubjects<typeof User> | 'all';
+type Subjects = InferSubjects<typeof User | typeof Administrator> | 'all';
 
 export enum Action {
   Manage = 'manage',

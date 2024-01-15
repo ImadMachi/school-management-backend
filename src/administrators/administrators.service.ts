@@ -1,15 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAdministratorDto } from './dto/create-administrator.dto';
 import { UpdateAdministratorDto } from './dto/update-administrator.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Administrator } from './entities/administrator.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AdministratorsService {
+  constructor(
+    @InjectRepository(Administrator)
+    private administratorRepository: Repository<Administrator>,
+  ) {}
+
   create(createAdministratorDto: CreateAdministratorDto) {
-    return 'This action adds a new administrator';
+    const administrator = new Administrator();
+    administrator.firstName = createAdministratorDto.firstName;
+    administrator.lastName = createAdministratorDto.lastName;
+    administrator.phoneNumber = createAdministratorDto.phoneNumber;
+    return this.administratorRepository.save(administrator);
   }
 
   findAll() {
-    return `This action returns all administrators`;
+    return this.administratorRepository.find();
   }
 
   findOne(id: number) {
@@ -20,7 +32,14 @@ export class AdministratorsService {
     return `This action updates a #${id} administrator`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} administrator`;
+  async remove(id: number) {
+    const administrator = await this.administratorRepository.findOne({
+      where: { id },
+    });
+
+    if (!administrator) {
+      throw new NotFoundException();
+    }
+    return this.administratorRepository.delete(id);
   }
 }

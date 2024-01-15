@@ -1,7 +1,7 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { dataSourceOptions } from './data-source';
 import { SeederOptions, runSeeders } from 'typeorm-extension';
-import AppSeeder from './seeds/app.seeder';
+import AppSeeder from './seeders/app.seeder';
 
 const seedDatasourceOptions: DataSourceOptions & SeederOptions = {
   ...dataSourceOptions,
