@@ -1,13 +1,11 @@
 import {
   Body,
-  ClassSerializerInterceptor,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Post,
   Request,
-  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from 'src/common/decorators/public_route.decorator';
@@ -21,9 +19,8 @@ export class AuthController {
     private usersService: UsersService,
   ) {}
 
-  @HttpCode(HttpStatus.OK)
-  @Public()
   @Post('login')
+  @Public()
   signIn(@Body() signInDto: SignInDto) {
     return this.authService.signIn(signInDto.email, signInDto.password);
   }

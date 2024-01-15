@@ -30,3 +30,11 @@ $ npm run seed
 ```bash
 $ sudo docker compose exec <service-name> hostname -i
 ```
+
+## Create a resource with Nest CLI
+
+```bash
+$ nest g resource <resource-name>
+# Example
+$ nest g resource users
+```

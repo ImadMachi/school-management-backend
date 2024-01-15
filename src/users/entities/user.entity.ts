@@ -35,7 +35,7 @@ export class User {
   @Transform(({ value }) => value.name)
   role: Role;
 
-  @OneToOne(() => Administrator, { nullable: true })
+  @OneToOne(() => Administrator, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn()
   administrator: Administrator;
 
