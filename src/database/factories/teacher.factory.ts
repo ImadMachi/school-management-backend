@@ -6,6 +6,9 @@ const roleFactory = setSeederFactory(Teacher, (faker) => {
   teacher.firstName = faker.person.firstName('male');
   teacher.lastName = faker.person.lastName('male');
   teacher.phoneNumber = faker.phone.number();
+  teacher.dateOfBirth = faker.date.past(20);
+  teacher.dateOfEmployment = faker.date.past(10);
+  teacher.sex = faker.person.gender();
   return teacher;
 });
 

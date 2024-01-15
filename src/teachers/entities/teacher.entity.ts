@@ -15,6 +15,15 @@ export class Teacher {
   @Column()
   phoneNumber: string;
 
+  @Column()
+  dateOfBirth: Date;
+
+  @Column()
+  dateOfEmployment: Date;
+
+  @Column()
+  sex: string;
+
   @OneToOne(() => User, (user) => user.teacher, { nullable: true })
   @JoinColumn()
   user: User;
