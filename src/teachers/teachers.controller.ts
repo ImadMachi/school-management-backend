@@ -1,13 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { TeachersService } from './teachers.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
+import { CheckPolicies, PoliciesGuard } from 'src/casl/guards/policies.guard';
 
 @Controller('teachers')
+@UseGuards(PoliciesGuard)
 export class TeachersController {
   constructor(private readonly teachersService: TeachersService) {}
 
   @Post()
+  @CheckPolicies(new Man)
   create(@Body() createTeacherDto: CreateTeacherDto) {
     return this.teachersService.create(createTeacherDto);
   }
