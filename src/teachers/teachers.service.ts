@@ -10,17 +10,12 @@ import { NotFoundException } from '@nestjs/common';
 export class TeachersService {
   constructor(
     @InjectRepository(Teacher)
-    private teacherrepository : Repository<Teacher>,
-  ){}
+    private teacherrepository: Repository<Teacher>,
+  ) { }
 
   create(createTeacherDto: CreateTeacherDto) {
-    const teacher = new Teacher();
-    teacher.firstName= createTeacherDto.firstName;
-    teacher.lastName=createTeacherDto.lastName;
-    teacher.phoneNumber=createTeacherDto.phoneNumber;
-    teacher.dateOfBirth=createTeacherDto.dateOfBirth;
-    teacher.dateOfEmployment=createTeacherDto.dateOfEmployment;
-    teacher.sex=createTeacherDto.sex;
+    const teacher = this.teacherrepository.create(createTeacherDto,);
+
     return this.teacherrepository.save(teacher);
   }
 
@@ -29,18 +24,20 @@ export class TeachersService {
   }
 
   findOne(id: number) {
-    return this.teacherrepository.findOne(id);
+    return this.teacherrepository.findOne({
+      where :{id}
+    });
   }
 
   update(id: number, updateTeacherDto: UpdateTeacherDto) {
-    return this.teacherrepository.update(id,updateTeacherDto);
+    return this.teacherrepository.update(id, updateTeacherDto);
   }
 
   async remove(id: number) {
     const teacher = await this.teacherrepository.findOne({
-      where : {id},
+      where: { id },
     });
-    if(!teacher){
+    if (!teacher) {
       throw new NotFoundException();
     }
     return this.teacherrepository.delete(id);

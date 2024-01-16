@@ -9,8 +9,9 @@ import { Injectable } from '@nestjs/common';
 import { Administrator } from 'src/administrators/entities/administrator.entity';
 import { RoleName } from 'src/auth/enums/RoleName';
 import { User } from 'src/users/entities/user.entity';
+import {Teacher} from 'src/teachers/entities/teacher.entity';
 
-type Subjects = InferSubjects<typeof User | typeof Administrator> | 'all';
+type Subjects = InferSubjects<typeof User | typeof Administrator | typeof Teacher> | 'all';
 
 export enum Action {
   Manage = 'manage',
@@ -32,6 +33,11 @@ export class CaslAbilityFactory {
     if (user.role.name === RoleName.Director) {
       can(Action.Manage, 'all');
     }
+    else if (user.role.name === RoleName.Teacher) {
+      // can(Action.Create,'Message')
+    }
+  
+  
     // if (user.isAdmin) {
     //   can(Action.Manage, 'all');
     // } else {
