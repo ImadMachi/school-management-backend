@@ -32,9 +32,19 @@ export default class AppSeeder implements Seeder {
     const teacherRole = await roleFactory.save({ name: RoleName.Teacher });
     const studentRole = await roleFactory.save({ name: RoleName.Student });
 
+    const customAdministrator1 = await administratorFactory.save({
+      firstName: 'Imad',
+      lastName: 'Machi',
+    });
+
+    const customAdministrator2 = await administratorFactory.save({
+      firstName: 'Achraf',
+      lastName: 'Kharbab',
+    });
+
     // Users
     const userDirector = await userFactory.save({
-      email: `${administrators[0].lastName.toLowerCase()}@gmail.com`,
+      email: 'imadoxmachi@gmail.com',
       password: '123456',
       role: directorRole,
       administrator: administrators[0],

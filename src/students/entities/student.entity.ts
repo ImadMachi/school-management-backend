@@ -1,5 +1,11 @@
 import { User } from '../../users/entities/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 
 @Entity()
 export class Student {
@@ -12,7 +18,6 @@ export class Student {
   @Column()
   lastName: string;
 
-  @OneToOne(() => User, (user) => user.student, { nullable: true })
-  @JoinColumn()
+  @OneToOne(() => User, (user) => user.student, { nullable: true, eager: true })
   user: User;
 }

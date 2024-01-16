@@ -13,10 +13,9 @@ export class AdministratorsService {
   ) {}
 
   create(createAdministratorDto: CreateAdministratorDto) {
-    const administrator = new Administrator();
-    administrator.firstName = createAdministratorDto.firstName;
-    administrator.lastName = createAdministratorDto.lastName;
-    administrator.phoneNumber = createAdministratorDto.phoneNumber;
+    const administrator = this.administratorRepository.create(
+      createAdministratorDto,
+    );
     return this.administratorRepository.save(administrator);
   }
 
