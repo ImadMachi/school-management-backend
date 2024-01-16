@@ -14,7 +14,7 @@ import { Role } from '../../auth/entities/role.entity';
 import { Teacher } from '../../teachers/entities/teacher.entity';
 import { Student } from '../../students/entities/student.entity';
 import { Administrator } from '../../administrators/entities/administrator.entity';
-import { Exclude, Expose, Transform } from 'class-transformer';
+import { Exclude, Transform } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -35,15 +35,24 @@ export class User {
   @Transform(({ value }) => value.name)
   role: Role;
 
-  @OneToOne(() => Administrator, { nullable: true, onDelete: 'CASCADE' })
+  @OneToOne(() => Administrator, (administrator) => administrator.user, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   administrator: Administrator;
 
-  @OneToOne(() => Teacher, { nullable: true })
+  @OneToOne(() => Teacher, (teacher) => teacher.user, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   teacher: Teacher;
 
-  @OneToOne(() => Student, { nullable: true })
+  @OneToOne(() => Student, (student) => student.user, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   student: Student;
 

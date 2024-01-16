@@ -1,5 +1,11 @@
-import { User } from "../../users/entities/user.entity";
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from '../../users/entities/user.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Teacher {
@@ -15,7 +21,6 @@ export class Teacher {
   @Column()
   phoneNumber: string;
 
-  @OneToOne(() => User, (user) => user.teacher, { nullable: true })
-  @JoinColumn()
+  @OneToOne(() => User, (user) => user.teacher, { nullable: true, eager: true })
   user: User;
 }
