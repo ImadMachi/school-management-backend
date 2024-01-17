@@ -9,6 +9,8 @@ import { CaslModule } from './casl/casl.module';
 import { TeachersModule } from './teachers/teachers.module';
 import { StudentsModule } from './students/students.module';
 import { AdministratorsModule } from './administrators/administrators.module';
+import { RolesModule } from './roles/roles.module';
+import { DirectorModule } from './director/director.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { AdministratorsModule } from './administrators/administrators.module';
     TeachersModule,
     StudentsModule,
     AdministratorsModule,
+    RolesModule,
+    DirectorModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,11 +1,6 @@
+import { Exclude, Expose } from 'class-transformer';
 import { User } from '../../users/entities/user.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Administrator {
@@ -25,5 +20,11 @@ export class Administrator {
     nullable: true,
     eager: true,
   })
+  @Exclude()
   user: User;
+
+  @Expose()
+  get userId() {
+    return this.user ? this.user.id : null;
+  }
 }

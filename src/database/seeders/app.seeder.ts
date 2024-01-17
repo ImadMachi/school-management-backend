@@ -3,15 +3,12 @@ import { DataSource } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Teacher } from '../../teachers/entities/teacher.entity';
 import { Student } from '../../students/entities/student.entity';
-import { Role } from '../../auth/entities/role.entity';
 import { Administrator } from '../../administrators/entities/administrator.entity';
 import { RoleName } from '../../auth/enums/RoleName';
+import { Role } from '../../roles/entities/role.entity';
 
 export default class AppSeeder implements Seeder {
-  public async run(
-    dataSource: DataSource,
-    factoryManager: SeederFactoryManager,
-  ): Promise<any> {
+  public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
     // Factories
     const administratorFactory = await factoryManager.get(Administrator);
     const teacherFactory = await factoryManager.get(Teacher);
@@ -23,7 +20,6 @@ export default class AppSeeder implements Seeder {
     const teachers = await teacherFactory.saveMany(5);
     const students = await studentFactory.saveMany(5);
     const administrators = await administratorFactory.saveMany(5);
-
     // Roles
     const directorRole = await roleFactory.save({ name: RoleName.Director });
     const administratorRole = await roleFactory.save({

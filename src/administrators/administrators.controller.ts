@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { AdministratorsService } from './administrators.service';
 import { CreateAdministratorDto } from './dto/create-administrator.dto';
 import { UpdateAdministratorDto } from './dto/update-administrator.dto';
@@ -21,8 +12,8 @@ export class AdministratorsController {
 
   @Post()
   @CheckPolicies(new ManageAdministratorsPolicyHandler())
-  create(@Body() createAdministratorDto: CreateAdministratorDto) {
-    return this.administratorsService.create(createAdministratorDto);
+  create(@Body() createAdministratorDto: CreateAdministratorDto, @Query('create-account') createAccount: boolean) {
+    return this.administratorsService.create(createAdministratorDto, createAccount);
   }
 
   @Get()
@@ -37,10 +28,7 @@ export class AdministratorsController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateAdministratorDto: UpdateAdministratorDto,
-  ) {
+  update(@Param('id') id: string, @Body() updateAdministratorDto: UpdateAdministratorDto) {
     return this.administratorsService.update(+id, updateAdministratorDto);
   }
 
