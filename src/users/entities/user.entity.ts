@@ -1,20 +1,10 @@
-import {
-  Admin,
-  BeforeInsert,
-  BeforeUpdate,
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Admin, BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { Role } from '../../auth/entities/role.entity';
 import { Teacher } from '../../teachers/entities/teacher.entity';
 import { Student } from '../../students/entities/student.entity';
 import { Administrator } from '../../administrators/entities/administrator.entity';
 import { Exclude, Transform } from 'class-transformer';
+import { Role } from '../../roles/entities/role.entity';
 
 @Entity()
 export class User {

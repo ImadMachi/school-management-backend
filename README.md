@@ -13,7 +13,7 @@ $ npm run start:dev
 
 ```bash
 # REBUILD A SPECIFIC SERVICE IN YAML COMPOSE
-$ docker compose build <service-name>
+$ docker compose build --no-cache <service-name>
 ```
 
 ## Seed the database

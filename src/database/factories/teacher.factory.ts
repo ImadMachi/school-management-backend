@@ -1,7 +1,7 @@
 import { Teacher } from '../../teachers/entities/teacher.entity';
 import { setSeederFactory } from 'typeorm-extension';
 
-const roleFactory = setSeederFactory(Teacher, (faker) => {
+const teacherFactory = setSeederFactory(Teacher, (faker) => {
   const teacher = new Teacher();
   teacher.firstName = faker.person.firstName('male');
   teacher.lastName = faker.person.lastName('male');
@@ -12,4 +12,4 @@ const roleFactory = setSeederFactory(Teacher, (faker) => {
   return teacher;
 });
 
-export default roleFactory;
+export default teacherFactory;

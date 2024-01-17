@@ -1,9 +1,9 @@
 import { User } from '../users/entities/user.entity';
 import { DataSourceOptions } from 'typeorm';
-import { Role } from '../auth/entities/role.entity';
 import { Student } from '../students/entities/student.entity';
 import { Teacher } from '../teachers/entities/teacher.entity';
 import { Administrator } from '../administrators/entities/administrator.entity';
+import { Role } from '../roles/entities/role.entity';
 
 export const dataSourceOptions: DataSourceOptions = {
   type: process.env.DB_TYPE as any,
@@ -17,5 +17,3 @@ export const dataSourceOptions: DataSourceOptions = {
   // @ts-ignore
   autoLoadEntities: true,
 };
-
-// export const DataSource = new DataSource(dataSourceOptions);
