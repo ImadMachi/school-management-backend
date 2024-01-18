@@ -4,12 +4,12 @@ WORKDIR /app
 
 COPY package.json ./
 
-RUN npm i -g @nestjs/cli 
+RUN yarn global add @nestjs/cli
 
-RUN npm install
+RUN yarn install
 
 COPY . .
 
 EXPOSE 8000
 
-CMD npm run start:dev
+CMD yarn run start:dev

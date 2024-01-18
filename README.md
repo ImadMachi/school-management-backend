@@ -38,3 +38,9 @@ $ nest g resource <resource-name>
 # Example
 $ nest g resource users
 ```
+
+## Purge Docker images, containers and volumes
+
+```bash
+$ docker system prune --all --volumes --force
+```
