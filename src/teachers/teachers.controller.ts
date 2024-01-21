@@ -4,6 +4,7 @@ import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { CheckPolicies, PoliciesGuard } from 'src/casl/guards/policies.guard';
 import { ManageTeachersPolicyHandler } from 'src/casl/policies/teachers/manage-teachers.policy';
+import { create } from 'domain';
 
 @Controller('teachers')
 @UseGuards(PoliciesGuard)
@@ -12,8 +13,8 @@ export class TeachersController {
 
   @Post()
   @CheckPolicies(new ManageTeachersPolicyHandler())
-  create(@Body() createTeacherDto: CreateTeacherDto) {
-    return this.teachersService.create(createTeacherDto);
+  create(@Body() createTeacherDto: CreateTeacherDto, @Body('create-account') createAccount: boolean) {
+    return this.teachersService.create(createTeacherDto, createAccount)
   }
 
   @Get()

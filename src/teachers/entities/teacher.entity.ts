@@ -1,3 +1,4 @@
+import { Exclude, Expose } from 'class-transformer';
 import { User } from '../../users/entities/user.entity';
 import {
   Column,
@@ -30,6 +31,14 @@ export class Teacher {
   @Column()
   sex: string;
 
-  @OneToOne(() => User, (user) => user.teacher, { nullable: true, eager: true })
+  @OneToOne(() => User, (user) => user.teacher, { 
+    nullable: true, eager: true 
+  })
+  @Exclude()
   user: User;
+
+  @Expose()
+  get userId() {
+    return this.user ? this.user.id : null;
+  }
 }

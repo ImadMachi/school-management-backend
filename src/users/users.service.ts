@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RolesService } from 'src/roles/roles.service';
 import { RoleName } from 'src/auth/enums/RoleName';
+import { Teacher } from 'src/teachers/entities/teacher.entity';
 
 @Injectable()
 export class UsersService {
@@ -29,6 +30,16 @@ export class UsersService {
     user.administrator = administrator;
     user.role = role;
 
+    return this.create(user);
+  }
+
+  async createForTeacher(createUserDto: CreateUserDto, teacher): Promise<User> {
+    const role = await this.roleService.findByName(RoleName.Teacher);
+    
+    const user = this.usersRepository.create(createUserDto);
+    user.teacher = teacher;
+    user.role = role;
+    
     return this.create(user);
   }
 
