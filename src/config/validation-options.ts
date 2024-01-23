@@ -5,7 +5,7 @@ interface EditedValidationPipeOptions extends ValidationPipeOptions {
 }
 
 const validationOptions: EditedValidationPipeOptions = {
-  disableErrorMessages: process.env.NODE_ENV === 'development',
+  disableErrorMessages: process.env.NODE_ENV !== 'development',
   whitelist: true,
   enableDebugMessages: process.env.NODE_ENV === 'development',
   transform: true,

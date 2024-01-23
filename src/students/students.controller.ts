@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { Public } from 'src/common/decorators/public_route.decorator';
 
 @Controller('students')
 export class StudentsController {
@@ -13,6 +14,7 @@ export class StudentsController {
   }
 
   @Get()
+  @Public()
   findAll() {
     return this.studentsService.findAll();
   }

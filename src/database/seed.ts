@@ -7,12 +7,13 @@ import roleFactory from './factories/role.factory';
 import studentFactory from './factories/student.factory';
 import teacherFactory from './factories/teacher.factory';
 import userFactory from './factories/user.factory';
+import messageFactory from './factories/message.factory';
 
 (async () => {
   const options: DataSourceOptions & SeederOptions = {
     ...dataSourceOptions,
     seeds: [AppSeeder],
-    factories: [administratorFactory, roleFactory, studentFactory, teacherFactory, userFactory],
+    factories: [administratorFactory, roleFactory, studentFactory, teacherFactory, userFactory, messageFactory],
   };
 
   const dataSource = new DataSource(options);
