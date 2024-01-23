@@ -13,7 +13,7 @@ export class Message {
   @Column()
   body: string;
 
-  @OneToMany(() => Attachment, (attachment) => attachment.message)
+  @OneToMany(() => Attachment, (attachment) => attachment.message, { nullable: true })
   attachments: Attachment[];
 
   @ManyToOne(() => User, (user) => user.sentMessages)

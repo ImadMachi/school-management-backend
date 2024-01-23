@@ -13,11 +13,11 @@ export class MessagesService {
   ) {}
 
   async createMessage(createMessageDto: CreateMessageDto, user: User) {
-    // const message = this.messageRepository.create({
-    //   ...createMessageDto,
-    //   sender: user,
-    // });
-    // return this.messageRepository.save(message);
+    const message = this.messageRepository.create({
+      ...createMessageDto,
+      sender: user,
+    });
+    return this.messageRepository.save(message);
   }
 
   async getSentMessagesByUser(userId: number): Promise<Message[]> {

@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { IsArray, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 
 export class CreateMessageDto {
@@ -16,6 +16,7 @@ export class CreateMessageDto {
 }
 
 class Recipient {
-  @IsString()
-  id: string;
+  @IsNumber()
+  @Transform(({ value }) => parseInt(value, 10))
+  id: number;
 }
