@@ -11,6 +11,7 @@ import { StudentsModule } from './students/students.module';
 import { AdministratorsModule } from './administrators/administrators.module';
 import { RolesModule } from './roles/roles.module';
 import { DirectorModule } from './director/director.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { DirectorModule } from './director/director.module';
     AdministratorsModule,
     RolesModule,
     DirectorModule,
+    MessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -6,6 +6,7 @@ import { Student } from '../../students/entities/student.entity';
 import { Administrator } from '../../administrators/entities/administrator.entity';
 import { RoleName } from '../../auth/enums/RoleName';
 import { Role } from '../../roles/entities/role.entity';
+import { Message } from '../../messages/entities/message.entity';
 
 export default class AppSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
@@ -15,6 +16,7 @@ export default class AppSeeder implements Seeder {
     const studentFactory = await factoryManager.get(Student);
     const userFactory = await factoryManager.get(User);
     const roleFactory = await factoryManager.get(Role);
+    const messageFactory = await factoryManager.get(Message);
 
     // Persons
     const teachers = await teacherFactory.saveMany(5);
@@ -60,11 +62,22 @@ export default class AppSeeder implements Seeder {
       teacher: teachers[0],
     });
 
-    const userStudent = await userFactory.save({
+    const userStudent1 = await userFactory.save({
       email: `${students[0].lastName.toLowerCase()}@gmail.com`,
       password: '123456',
       role: studentRole,
       student: students[0],
+    });
+    const userStudent2 = await userFactory.save({
+      email: `${students[1].lastName.toLowerCase()}@gmail.com`,
+      password: '123456',
+      role: studentRole,
+      student: students[1],
+    });
+
+    const messagesSentByDirector = await messageFactory.saveMany(3, {
+      sender: userDirector,
+      recipients: [userStudent1, userStudent2],
     });
   }
 }

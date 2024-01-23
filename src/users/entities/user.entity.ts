@@ -1,10 +1,22 @@
-import { Admin, BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Admin,
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Teacher } from '../../teachers/entities/teacher.entity';
 import { Student } from '../../students/entities/student.entity';
 import { Administrator } from '../../administrators/entities/administrator.entity';
 import { Exclude, Transform } from 'class-transformer';
 import { Role } from '../../roles/entities/role.entity';
+import { Message } from '../../messages/entities/message.entity';
 
 @Entity()
 export class User {
@@ -45,6 +57,12 @@ export class User {
   })
   @JoinColumn()
   student: Student;
+
+  @OneToMany(() => Message, (message) => message.sender)
+  sentMessages: Message[];
+
+  @OneToMany(() => Message, (message) => message.recipients)
+  receivedMessages: Message[];
 
   @BeforeInsert()
   @BeforeUpdate()

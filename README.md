@@ -28,7 +28,7 @@ $ npm run seed
 ## Get the hostname of running container (for TablePlus)
 
 ```bash
-$ sudo docker compose exec <service-name> hostname -i
+$ docker compose exec <service-name> hostname -i
 ```
 
 ## Create a resource with Nest CLI
