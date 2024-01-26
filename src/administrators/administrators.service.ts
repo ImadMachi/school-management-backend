@@ -5,8 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Administrator } from './entities/administrator.entity';
 import { DataSource, Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
-import { RolesService } from 'src/roles/roles.service';
-import { RoleName } from 'src/auth/enums/RoleName';
+
 
 @Injectable()
 export class AdministratorsService {

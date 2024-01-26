@@ -6,6 +6,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { RolesService } from 'src/roles/roles.service';
 import { RoleName } from 'src/auth/enums/RoleName';
 import { Teacher } from 'src/teachers/entities/teacher.entity';
+import { Student } from 'src/students/entities/student.entity';
 
 @Injectable()
 export class UsersService {
@@ -38,6 +39,16 @@ export class UsersService {
     
     const user = this.usersRepository.create(createUserDto);
     user.teacher = teacher;
+    user.role = role;
+    
+    return this.create(user);
+  }
+
+  async createForStudent(createUserDto: CreateUserDto, student): Promise<User> {
+    const role = await this.roleService.findByName(RoleName.Student);
+    
+    const user = this.usersRepository.create(createUserDto);
+    user.student = student;
     user.role = role;
     
     return this.create(user);
