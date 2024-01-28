@@ -28,9 +28,14 @@ export class StudentsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStudentDto: UpdateStudentDto) {
+  @CheckPolicies(new ManageTeachersPolicyHandler())
+  update(
+    @Param('id') id: string,
+    @Body() updateStudentDto: UpdateStudentDto
+  ) {
     return this.studentsService.update(+id, updateStudentDto);
   }
+
 
   @Delete(':id')
   @CheckPolicies(new ManageTeachersPolicyHandler())

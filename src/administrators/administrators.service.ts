@@ -45,13 +45,32 @@ export class AdministratorsService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} administrator`;
+    return this.administratorRepository.findOne({
+      where: { id }
+    });
   }
 
-  update(id: number, updateAdministratorDto: UpdateAdministratorDto) {
-    return `This action updates a #${id} administrator`;
-  }
+  async update(id: number, updateAdministratorDto: UpdateAdministratorDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    let administrator: Administrator;
+    try {
+      administrator = await this.administratorRepository.findOne({ where: { id } });
+      if (!administrator) {
+        throw new NotFoundException();
+      }
 
+      this.administratorRepository.merge(administrator, updateAdministratorDto);
+      await this.administratorRepository.save(administrator);
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
+      throw new HttpException(error.message, error.status);
+    }
+    await queryRunner.release();
+    return administrator;
+  }
   async remove(id: number) {
     const administrator = await this.administratorRepository.findOne({
       where: { id },

@@ -44,11 +44,31 @@ export class StudentsService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} student`;
+    return this.studentRepository.findOne({
+      where: { id }
+    });
   }
 
-  update(id: number, updateStudentDto: UpdateStudentDto) {
-    return `This action updates a #${id} student`;
+  async update(id: number, updateStudentDto: UpdateStudentDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    let student: Student;
+    try {
+      student = await this.studentRepository.findOne({ where: { id } });
+      if (!student) {
+        throw new NotFoundException();
+      }
+
+      this.studentRepository.merge(student, updateStudentDto);
+      await this.studentRepository.save(student);
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
+      throw new HttpException(error.message, error.status);
+    }
+    await queryRunner.release();
+    return student;
   }
 
   async remove(id: number) {
