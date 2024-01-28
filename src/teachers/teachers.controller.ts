@@ -28,13 +28,15 @@ export class TeachersController {
   }
 
   @Patch(':id')
+  @CheckPolicies(new ManageTeachersPolicyHandler())
   update(
-    @Param('id') id: string, 
+    @Param('id') id: string,
     @Body() updateTeacherDto: UpdateTeacherDto
-    ) {
+  ) {
     return this.teachersService.update(+id, updateTeacherDto);
   }
 
+  
   @Delete(':id')
   @CheckPolicies(new ManageTeachersPolicyHandler())
   remove(@Param('id') id: string) {
