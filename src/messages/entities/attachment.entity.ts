@@ -7,6 +7,9 @@ export class Attachment {
   id: number;
 
   @Column()
+  filepath: string;
+
+  @Column()
   filename: string;
 
   @ManyToOne(() => Message, (message) => message.attachments)

@@ -79,5 +79,17 @@ export default class AppSeeder implements Seeder {
       sender: userDirector,
       recipients: [userStudent1, userStudent2],
     });
+
+    const starredMessagesByStudent1 = await messageFactory.saveMany(2, {
+      sender: userTeacher,
+      recipients: [userStudent1, userDirector],
+      starredBy: [userStudent1, userDirector],
+    });
+
+    const starredMessagesByStudent2 = await messageFactory.saveMany(2, {
+      sender: userTeacher,
+      recipients: [userStudent2, userDirector],
+      starredBy: [userStudent2],
+    });
   }
 }

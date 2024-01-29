@@ -4,10 +4,10 @@ import { MessagesController } from './messages.controller';
 import { Message } from './entities/message.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Attachment } from './entities/attachment.entity';
-import { MemoryStoredFile, NestjsFormDataModule } from 'nestjs-form-data';
+import { CaslModule } from 'src/casl/casl.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Message, Attachment])],
+  imports: [TypeOrmModule.forFeature([Message, Attachment]), CaslModule],
   controllers: [MessagesController],
   providers: [MessagesService],
 })

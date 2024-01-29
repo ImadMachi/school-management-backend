@@ -5,6 +5,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -61,8 +62,14 @@ export class User {
   @OneToMany(() => Message, (message) => message.sender)
   sentMessages: Message[];
 
-  @OneToMany(() => Message, (message) => message.recipients)
+  @ManyToMany(() => Message, (message) => message.recipients)
   receivedMessages: Message[];
+
+  @ManyToMany(() => Message, (message) => message.starredBy)
+  starredMessages: Message[];
+
+  @ManyToMany(() => Message, (message) => message.trashedBy)
+  trashMessages: Message[];
 
   @BeforeInsert()
   @BeforeUpdate()
