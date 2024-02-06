@@ -764,7 +764,7 @@
   resolved "https://registry.npmjs.org/@nestjs/mapped-types/-/mapped-types-2.0.4.tgz"
   integrity sha512-xl+gUSp0B+ln1VSNoUftlglk8dfpUes3DHGxKZ5knuBxS5g2H/8p9/DSBOYWUfO5f4u9s6ffBPZ71WO+tbe5SA==
 
-"@nestjs/platform-express@^10.3.1":
+"@nestjs/platform-express@^10.0.0":
   version "10.3.1"
   resolved "https://registry.npmjs.org/@nestjs/platform-express/-/platform-express-10.3.1.tgz"
   integrity sha512-Rj21quI5h4Lry7q9an+nO4ADQiQUy9A6XK74o5aTUHo3Ysm25ujqh2NgU4XbT3M2oXU9qzhE59OfhkQ7ZUvTAg==
@@ -788,7 +788,7 @@
 
 "@nestjs/serve-static@^4.0.0":
   version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@nestjs/serve-static/-/serve-static-4.0.0.tgz#3baeea982f66d64718a59f3d8f67281b74d4dbdd"
+  resolved "https://registry.npmjs.org/@nestjs/serve-static/-/serve-static-4.0.0.tgz"
   integrity sha512-8cTrNV2ngdHIjiLNsXePnw0+KY1ThrZGz/WeyAG5gIvmZNDbnZBOrPoYlKL+MOzlXlQStxR5jKLYmn+nJeoncQ==
   dependencies:
     path-to-regexp "0.2.5"
@@ -1055,7 +1055,7 @@
 
 "@types/multer@^1.4.11":
   version "1.4.11"
-  resolved "https://registry.yarnpkg.com/@types/multer/-/multer-1.4.11.tgz#c70792670513b4af1159a2b60bf48cc932af55c5"
+  resolved "https://registry.npmjs.org/@types/multer/-/multer-1.4.11.tgz"
   integrity sha512-svK240gr6LVWvv3YGyhLlA+6LRRWA4mnGIU7RcNmgjBYFl6665wcXrRfxGp5tEPVHUNm5FMcmq7too9bxCwX/w==
   dependencies:
     "@types/express" "*"
@@ -4489,7 +4489,7 @@ path-to-regexp@0.1.7:
 
 path-to-regexp@0.2.5:
   version "0.2.5"
-  resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-0.2.5.tgz#0b426991e387fc4c675de23557f358715eb66fb0"
+  resolved "https://registry.npmjs.org/path-to-regexp/-/path-to-regexp-0.2.5.tgz"
   integrity sha512-l6qtdDPIkmAmzEO6egquYDfqQGPMRNGjYtrU13HAXb3YSRrt7HSb1sJY0pKp6o2bAa86tSB6iwaW2JbthPKr7Q==
 
 path-to-regexp@3.2.0:
