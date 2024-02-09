@@ -31,6 +31,12 @@ $ npm run seed
 $ docker compose exec <service-name> hostname -i
 ```
 
+## Purge Docker images, containers and volumes
+
+```bash
+$ docker system prune --all --volumes --force
+```
+
 ## Create a resource with Nest CLI
 
 ```bash
@@ -39,8 +45,11 @@ $ nest g resource <resource-name>
 $ nest g resource users
 ```
 
-## Purge Docker images, containers and volumes
+## Working with git
 
 ```bash
-$ docker system prune --all --volumes --force
+$ git fetch
+$ git branch -a
+$ git branch feature_management origin/feature_management # reflecting the remote branch for the first time
+$ git fetch origin feature_management:feature_management # updating the remote brach
 ```
