@@ -9,6 +9,7 @@ import * as path from 'path';
 import * as crypto from 'crypto';
 import { Attachment } from './entities/attachment.entity';
 import { MailFolder } from './enums/mail-folder.enum';
+import { MessageCategoriesService } from 'src/message-categories/message-categories.service';
 
 @Injectable()
 export class MessagesService {
@@ -17,12 +18,18 @@ export class MessagesService {
     private messageRepository: Repository<Message>,
     @InjectRepository(Attachment)
     private attachmentRepository: Repository<Attachment>,
+    private messageCategoryService: MessageCategoriesService,
   ) {}
 
   async createMessage(createMessageDto: CreateMessageDto, user: User, files: Array<Express.Multer.File>) {
+    const category = await this.messageCategoryService.findOne(createMessageDto.categoryId);
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
     const message = this.messageRepository.create({
       ...createMessageDto,
       sender: user,
+      category,
     });
 
     if (files?.length > 0) {
@@ -77,51 +84,10 @@ export class MessagesService {
       .leftJoinAndSelect('sender.teacher', 'teacher')
       .leftJoinAndSelect('message.attachments', 'attachments')
       .innerJoinAndSelect('sender.role', 'role')
+      .innerJoinAndSelect('message.category', 'category')
       .orderBy('message.createdAt', 'DESC')
       .getMany();
   }
-
-  // async getSentMessagesByUser(userId: number): Promise<Message[]> {
-  //   return this.messageRepository
-  //     .createQueryBuilder('message')
-  //     .innerJoin('message.sender', 'sender')
-  //     .where('sender.id = :userId', { userId })
-  //     .innerJoinAndSelect('message.sender', 'sender')
-  //     .leftJoinAndSelect('sender.administrator', 'administrator')
-  //     .leftJoinAndSelect('sender.teacher', 'teacher')
-  //     .leftJoinAndSelect('message.attachments', 'attachments')
-  //     .innerJoinAndSelect('sender.role', 'role')
-  //     .orderBy('message.createdAt', 'DESC')
-  //     .getMany();
-  // }
-
-  // async getReceivedMessagesByUser(userId: number): Promise<Message[]> {
-  //   return this.messageRepository
-  //     .createQueryBuilder('message')
-  //     .innerJoin('message.recipients', 'recipient')
-  //     .where('recipient.id = :userId', { userId })
-  //     .innerJoinAndSelect('message.sender', 'sender')
-  //     .leftJoinAndSelect('sender.administrator', 'administrator')
-  //     .leftJoinAndSelect('sender.teacher', 'teacher')
-  //     .leftJoinAndSelect('message.attachments', 'attachments')
-  //     .innerJoinAndSelect('sender.role', 'role')
-  //     .orderBy('message.createdAt', 'DESC')
-  //     .getMany();
-  // }
-
-  // async getStarredMessagesByUser(userId: number): Promise<Message[]> {
-  //   return this.messageRepository
-  //     .createQueryBuilder('message')
-  //     .innerJoin('message.starredBy', 'starredBy')
-  //     .where('starredBy.id = :userId', { userId })
-  //     .innerJoinAndSelect('message.sender', 'sender')
-  //     .leftJoinAndSelect('sender.administrator', 'administrator')
-  //     .leftJoinAndSelect('sender.teacher', 'teacher')
-  //     .leftJoinAndSelect('message.attachments', 'attachments')
-  //     .innerJoinAndSelect('sender.role', 'role')
-  //     .orderBy('message.createdAt', 'DESC')
-  //     .getMany();
-  // }
 
   private async saveAttachments(files: Array<Express.Multer.File>) {
     return Promise.all(
@@ -129,8 +95,8 @@ export class MessagesService {
         const filename = file.originalname;
         const fileHash = this.generateRandomHash() + filename;
 
-        const execpath = path.join(__dirname, '..', '..', 'attachments', fileHash);
-        const filepath = path.join('attachments', fileHash);
+        const execpath = path.join(__dirname, '..', '..', 'uploads', 'attachments', fileHash);
+        const filepath = path.join(fileHash);
 
         const attachment = this.attachmentRepository.create({
           filename,

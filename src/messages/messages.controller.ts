@@ -14,6 +14,9 @@ export class MessagesController {
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   createMessage(@Body() createMessageDto: CreateMessageDto, @Request() req, @UploadedFiles() files: Array<Express.Multer.File>) {
+    files.forEach((file) => {
+      console.log(file.originalname);
+    });
     return this.messagesService.createMessage(createMessageDto, req.user, files);
   }
 

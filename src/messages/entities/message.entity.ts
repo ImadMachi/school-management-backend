@@ -11,7 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Attachment } from './attachment.entity';
-import { Expose } from 'class-transformer';
+import { MessageCategory } from '../../message-categories/entities/message-category.entity';
 
 @Entity()
 export class Message {
@@ -24,7 +24,10 @@ export class Message {
   @Column()
   body: string;
 
-  @OneToMany(() => Attachment, (attachment) => attachment.message, { nullable: true })
+  @ManyToOne(() => MessageCategory, (messageCategory) => messageCategory.messages)
+  category: MessageCategory;
+
+  @OneToMany(() => Attachment, (attachment) => attachment.message, { nullable: true, cascade: true })
   attachments: Attachment[];
 
   @ManyToOne(() => User, (user) => user.sentMessages)

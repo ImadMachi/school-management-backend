@@ -13,6 +13,10 @@ export class CreateMessageDto {
   @ValidateNested({ each: true })
   @Type(() => Recipient)
   recipients: Recipient[];
+
+  @IsNumber()
+  @Transform(({ value }) => parseInt(value, 10))
+  categoryId: number;
 }
 
 class Recipient {

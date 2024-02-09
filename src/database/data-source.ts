@@ -9,6 +9,7 @@ import { Role } from '../roles/entities/role.entity';
 import { Message } from '../messages/entities/message.entity';
 import { Attachment } from '../messages/entities/attachment.entity';
 import { Director } from '../director/entities/director.entity';
+import { MessageCategory } from '../message-categories/entities/message-category.entity';
 
 dotenv.config();
 
@@ -19,8 +20,8 @@ export const dataSourceOptions: DataSourceOptions = {
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
-  entities: [User, Role, Student, Teacher, Administrator, Message, Attachment, Director],
-  synchronize: process.env.NODE_ENV == 'development', // Only for development mode
+  entities: [User, Role, Student, Teacher, Administrator, Message, Attachment, Director, MessageCategory],
+  synchronize: process.env.NODE_ENV == 'development',
   // @ts-ignore
   autoLoadEntities: true,
 };

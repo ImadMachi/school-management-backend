@@ -20,7 +20,8 @@ export class Student {
   sex: string;
 
   @OneToOne(() => User, (user) => user.student, {
-    nullable: true, eager: true
+    nullable: true,
+    eager: true,
   })
   @Exclude()
   user: User;

@@ -5,8 +5,9 @@ import { RoleName } from 'src/auth/enums/RoleName';
 import { User } from 'src/users/entities/user.entity';
 import { Teacher } from 'src/teachers/entities/teacher.entity';
 import { Message } from 'src/messages/entities/message.entity';
+import { MessageCategory } from 'src/message-categories/entities/message-category.entity';
 
-type Subjects = InferSubjects<typeof User | typeof Administrator | typeof Teacher | typeof Message> | 'all';
+type Subjects = InferSubjects<typeof User | typeof Administrator | typeof Teacher | typeof Message | typeof MessageCategory> | 'all';
 
 export enum Action {
   Manage = 'manage',
@@ -29,17 +30,10 @@ export class CaslAbilityFactory {
       // can(Action.Create,'Message')
     }
 
-    // if (user.isAdmin) {
-    //   can(Action.Manage, 'all');
-    // } else {
-    //   can(Action.Read, 'all');
-    // }
-
     // can(Action.Update, Article, { authorId: user.id });
     // cannot(Action.Delete, Article, { isPublished: true });
 
     return build({
-      // Read https://casl.js.org/v6/en/guide/subject-type-detection#use-classes-as-subject-types for details
       detectSubjectType: (item) => item.constructor as ExtractSubjectType<Subjects>,
     });
   }

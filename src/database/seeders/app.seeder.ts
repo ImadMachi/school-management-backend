@@ -7,6 +7,7 @@ import { Administrator } from '../../administrators/entities/administrator.entit
 import { RoleName } from '../../auth/enums/RoleName';
 import { Role } from '../../roles/entities/role.entity';
 import { Message } from '../../messages/entities/message.entity';
+import { MessageCategory } from '../../message-categories/entities/message-category.entity';
 
 export default class AppSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
@@ -17,11 +18,13 @@ export default class AppSeeder implements Seeder {
     const userFactory = await factoryManager.get(User);
     const roleFactory = await factoryManager.get(Role);
     const messageFactory = await factoryManager.get(Message);
+    const messageCategoryFactory = await factoryManager.get(MessageCategory);
 
     // Persons
     const teachers = await teacherFactory.saveMany(5);
     const students = await studentFactory.saveMany(5);
     const administrators = await administratorFactory.saveMany(5);
+
     // Roles
     const directorRole = await roleFactory.save({ name: RoleName.Director });
     const administratorRole = await roleFactory.save({
@@ -75,21 +78,57 @@ export default class AppSeeder implements Seeder {
       student: students[1],
     });
 
+    // Message Categories
+    const messageCategory1 = await messageCategoryFactory.save({
+      name: 'Academique',
+      imagepath: 'academic.jpg',
+    });
+
+    const messageCategory2 = await messageCategoryFactory.save({
+      name: 'Announcement',
+      imagepath: 'announcement.jpeg',
+    });
+
+    const messageCategory3 = await messageCategoryFactory.save({
+      name: 'Evenement',
+      imagepath: 'event.png',
+    });
+
+    const messageCategory4 = await messageCategoryFactory.save({
+      name: 'Devoir',
+      imagepath: 'homework.jpg',
+    });
+
+    const messageCategory5 = await messageCategoryFactory.save({
+      name: 'Voyage scolaire',
+      imagepath: 'school-trips-managers.jpg',
+    });
+
+    // Messages
     const messagesSentByDirector = await messageFactory.saveMany(3, {
       sender: userDirector,
       recipients: [userStudent1, userStudent2],
+      category: messageCategory1,
+    });
+
+    const messagesSentByTeacher = await messageFactory.saveMany(3, {
+      sender: userTeacher,
+      recipients: [userStudent1, userStudent2],
+      category: messageCategory2,
     });
 
     const starredMessagesByStudent1 = await messageFactory.saveMany(2, {
       sender: userTeacher,
       recipients: [userStudent1, userDirector],
       starredBy: [userStudent1, userDirector],
+      category: messageCategory3,
     });
 
     const starredMessagesByStudent2 = await messageFactory.saveMany(2, {
       sender: userTeacher,
       recipients: [userStudent2, userDirector],
       starredBy: [userStudent2],
+      category: messageCategory4,
     });
   }
 }

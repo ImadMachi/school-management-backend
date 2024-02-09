@@ -15,6 +15,7 @@ import { AdministratorsModule } from './administrators/administrators.module';
 import { RolesModule } from './roles/roles.module';
 import { DirectorModule } from './director/director.module';
 import { MessagesModule } from './messages/messages.module';
+import { MessageCategoriesModule } from './message-categories/message-categories.module';
 
 @Module({
   imports: [
@@ -26,8 +27,8 @@ import { MessagesModule } from './messages/messages.module';
       isGlobal: true,
     }),
     ServeStaticModule.forRoot({
-      serveRoot: '/attachments',
-      rootPath: join(__dirname, '..', 'attachments'),
+      serveRoot: '/uploads',
+      rootPath: join(__dirname, '..', 'uploads'),
     }),
     CaslModule,
     TeachersModule,
@@ -36,6 +37,7 @@ import { MessagesModule } from './messages/messages.module';
     RolesModule,
     DirectorModule,
     MessagesModule,
+    MessageCategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

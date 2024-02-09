@@ -12,6 +12,6 @@ export class Attachment {
   @Column()
   filename: string;
 
-  @ManyToOne(() => Message, (message) => message.attachments)
+  @ManyToOne(() => Message, (message) => message.attachments, { onDelete: 'CASCADE' })
   message: Message;
 }
