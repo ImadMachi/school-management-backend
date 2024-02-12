@@ -18,6 +18,7 @@ import { Administrator } from '../../administrators/entities/administrator.entit
 import { Exclude, Transform } from 'class-transformer';
 import { Role } from '../../roles/entities/role.entity';
 import { Message } from '../../messages/entities/message.entity';
+import { Parent } from 'src/parents/entities/parent.entity';
 
 @Entity()
 export class User {
@@ -58,6 +59,15 @@ export class User {
   })
   @JoinColumn()
   student: Student;
+
+  
+  @OneToOne(() => Parent, (parent) => parent.user, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  parent: Parent;
+
 
   @OneToMany(() => Message, (message) => message.sender)
   sentMessages: Message[];
