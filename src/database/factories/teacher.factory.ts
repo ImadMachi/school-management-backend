@@ -8,7 +8,7 @@ const teacherFactory = setSeederFactory(Teacher, (faker) => {
   teacher.phoneNumber = faker.phone.number();
   teacher.dateOfBirth = faker.date.past(20);
   teacher.dateOfEmployment = faker.date.past(10);
-  teacher.sex = faker.person.gender();
+  teacher.sex = faker.helpers.arrayElement(['mâle', 'femelle']);
   return teacher;
 });
 

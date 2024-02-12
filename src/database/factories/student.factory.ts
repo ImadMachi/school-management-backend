@@ -6,7 +6,7 @@ const studentFactory = setSeederFactory(Student, (faker) => {
   student.firstName = faker.person.firstName('male');
   student.lastName = faker.person.lastName('male');
   student.dateOfBirth = faker.date.past(20);
-  student.sex = faker.person.gender();
+  student.sex = faker.helpers.arrayElement(['mâle', 'femelle']);
   return student;
 });
 
