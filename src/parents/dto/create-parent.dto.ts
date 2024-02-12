@@ -3,6 +3,8 @@ import { IsNotEmpty, ValidateNested } from "class-validator";
 import { CreateUserDto } from "src/users/dto/create-user.dto";
 
 export class CreateParentDto {
+    
+    @IsNotEmpty()
     firstName: string;
 
     @IsNotEmpty()

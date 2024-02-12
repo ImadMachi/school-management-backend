@@ -12,6 +12,7 @@ export class Parent {
 
   @Column()
   lastName: string;
+  
   @Column()
   phoneNumber: string;
 
