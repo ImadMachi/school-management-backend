@@ -10,12 +10,13 @@ import userFactory from './factories/user.factory';
 import messageFactory from './factories/message.factory';
 import { dataSourceOptions } from './data-source';
 import messageCategoryFactory from './factories/message-category.factory';
+import parentFactory from './factories/parent.factory';
 
 async function seed() {
   const options: DataSourceOptions & SeederOptions = {
     ...dataSourceOptions,
     seeds: [AppSeeder],
-    factories: [administratorFactory, roleFactory, studentFactory, teacherFactory, userFactory, messageFactory, messageCategoryFactory],
+    factories: [administratorFactory, roleFactory, studentFactory, teacherFactory,parentFactory, userFactory, messageFactory, messageCategoryFactory],
   };
 
   const dataSource = new DataSource(options);
