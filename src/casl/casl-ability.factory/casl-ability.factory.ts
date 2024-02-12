@@ -6,8 +6,10 @@ import { User } from 'src/users/entities/user.entity';
 import { Teacher } from 'src/teachers/entities/teacher.entity';
 import { Message } from 'src/messages/entities/message.entity';
 import { MessageCategory } from 'src/message-categories/entities/message-category.entity';
+import { Student } from 'src/students/entities/student.entity';
+import { Parent } from 'src/parents/entities/parent.entity';
 
-type Subjects = InferSubjects<typeof User | typeof Administrator | typeof Teacher | typeof Message | typeof MessageCategory> | 'all';
+type Subjects = InferSubjects<typeof User | typeof Administrator | typeof Teacher | typeof Student | typeof Parent | typeof Message | typeof MessageCategory> | 'all';
 
 export enum Action {
   Manage = 'manage',
