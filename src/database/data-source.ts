@@ -10,18 +10,48 @@ import { Message } from '../messages/entities/message.entity';
 import { Attachment } from '../messages/entities/attachment.entity';
 import { Director } from '../director/entities/director.entity';
 import { MessageCategory } from '../message-categories/entities/message-category.entity';
+const { parse } = require('pg-connection-string');
 
 dotenv.config();
 
+let type = process.env.DB_TYPE;
+let host = process.env.DB_HOST;
+let port = +process.env.DB_PORT;
+let username = process.env.DB_USER;
+let password = process.env.DB_PASS;
+let database = process.env.DB_NAME;
+
+const databaseUrl = process.env.DATABASE_URL;
+
+if (databaseUrl) {
+  const dbConfig = parse(databaseUrl);
+  host = dbConfig.host;
+  port = +dbConfig.port;
+  username = dbConfig.user;
+  password = dbConfig.password;
+  database = dbConfig.database;
+}
+
+if (databaseUrl) {
+  const url = new URL(databaseUrl);
+  process.env.DB_TYPE = url.protocol.replace(':', '');
+  process.env.DB_HOST = url.hostname;
+  process.env.DB_PORT = url.port;
+  process.env.DB_USER = url.username;
+  process.env.DB_PASS = url.password;
+  process.env.DB_NAME = url.pathname.replace('/', '');
+}
+
 export const dataSourceOptions: DataSourceOptions = {
-  type: process.env.DB_TYPE as any,
-  host: process.env.DB_HOST,
-  port: +process.env.DB_PORT,
-  username: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-  entities: [User, Role, Student, Teacher, Administrator, Message, Attachment, Director, MessageCategory],
+  type: type as any,
+  host,
+  port,
+  username,
+  password,
+  database,
   synchronize: process.env.NODE_ENV == 'development',
+  entities: [User, Role, Student, Teacher, Administrator, Message, Attachment, Director, MessageCategory],
+
   // @ts-ignore
   autoLoadEntities: true,
 };
