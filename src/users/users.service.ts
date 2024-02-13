@@ -5,8 +5,6 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RolesService } from 'src/roles/roles.service';
 import { RoleName } from 'src/auth/enums/RoleName';
-import { Teacher } from 'src/teachers/entities/teacher.entity';
-import { Student } from 'src/students/entities/student.entity';
 
 @Injectable()
 export class UsersService {
@@ -36,28 +34,34 @@ export class UsersService {
 
   async createForTeacher(createUserDto: CreateUserDto, teacher): Promise<User> {
     const role = await this.roleService.findByName(RoleName.Teacher);
-    
+
     const user = this.usersRepository.create(createUserDto);
     user.teacher = teacher;
     user.role = role;
-    
+
     return this.create(user);
   }
 
   async createForStudent(createUserDto: CreateUserDto, student): Promise<User> {
     const role = await this.roleService.findByName(RoleName.Student);
-    
+
     const user = this.usersRepository.create(createUserDto);
     user.student = student;
     user.role = role;
-    
+
     return this.create(user);
   }
 
-  async findAll(): Promise<User[]> {
-    return this.usersRepository.find({
-      relations: ['role', 'administrator', 'teacher', 'student'],
-    });
+  async findAll(role: RoleName): Promise<User[]> {
+    const query = this.usersRepository.createQueryBuilder('user').leftJoinAndSelect('user.role', 'role');
+    if (Object.values(RoleName).includes(role)) {
+      query.where('role.name = :role', { role });
+    }
+    query.leftJoinAndSelect('user.student', 'student');
+    query.leftJoinAndSelect('user.administrator', 'administrator');
+    query.leftJoinAndSelect('user.teacher', 'teacher');
+
+    return query.getMany();
   }
 
   findByEmail(email: string, options = {}): Promise<User | null> {
