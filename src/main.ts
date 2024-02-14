@@ -12,6 +12,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get('Reflector')));
 
-  await app.listen(8000);
+  await app.listen(process.env.PORT);
 }
 bootstrap();
