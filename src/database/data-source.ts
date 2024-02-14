@@ -15,7 +15,6 @@ const { parse } = require('pg-connection-string');
 dotenv.config();
 
 let type = process.env.DB_TYPE || 'postgres';
-
 let host = process.env.DB_HOST;
 let port = +process.env.DB_PORT;
 let username = process.env.DB_USER;
