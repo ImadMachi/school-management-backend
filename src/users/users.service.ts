@@ -63,7 +63,8 @@ export class UsersService {
 
   async findAll(): Promise<User[]> {
     return this.usersRepository.find({
-      relations: ['role', 'administrator', 'teacher', 'student'],
+      where: { isActive: true },
+      relations: ['role', 'administrator', 'teacher', 'student','parent'],
     });
   }
 
@@ -74,7 +75,22 @@ export class UsersService {
   findOne(id: number): Promise<User | null> {
     return this.usersRepository.findOne({
       where: { id },
-      relations: ['role', 'administrator', 'teacher', 'student'],
+      relations: ['role', 'administrator', 'teacher', 'student' , 'parent'],
     });
   }
+  
+  async remove(id: number): Promise<User | null> {
+    const userToDelete = await this.usersRepository.findOne({
+      where: { id }
+    });
+    if (!userToDelete) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    // Manually delete related messages  
+     this.usersRepository.delete(id);
+  
+    return userToDelete;
+  }
+  
+  
 }

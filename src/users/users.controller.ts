@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, Param, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CheckPolicies, PoliciesGuard } from 'src/casl/guards/policies.guard';
 import { ReadUsersPolicyHandler } from 'src/casl/policies/users/read-users.policy';
@@ -12,5 +12,11 @@ export class UsersController {
   @CheckPolicies(new ReadUsersPolicyHandler())
   findAll() {
     return this.usersService.findAll();
+  }
+
+  @Delete(':id')
+  @CheckPolicies(new ReadUsersPolicyHandler())
+  remove(@Param('id') id: string) {
+    return this.usersService.remove(+id);
   }
 }
