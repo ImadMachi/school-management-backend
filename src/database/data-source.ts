@@ -14,7 +14,8 @@ const { parse } = require('pg-connection-string');
 
 dotenv.config();
 
-let type = process.env.DB_TYPE;
+let type = process.env.DB_TYPE || 'postgres';
+
 let host = process.env.DB_HOST;
 let port = +process.env.DB_PORT;
 let username = process.env.DB_USER;
@@ -32,16 +33,6 @@ if (databaseUrl) {
   database = dbConfig.database;
 }
 
-if (databaseUrl) {
-  const url = new URL(databaseUrl);
-  process.env.DB_TYPE = url.protocol.replace(':', '');
-  process.env.DB_HOST = url.hostname;
-  process.env.DB_PORT = url.port;
-  process.env.DB_USER = url.username;
-  process.env.DB_PASS = url.password;
-  process.env.DB_NAME = url.pathname.replace('/', '');
-}
-
 export const dataSourceOptions: DataSourceOptions = {
   type: type as any,
   host,
@@ -51,7 +42,13 @@ export const dataSourceOptions: DataSourceOptions = {
   database,
   synchronize: process.env.NODE_ENV == 'development',
   entities: [User, Role, Student, Teacher, Administrator, Message, Attachment, Director, MessageCategory],
-
   // @ts-ignore
   autoLoadEntities: true,
+  extra: {
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  },
+  logging: process.env.NODE_ENV == 'development',
+  sslmode: 'require',
 };
