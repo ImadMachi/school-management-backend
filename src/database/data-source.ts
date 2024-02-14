@@ -1,4 +1,4 @@
-import { DataSourceOptions } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 import * as dotenv from 'dotenv';
 
 import { User } from '../users/entities/user.entity';
@@ -34,21 +34,23 @@ if (databaseUrl) {
 }
 
 export const dataSourceOptions: DataSourceOptions = {
-  type: process.env.DB_TYPE as any,
-  host: process.env.DB_HOST,
-  port: +process.env.DB_PORT,
-  username: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
+  type: type as any,
+  host,
+  port,
+  username,
+  password,
+  database,
   entities: [User, Role, Student, Teacher, Administrator, Parent, Message, Attachment, Director, MessageCategory],
   synchronize: process.env.NODE_ENV == 'development',
   // @ts-ignore
   autoLoadEntities: true,
+  logging: process.env.NODE_ENV == 'development',
   extra: {
     ssl: {
       rejectUnauthorized: false,
     },
   },
-  logging: process.env.NODE_ENV == 'development',
   sslmode: 'require',
 };
+
+export default new DataSource(dataSourceOptions);
