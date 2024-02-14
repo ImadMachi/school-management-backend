@@ -8,7 +8,7 @@ import { ManageAdministratorsPolicyHandler } from 'src/casl/policies/administrat
 @Controller('administrators')
 @UseGuards(PoliciesGuard)
 export class AdministratorsController {
-  constructor(private readonly administratorsService: AdministratorsService) { }
+  constructor(private readonly administratorsService: AdministratorsService) {}
 
   @Post()
   @CheckPolicies(new ManageAdministratorsPolicyHandler())
@@ -29,13 +29,9 @@ export class AdministratorsController {
 
   @Patch(':id')
   @CheckPolicies(new ManageAdministratorsPolicyHandler())
-  update(
-    @Param('id') id: string,
-    @Body() updateAdministratorDto: UpdateAdministratorDto
-  ) {
+  update(@Param('id') id: string, @Body() updateAdministratorDto: UpdateAdministratorDto) {
     return this.administratorsService.update(+id, updateAdministratorDto);
   }
-
 
   @Delete(':id')
   @CheckPolicies(new ManageAdministratorsPolicyHandler())

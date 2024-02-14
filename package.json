@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
+    "migration:run": "node ./node_modules/typeorm/cli.js migration:run --dataSource ./dist/database/data-source.js",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -35,6 +36,7 @@
     "class-validator": "^0.14.1",
     "multer": "^1.4.5-lts.1",
     "pg": "^8.11.3",
+    "pg-connection-string": "^2.6.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.19",

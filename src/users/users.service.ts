@@ -34,21 +34,21 @@ export class UsersService {
 
   async createForTeacher(createUserDto: CreateUserDto, teacher): Promise<User> {
     const role = await this.roleService.findByName(RoleName.Teacher);
-    
+
     const user = this.usersRepository.create(createUserDto);
     user.teacher = teacher;
     user.role = role;
-    
+
     return this.create(user);
   }
 
   async createForStudent(createUserDto: CreateUserDto, student): Promise<User> {
     const role = await this.roleService.findByName(RoleName.Student);
-    
+
     const user = this.usersRepository.create(createUserDto);
     user.student = student;
     user.role = role;
-    
+
     return this.create(user);
   } 
   async createForParent(createUserDto: CreateUserDto, parent): Promise<User> {
@@ -61,11 +61,16 @@ export class UsersService {
     return this.create(user);
   }
 
-  async findAll(): Promise<User[]> {
-    return this.usersRepository.find({
-      where: { isActive: true },
-      relations: ['role', 'administrator', 'teacher', 'student','parent'],
-    });
+  async findAll(role: RoleName): Promise<User[]> {
+    const query = this.usersRepository.createQueryBuilder('user').leftJoinAndSelect('user.role', 'role');
+    if (Object.values(RoleName).includes(role)) {
+      query.where('role.name = :role', { role });
+    }
+    query.leftJoinAndSelect('user.student', 'student');
+    query.leftJoinAndSelect('user.administrator', 'administrator');
+    query.leftJoinAndSelect('user.teacher', 'teacher');
+
+    return query.getMany();
   }
 
   findByEmail(email: string, options = {}): Promise<User | null> {

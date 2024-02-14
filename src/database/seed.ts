@@ -16,7 +16,16 @@ async function seed() {
   const options: DataSourceOptions & SeederOptions = {
     ...dataSourceOptions,
     seeds: [AppSeeder],
-    factories: [administratorFactory, roleFactory, studentFactory, teacherFactory,parentFactory, userFactory, messageFactory, messageCategoryFactory],
+    factories: [
+      administratorFactory,
+      roleFactory,
+      studentFactory,
+      teacherFactory,
+      parentFactory,
+      userFactory,
+      messageFactory,
+      messageCategoryFactory,
+    ],
   };
 
   const dataSource = new DataSource(options);
