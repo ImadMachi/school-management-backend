@@ -1,6 +1,7 @@
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { Parent } from 'src/parents/entities/parent.entity';
 import { Teacher } from '../../teachers/entities/teacher.entity';
 import { Student } from '../../students/entities/student.entity';
 import { Administrator } from '../../administrators/entities/administrator.entity';
@@ -15,15 +16,18 @@ export default class AppSeeder implements Seeder {
     const administratorFactory = await factoryManager.get(Administrator);
     const teacherFactory = await factoryManager.get(Teacher);
     const studentFactory = await factoryManager.get(Student);
+    const parentFactory = await factoryManager.get(Parent);
     const userFactory = await factoryManager.get(User);
     const roleFactory = await factoryManager.get(Role);
     const messageFactory = await factoryManager.get(Message);
     const messageCategoryFactory = await factoryManager.get(MessageCategory);
 
     // Persons
+    const parents = await parentFactory.saveMany(5);
     const teachers = await teacherFactory.saveMany(5);
     const students = await studentFactory.saveMany(5);
     const administrators = await administratorFactory.saveMany(5);
+    
 
     // Roles
     const directorRole = await roleFactory.save({ name: RoleName.Director });
@@ -32,6 +36,7 @@ export default class AppSeeder implements Seeder {
     });
     const teacherRole = await roleFactory.save({ name: RoleName.Teacher });
     const studentRole = await roleFactory.save({ name: RoleName.Student });
+    const parentRole = await roleFactory.save({ name: RoleName.Parent });
 
     const customAdministrator1 = await administratorFactory.save({
       firstName: 'Imad',
@@ -85,6 +90,13 @@ export default class AppSeeder implements Seeder {
       student: students[1],
     });
 
+    const userParent = await userFactory.save({
+      email :`${parents[0].lastName.toLowerCase()}@gmail.com`,
+      password: '123456',
+      role: parentRole,
+      parent: parents[0],
+    })
+
     // Message Categories
     const messageCategory1 = await messageCategoryFactory.save({
       name: 'Academique',
@@ -137,5 +149,13 @@ export default class AppSeeder implements Seeder {
       starredBy: [userStudent2],
       category: messageCategory4,
     });
+    const starredMessagesByParent = await messageFactory.saveMany(2, {
+      sender: userParent,
+      recipients: [userParent, userDirector],
+      starredBy: [userParent],
+      category: messageCategory5,
+    });
+
+
   }
 }

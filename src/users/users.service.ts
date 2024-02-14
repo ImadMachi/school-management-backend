@@ -50,6 +50,15 @@ export class UsersService {
     user.role = role;
 
     return this.create(user);
+  } 
+  async createForParent(createUserDto: CreateUserDto, parent): Promise<User> {
+    const role = await this.roleService.findByName(RoleName.Parent);
+    
+    const user = this.usersRepository.create(createUserDto);
+    user.parent = parent;
+    user.role = role;
+    
+    return this.create(user);
   }
 
   async findAll(role: RoleName): Promise<User[]> {

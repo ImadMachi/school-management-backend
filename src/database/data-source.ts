@@ -5,6 +5,7 @@ import { User } from '../users/entities/user.entity';
 import { Student } from '../students/entities/student.entity';
 import { Teacher } from '../teachers/entities/teacher.entity';
 import { Administrator } from '../administrators/entities/administrator.entity';
+import { Parent } from 'src/parents/entities/parent.entity';
 import { Role } from '../roles/entities/role.entity';
 import { Message } from '../messages/entities/message.entity';
 import { Attachment } from '../messages/entities/attachment.entity';
@@ -33,14 +34,14 @@ if (databaseUrl) {
 }
 
 export const dataSourceOptions: DataSourceOptions = {
-  type: type as any,
-  host,
-  port,
-  username,
-  password,
-  database,
-  synchronize: process.env.NODE_ENV == 'development',
+  type: process.env.DB_TYPE as any,
+  host: process.env.DB_HOST,
+  port: +process.env.DB_PORT,
+  username: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
   entities: [User, Role, Student, Teacher, Administrator, Message, Attachment, Director, MessageCategory],
+  synchronize: process.env.NODE_ENV == 'development',
   // @ts-ignore
   autoLoadEntities: true,
   extra: {
