@@ -47,6 +47,7 @@ export class MessagesService {
       .innerJoinAndSelect('message.sender', 'sender')
       .leftJoinAndSelect('sender.administrator', 'administrator')
       .leftJoinAndSelect('sender.teacher', 'teacher')
+      .leftJoinAndSelect('sender.parent', 'parent')
       .leftJoinAndSelect('message.attachments', 'attachments')
       .innerJoinAndSelect('sender.role', 'role')
       .getOne();
@@ -82,6 +83,7 @@ export class MessagesService {
     return queryBuilder
       .leftJoinAndSelect('sender.administrator', 'administrator')
       .leftJoinAndSelect('sender.teacher', 'teacher')
+      .leftJoinAndSelect('sender.parent', 'parent')
       .leftJoinAndSelect('message.attachments', 'attachments')
       .innerJoinAndSelect('sender.role', 'role')
       .innerJoinAndSelect('message.category', 'category')

@@ -11,12 +11,14 @@ import messageFactory from './factories/message.factory';
 import { dataSourceOptions } from './data-source';
 import messageCategoryFactory from './factories/message-category.factory';
 import parentFactory from './factories/parent.factory';
+import directorFactory from './factories/director.factory';
 
 async function seed() {
   const options: DataSourceOptions & SeederOptions = {
     ...dataSourceOptions,
     seeds: [AppSeeder],
     factories: [
+      directorFactory,
       administratorFactory,
       roleFactory,
       studentFactory,
