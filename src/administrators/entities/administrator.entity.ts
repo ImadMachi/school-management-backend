@@ -1,6 +1,7 @@
 import { Exclude, Expose } from 'class-transformer';
 import { User } from '../../users/entities/user.entity';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Class } from 'src/classes/entities/class.entity';
 
 @Entity()
 export class Administrator {
@@ -16,12 +17,15 @@ export class Administrator {
   @Column()
   phoneNumber: string;
 
+  @Exclude()
   @OneToOne(() => User, (user) => user.administrator, {
     nullable: true,
     eager: true,
   })
-  @Exclude()
   user: User;
+
+  @OneToMany(() => Class, (cls) => cls.administrator)
+  classes: Class[];
 
   @Expose()
   get userId() {

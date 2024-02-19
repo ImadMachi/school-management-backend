@@ -8,8 +8,20 @@ import { Message } from 'src/messages/entities/message.entity';
 import { MessageCategory } from 'src/message-categories/entities/message-category.entity';
 import { Student } from 'src/students/entities/student.entity';
 import { Parent } from 'src/parents/entities/parent.entity';
+import { Director } from 'src/director/entities/director.entity';
 
-type Subjects = InferSubjects<typeof User | typeof Administrator | typeof Teacher | typeof Student | typeof Parent | typeof Message | typeof MessageCategory> | 'all';
+type Subjects =
+  | InferSubjects<
+      | typeof User
+      | typeof Director
+      | typeof Administrator
+      | typeof Teacher
+      | typeof Student
+      | typeof Parent
+      | typeof Message
+      | typeof MessageCategory
+    >
+  | 'all';
 
 export enum Action {
   Manage = 'manage',
@@ -29,7 +41,7 @@ export class CaslAbilityFactory {
     if (user.role.name === RoleName.Director) {
       can(Action.Manage, 'all');
     } else if (user.role.name === RoleName.Teacher) {
-      // can(Action.Create,'Message')
+      can(Action.Read, MessageCategory);
     }
 
     // can(Action.Update, Article, { authorId: user.id });

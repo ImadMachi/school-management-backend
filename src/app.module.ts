@@ -17,6 +17,7 @@ import { DirectorModule } from './director/director.module';
 import { MessagesModule } from './messages/messages.module';
 import { MessageCategoriesModule } from './message-categories/message-categories.module';
 import { ParentsModule } from './parents/parents.module';
+import { ClassesModule } from './classes/classes.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { ParentsModule } from './parents/parents.module';
     MessagesModule,
     MessageCategoriesModule,
     ParentsModule,
+    ClassesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

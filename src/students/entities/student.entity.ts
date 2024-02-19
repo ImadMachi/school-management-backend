@@ -1,6 +1,7 @@
 import { Exclude, Expose } from 'class-transformer';
 import { User } from '../../users/entities/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, ManyToMany } from 'typeorm';
+import { Class } from 'src/classes/entities/class.entity';
 
 @Entity()
 export class Student {
@@ -19,12 +20,15 @@ export class Student {
   @Column()
   sex: string;
 
+  @Exclude()
   @OneToOne(() => User, (user) => user.student, {
     nullable: true,
     eager: true,
   })
-  @Exclude()
   user: User;
+
+  @ManyToMany(() => Class, (cls) => cls.students)
+  classes: Class[];
 
   @Expose()
   get userId() {

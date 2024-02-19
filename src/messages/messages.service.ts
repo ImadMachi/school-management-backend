@@ -45,8 +45,10 @@ export class MessagesService {
       .createQueryBuilder('message')
       .where('message.id = :id', { id })
       .innerJoinAndSelect('message.sender', 'sender')
+      .leftJoinAndSelect('sender.director', 'director')
       .leftJoinAndSelect('sender.administrator', 'administrator')
       .leftJoinAndSelect('sender.teacher', 'teacher')
+      .leftJoinAndSelect('sender.parent', 'parent')
       .leftJoinAndSelect('message.attachments', 'attachments')
       .innerJoinAndSelect('sender.role', 'role')
       .getOne();
@@ -57,8 +59,12 @@ export class MessagesService {
     return message;
   }
 
-  async getMessagesByFolder(userId: number, folder: string) {
+  async getMessagesByFolder(userId: number, folder: string, timestamp: string) {
     const queryBuilder = this.messageRepository.createQueryBuilder('message');
+
+    if (timestamp) {
+      queryBuilder.where('message.createdAt > :timestamp', { timestamp: new Date(timestamp) });
+    }
 
     if (folder === MailFolder.Sender) {
       queryBuilder.innerJoinAndSelect('message.sender', 'sender').where('sender.id = :userId', { userId });
@@ -80,13 +86,30 @@ export class MessagesService {
     }
 
     return queryBuilder
+      .leftJoinAndSelect('sender.director', 'director')
       .leftJoinAndSelect('sender.administrator', 'administrator')
       .leftJoinAndSelect('sender.teacher', 'teacher')
+      .leftJoinAndSelect('sender.parent', 'parent')
       .leftJoinAndSelect('message.attachments', 'attachments')
       .innerJoinAndSelect('sender.role', 'role')
       .innerJoinAndSelect('message.category', 'category')
       .orderBy('message.createdAt', 'DESC')
       .getMany();
+  }
+
+  async getNewMessages(timestamp: string, userId: number) {
+    const queryBuilder = this.messageRepository.createQueryBuilder('message');
+    queryBuilder
+      .innerJoin('message.recipients', 'recipient')
+      .where('recipient.id = :userId', { userId })
+      .andWhere('message.createdAt > :timestamp', { timestamp: new Date(timestamp) })
+      .innerJoinAndSelect('message.sender', 'sender')
+      .leftJoinAndSelect('message.attachments', 'attachments')
+      .innerJoinAndSelect('sender.role', 'role')
+      .innerJoinAndSelect('message.category', 'category')
+      .orderBy('message.createdAt', 'DESC');
+
+    return queryBuilder.getMany();
   }
 
   private async saveAttachments(files: Array<Express.Multer.File>) {

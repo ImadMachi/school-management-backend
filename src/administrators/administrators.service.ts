@@ -6,7 +6,6 @@ import { Administrator } from './entities/administrator.entity';
 import { DataSource, Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 
-
 @Injectable()
 export class AdministratorsService {
   constructor(
@@ -46,7 +45,7 @@ export class AdministratorsService {
 
   findOne(id: number) {
     return this.administratorRepository.findOne({
-      where: { id }
+      where: { id },
     });
   }
 

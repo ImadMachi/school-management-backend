@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
+import { IsNotEmpty, ValidateNested } from 'class-validator';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 export class CreateAdministratorDto {

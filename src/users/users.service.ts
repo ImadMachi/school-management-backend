@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RolesService } from 'src/roles/roles.service';
 import { RoleName } from 'src/auth/enums/RoleName';
+import { Director } from 'src/director/entities/director.entity';
 
 @Injectable()
 export class UsersService {
@@ -20,6 +21,16 @@ export class UsersService {
       throw new HttpException('User already exists', HttpStatus.CONFLICT);
     }
     return this.usersRepository.save(user);
+  }
+
+  async createForDirector(createUserDto: CreateUserDto, director: Director): Promise<User> {
+    const role = await this.roleService.findByName(RoleName.Director);
+
+    const user = this.usersRepository.create(createUserDto);
+    user.director = director;
+    user.role = role;
+
+    return this.create(user);
   }
 
   async createForAdministrator(createUserDto: CreateUserDto, administrator): Promise<User> {
@@ -50,14 +61,14 @@ export class UsersService {
     user.role = role;
 
     return this.create(user);
-  } 
+  }
   async createForParent(createUserDto: CreateUserDto, parent): Promise<User> {
     const role = await this.roleService.findByName(RoleName.Parent);
-    
+
     const user = this.usersRepository.create(createUserDto);
     user.parent = parent;
     user.role = role;
-    
+
     return this.create(user);
   }
 
@@ -69,6 +80,7 @@ export class UsersService {
     query.leftJoinAndSelect('user.student', 'student');
     query.leftJoinAndSelect('user.administrator', 'administrator');
     query.leftJoinAndSelect('user.teacher', 'teacher');
+    query.leftJoinAndSelect('user.parent', 'parent');
 
     return query.getMany();
   }
@@ -80,7 +92,7 @@ export class UsersService {
   findOne(id: number): Promise<User | null> {
     return this.usersRepository.findOne({
       where: { id },
-      relations: ['role', 'administrator', 'teacher', 'student' , 'parent'],
+      relations: ['role', 'administrator', 'teacher', 'student', 'parent'],
     });
   }
   
