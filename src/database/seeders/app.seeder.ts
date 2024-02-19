@@ -11,6 +11,7 @@ import { Message } from '../../messages/entities/message.entity';
 import { MessageCategory } from '../../message-categories/entities/message-category.entity';
 import generateSlug from 'src/common/utils/generate-slug.util';
 import { Director } from 'src/director/entities/director.entity';
+import { Class } from 'src/classes/entities/class.entity';
 
 export default class AppSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
@@ -24,6 +25,7 @@ export default class AppSeeder implements Seeder {
     const roleFactory = await factoryManager.get(Role);
     const messageFactory = await factoryManager.get(Message);
     const messageCategoryFactory = await factoryManager.get(MessageCategory);
+    const classFactory = await factoryManager.get(Class);
 
     // Persons
     const directors = await directorFactory.saveMany(5);
@@ -31,6 +33,29 @@ export default class AppSeeder implements Seeder {
     const teachers = await teacherFactory.saveMany(5);
     const students = await studentFactory.saveMany(5);
     const parents = await parentFactory.saveMany(5);
+    // const customDirector1 = await directorFactory.save({
+    //   firstName: 'Imad',
+    //   lastName: 'Machi',
+    // });
+
+    // Classes
+    const classe1 = await classFactory.save({
+      name: 'Classe 1',
+      startDate: new Date('2021-09-01'),
+      endDate: new Date('2022-06-30'),
+      teachers: [teachers[0], teachers[1]],
+      students: [students[0], students[1], students[2], students[3], students[4]],
+      administrator: administrators[0],
+    });
+
+    const classe2 = await classFactory.save({
+      name: 'Classe 2',
+      startDate: new Date('2021-09-01'),
+      endDate: new Date('2022-06-30'),
+      teachers: [teachers[2], teachers[3]],
+      students: [students[0], students[1], students[2], students[3], students[4]],
+      administrator: administrators[1],
+    });
 
     // Roles
     const directorRole = await roleFactory.save({ name: RoleName.Director });
@@ -41,21 +66,15 @@ export default class AppSeeder implements Seeder {
     const studentRole = await roleFactory.save({ name: RoleName.Student });
     const parentRole = await roleFactory.save({ name: RoleName.Parent });
 
-    // Custom Persons
-    const customDirector1 = await directorFactory.save({
-      firstName: 'Imad',
-      lastName: 'Machi',
-    });
-
     // Users
-    const userDirector1 = await userFactory.save({
-      email: 'imadoxmachi@gmail.com',
-      password: '123456',
-      role: directorRole,
-      director: customDirector1,
-    });
+    // const userDirector1 = await userFactory.save({
+    //   email: 'imadoxmachi@gmail.com',
+    //   password: '123456',
+    //   role: directorRole,
+    //   director: customDirector1,
+    // });
 
-    const userDirector2 = await userFactory.save({
+    const userDirector1 = await userFactory.save({
       email: 'admin@gmail.com',
       password: '123456',
       role: directorRole,

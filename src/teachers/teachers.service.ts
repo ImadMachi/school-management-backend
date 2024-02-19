@@ -2,7 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Teacher } from './entities/teacher.entity'
+import { Teacher } from './entities/teacher.entity';
 import { DataSource, Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
@@ -11,10 +11,10 @@ import { UsersService } from 'src/users/users.service';
 export class TeachersService {
   constructor(
     @InjectRepository(Teacher)
-    private teacherrepository: Repository<Teacher>,
+    private teacherRepository: Repository<Teacher>,
     private dataSource: DataSource,
     private userService: UsersService,
-  ) { }
+  ) {}
 
   async create(createTeacherDto: CreateTeacherDto, createAccount: boolean) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -24,8 +24,8 @@ export class TeachersService {
     try {
       const { createUserDto, ...teacherDto } = createTeacherDto;
 
-      teacher = this.teacherrepository.create(teacherDto);
-      await this.teacherrepository.save(teacher);
+      teacher = this.teacherRepository.create(teacherDto);
+      await this.teacherRepository.save(teacher);
 
       if (createAccount && createUserDto) {
         const user = await this.userService.createForTeacher(createUserDto, teacher);
@@ -41,12 +41,12 @@ export class TeachersService {
   }
 
   findAll() {
-    return this.teacherrepository.find();
+    return this.teacherRepository.find();
   }
 
   findOne(id: number) {
-    return this.teacherrepository.findOne({
-      where: { id }
+    return this.teacherRepository.findOne({
+      where: { id },
     });
   }
 
@@ -56,14 +56,14 @@ export class TeachersService {
     await queryRunner.startTransaction();
     let teacher: Teacher;
     try {
-      teacher = await this.teacherrepository.findOne({ where: { id } });
+      teacher = await this.teacherRepository.findOne({ where: { id } });
       if (!teacher) {
         throw new NotFoundException();
       }
 
       // Update the teacher entity with the new data
-      this.teacherrepository.merge(teacher, updateTeacherDto);
-      await this.teacherrepository.save(teacher);
+      this.teacherRepository.merge(teacher, updateTeacherDto);
+      await this.teacherRepository.save(teacher);
     } catch (error) {
       await queryRunner.rollbackTransaction();
       await queryRunner.release();
@@ -74,12 +74,12 @@ export class TeachersService {
   }
 
   async remove(id: number) {
-    const teacher = await this.teacherrepository.findOne({
+    const teacher = await this.teacherRepository.findOne({
       where: { id },
     });
     if (!teacher) {
       throw new NotFoundException();
     }
-    return this.teacherrepository.delete(id);
+    return this.teacherRepository.delete(id);
   }
 }

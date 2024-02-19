@@ -4,7 +4,7 @@ import { CreateMessageDto } from './dto/create-message.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { CheckPolicies, PoliciesGuard } from 'src/casl/guards/policies.guard';
 import { ManageMessagesPolicyHandler } from 'src/casl/policies/messages/manage-messages.policy';
-import { QueryFolderDto } from './dto/query-folder.dto';
+import { GetMessageQueryDto } from './dto/get-message-query.dto';
 
 @Controller('messages')
 @UseGuards(PoliciesGuard)
@@ -19,13 +19,15 @@ export class MessagesController {
 
   @Get('user/:userId')
   @CheckPolicies(new ManageMessagesPolicyHandler())
-  getMessagesByUser(@Param('userId') userId: number, @Query() query: QueryFolderDto) {
-    return this.messagesService.getMessagesByFolder(userId, query.folder);
+  getMessagesByUser(@Param('userId') userId: number, @Query() query: GetMessageQueryDto) {
+    return this.messagesService.getMessagesByFolder(userId, query.folder, query.timestamp);
   }
 
   @Get('auth')
-  getAuthenticatedUserMessages(@Request() req, @Query() query: QueryFolderDto) {
-    return this.messagesService.getMessagesByFolder(req.user.id, query.folder);
+  getAuthenticatedUserMessages(@Request() req, @Query() query: GetMessageQueryDto) {
+    console.log(query.timestamp, typeof query.timestamp);
+
+    return this.messagesService.getMessagesByFolder(req.user.id, query.folder, query.timestamp);
   }
 
   @Get(':id')
