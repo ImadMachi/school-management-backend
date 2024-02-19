@@ -32,6 +32,11 @@ export default class AppSeeder implements Seeder {
     const administrators = await administratorFactory.saveMany(5);
     const teachers = await teacherFactory.saveMany(5);
     const students = await studentFactory.saveMany(5);
+    const customStudent1 = await studentFactory.save({
+      firstName: 'Ahmed',
+      lastName: 'Lahlou',
+      sex: 'mâle',
+    });
     const parents = await parentFactory.saveMany(5);
     // const customDirector1 = await directorFactory.save({
     //   firstName: 'Imad',
@@ -110,10 +115,10 @@ export default class AppSeeder implements Seeder {
     });
 
     const userStudent1 = await userFactory.save({
-      email: `${students[0].lastName.toLowerCase()}@gmail.com`,
+      email: `${customStudent1.lastName.toLowerCase()}@gmail.com`,
       password: '123456',
       role: studentRole,
-      student: students[0],
+      student: customStudent1,
     });
     const userStudent2 = await userFactory.save({
       email: `${students[1].lastName.toLowerCase()}@gmail.com`,
