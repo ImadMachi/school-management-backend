@@ -95,4 +95,19 @@ export class UsersService {
       relations: ['role', 'administrator', 'teacher', 'student', 'parent'],
     });
   }
+  
+  async remove(id: number): Promise<User | null> {
+    const userToDelete = await this.usersRepository.findOne({
+      where: { id }
+    });
+    if (!userToDelete) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    // Manually delete related messages  
+     this.usersRepository.delete(id);
+  
+    return userToDelete;
+  }
+  
+  
 }
