@@ -1,12 +1,22 @@
 import { Administrator } from '../../administrators/entities/administrator.entity';
 import { setSeederFactory } from 'typeorm-extension';
+import { arabicFirstNames,arabicLastNames } from '../dummyNames';;
 
+
+function getRandomElement(array) {
+  const randomIndex = Math.floor(Math.random() * array.length);
+  return array[randomIndex];
+}
 const administratorFactory = setSeederFactory(Administrator, (faker) => {
   const administrator = new Administrator();
-  administrator.firstName = faker.person.firstName('male');
-  administrator.lastName = faker.person.lastName('male');
+  administrator.firstName = getRandomElement(arabicFirstNames);
+  administrator.lastName = getRandomElement(arabicLastNames);  
   administrator.phoneNumber = faker.phone.number();
+  console.log('Generated Administrator:', administrator.firstName, administrator.lastName);
   return administrator;
 });
+
+// Helper function to get a random element from an array
+
 
 export default administratorFactory;
