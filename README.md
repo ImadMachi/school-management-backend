@@ -53,3 +53,9 @@ $ git branch -a
 $ git branch feature_management origin/feature_management # reflecting the remote branch for the first time
 $ git fetch origin feature_management:feature_management # updating the remote brach
 ```
+
+## EXPO Build apk
+
+```bash
+$ eas build -p android --profile preview
+```
