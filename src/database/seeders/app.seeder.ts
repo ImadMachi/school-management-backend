@@ -137,7 +137,7 @@ export default class AppSeeder implements Seeder {
     });
 
     const messageCategory2 = await messageCategoryFactory.save({
-      name: 'Announcement',
+      name: 'Annonce',
       slug: generateSlug('Announcement'),
       imagepath: 'announcement.jpeg',
     });
@@ -161,36 +161,44 @@ export default class AppSeeder implements Seeder {
     });
 
     // Messages
-    const messagesSentByDirector = await messageFactory.saveMany(3, {
+    const message1 = await messageFactory.save({
       sender: userDirector1,
       recipients: [userStudent1, userStudent2],
       category: messageCategory1,
+      subject: 'Rentrée scolaire',
+      body: 'La rentrée scolaire aura lieu le 15 septembre 2021',
     });
 
-    const messagesSentByTeacher = await messageFactory.saveMany(3, {
+    const message2 = await messageFactory.save({
+      sender: userAdministrator1,
+      recipients: [userStudent1, userStudent2],
+      category: messageCategory5,
+      subject: 'Sortie scolaire',
+      body: 'Sortie scolaire le 25 septembre 2021',
+    });
+
+    const message3 = await messageFactory.save({
+      sender: userTeacher,
+      recipients: [userStudent1, userStudent2],
+      category: messageCategory4,
+      subject: 'Devoir de mathématiques',
+      body: 'Devoir de mathématiques pour le 20 septembre 2021',
+    });
+
+    const message4 = await messageFactory.save({
+      sender: userAdministrator1,
+      recipients: [userStudent1, userStudent2],
+      category: messageCategory3,
+      subject: "Fête de l'école",
+      body: "Fête de l'école le 30 septembre 2021",
+    });
+
+    const message5 = await messageFactory.save({
       sender: userTeacher,
       recipients: [userStudent1, userStudent2],
       category: messageCategory2,
-    });
-
-    const starredMessagesByStudent1 = await messageFactory.saveMany(2, {
-      sender: userTeacher,
-      recipients: [userStudent1, userDirector1],
-      starredBy: [userStudent1, userDirector1],
-      category: messageCategory3,
-    });
-
-    const starredMessagesByStudent2 = await messageFactory.saveMany(2, {
-      sender: userTeacher,
-      recipients: [userStudent2, userDirector1],
-      starredBy: [userStudent2],
-      category: messageCategory4,
-    });
-    const starredMessagesByParent = await messageFactory.saveMany(2, {
-      sender: userParent,
-      recipients: [userParent, userDirector1],
-      starredBy: [userParent],
-      category: messageCategory5,
+      subject: 'Annonce',
+      body: 'Annonce importante',
     });
   }
 }
