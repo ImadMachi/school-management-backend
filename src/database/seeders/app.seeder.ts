@@ -12,6 +12,7 @@ import { MessageCategory } from '../../message-categories/entities/message-categ
 import generateSlug from 'src/common/utils/generate-slug.util';
 import { Director } from 'src/director/entities/director.entity';
 import { Class } from 'src/classes/entities/class.entity';
+import { Attachment } from 'src/messages/entities/attachment.entity';
 
 export default class AppSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
@@ -26,6 +27,7 @@ export default class AppSeeder implements Seeder {
     const messageFactory = await factoryManager.get(Message);
     const messageCategoryFactory = await factoryManager.get(MessageCategory);
     const classFactory = await factoryManager.get(Class);
+    const attachmentFactory = await factoryManager.get(Attachment);
 
     // Persons
     const directors = await directorFactory.saveMany(5);
@@ -38,10 +40,6 @@ export default class AppSeeder implements Seeder {
       sex: 'mâle',
     });
     const parents = await parentFactory.saveMany(5);
-    // const customDirector1 = await directorFactory.save({
-    //   firstName: 'Imad',
-    //   lastName: 'Machi',
-    // });
 
     // Classes
     const classe1 = await classFactory.save({
@@ -189,6 +187,16 @@ export default class AppSeeder implements Seeder {
       subject: 'Devoir de mathématiques',
       body: 'Devoir de mathématiques pour le 20 septembre 2021',
     });
+    const attachment3 = await attachmentFactory.save({
+      filename: 'devoir-maths-1',
+      filepath: 'devoir-math.jpg',
+      message: message3,
+    });
+    const attachment3_2 = await attachmentFactory.save({
+      filename: 'devoir-maths-2',
+      filepath: 'devoir-math-2.jpg',
+      message: message3,
+    });
 
     const message4 = await messageFactory.save({
       sender: userAdministrator1,
@@ -203,7 +211,12 @@ export default class AppSeeder implements Seeder {
       recipients: [userStudent1, userStudent2],
       category: messageCategory2,
       subject: 'Annonce',
-      body: 'Annonce importante',
+      body: 'Annonce importante, veuillez consulter les pièces jointes',
+    });
+    const attachment5 = await attachmentFactory.save({
+      filename: 'annonce',
+      filepath: 'annonce.png',
+      message: message4,
     });
   }
 }
