@@ -125,7 +125,7 @@ export default class AppSeeder implements Seeder {
       student: students[1],
     });
 
-    const userParent = await userFactory.save({
+    const userParent1 = await userFactory.save({
       email: `${parents[0].lastName.toLowerCase()}@gmail.com`,
       password: '123456',
       role: parentRole,
@@ -169,7 +169,7 @@ export default class AppSeeder implements Seeder {
       recipients: [userStudent1, userStudent2],
       category: messageCategory1,
       subject: 'Rentrée scolaire',
-      body: 'La rentrée scolaire aura lieu le 15 septembre 2021',
+      body: 'La rentrée scolaire aura lieu le 15 mars 2023',
     });
 
     const message2 = await messageFactory.save({
@@ -217,6 +217,30 @@ export default class AppSeeder implements Seeder {
       filename: 'annonce',
       filepath: 'annonce.png',
       message: message4,
+    });
+
+    const message6 = await messageFactory.save({
+      sender: userParent1,
+      recipients: [userDirector1],
+      category: messageCategory2,
+      subject: 'Demande de rendez-vous',
+      body: 'Je souhaiterais avoir un rendez-vous avec vous',
+    });
+
+    const message7 = await messageFactory.save({
+      sender: userStudent1,
+      recipients: [userDirector1],
+      category: messageCategory3,
+      subject: 'Demande de details',
+      body: 'Je souhaiterais avoir plus de details sur le voyage scolaire',
+    });
+
+    const message8 = await messageFactory.save({
+      sender: userDirector1,
+      recipients: [userStudent1, userStudent2],
+      category: messageCategory1,
+      subject: 'Retoour de vacances',
+      body: "J'espère que vous avez passé de bonnes vacances",
     });
   }
 }
