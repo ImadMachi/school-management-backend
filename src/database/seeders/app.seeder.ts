@@ -192,6 +192,11 @@ export default class AppSeeder implements Seeder {
       filepath: 'devoir-math.jpg',
       message: message3,
     });
+    const attachment3_1 = await attachmentFactory.save({
+      filename: 'exercices de mathématiques',
+      filepath: 'math-exercices.pdf',
+      message: message3,
+    });
     const attachment3_2 = await attachmentFactory.save({
       filename: 'devoir-maths-2',
       filepath: 'devoir-math-2.jpg',
