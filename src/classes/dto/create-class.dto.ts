@@ -13,10 +13,7 @@ export class CreateClassDto {
   name: string;
 
   @IsNotEmpty()
-  startDate: Date;
-
-  @IsNotEmpty()
-  endDate: Date;
+  schoolYear: string;
 
   @IsArray()
   @ValidateNested({ each: true })

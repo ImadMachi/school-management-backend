@@ -16,6 +16,12 @@ $ npm run start:dev
 $ docker compose build --no-cache <service-name>
 ```
 
+## Purge Docker
+
+```bash
+$ docker system prune --all --volumes --force
+```
+
 ## Seed the database
 
 ```bash
@@ -23,6 +29,12 @@ $ docker compose build --no-cache <service-name>
 $ docker compose exec backend npm run seed
 # NPM
 $ npm run seed
+```
+
+## Run migrations
+
+```bash
+$ docker compose exec backend node ./node_modules/typeorm/cli.js migration:run --dataSource ./dist/database/data-source.js
 ```
 
 ## Get the hostname of running container (for TablePlus)

@@ -12,11 +12,8 @@ export class Class {
   @Column()
   name: string;
 
-  @Column({ type: 'timestamptz' })
-  startDate: Date;
-
-  @Column({ type: 'timestamptz' })
-  endDate: Date;
+  @Column()
+  schoolYear: string;
 
   @ManyToOne(() => Administrator, (administrator) => administrator.classes)
   administrator: Administrator;

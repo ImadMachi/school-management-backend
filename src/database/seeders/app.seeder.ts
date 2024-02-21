@@ -44,8 +44,7 @@ export default class AppSeeder implements Seeder {
     // Classes
     const classe1 = await classFactory.save({
       name: 'Classe 1',
-      startDate: new Date('2021-09-01'),
-      endDate: new Date('2022-06-30'),
+      schoolYear: '2023-2024',
       teachers: [teachers[0], teachers[1]],
       students: [students[0], students[1], students[2], students[3], students[4]],
       administrator: administrators[0],
@@ -53,11 +52,18 @@ export default class AppSeeder implements Seeder {
 
     const classe2 = await classFactory.save({
       name: 'Classe 2',
-      startDate: new Date('2021-09-01'),
-      endDate: new Date('2022-06-30'),
+      schoolYear: '2023-2024',
       teachers: [teachers[2], teachers[3]],
       students: [students[0], students[1], students[2], students[3], students[4]],
       administrator: administrators[1],
+    });
+
+    const classe3 = await classFactory.save({
+      name: 'Classe 3',
+      schoolYear: '2022-2023',
+      teachers: [teachers[4]],
+      students: [students[0], students[1], students[2], students[3], students[4]],
+      administrator: administrators[2],
     });
 
     // Roles
@@ -70,13 +76,6 @@ export default class AppSeeder implements Seeder {
     const parentRole = await roleFactory.save({ name: RoleName.Parent });
 
     // Users
-    // const userDirector1 = await userFactory.save({
-    //   email: 'imadoxmachi@gmail.com',
-    //   password: '123456',
-    //   role: directorRole,
-    //   director: customDirector1,
-    // });
-
     const userDirector1 = await userFactory.save({
       email: 'admin@gmail.com',
       password: '123456',
