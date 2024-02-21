@@ -134,7 +134,7 @@ export default class AppSeeder implements Seeder {
 
     // Message Categories
     const messageCategory1 = await messageCategoryFactory.save({
-      name: 'Academique',
+      name: 'Académique',
       slug: generateSlug('Academique'),
       imagepath: 'academic.jpg',
     });
@@ -146,7 +146,7 @@ export default class AppSeeder implements Seeder {
     });
 
     const messageCategory3 = await messageCategoryFactory.save({
-      name: 'Evenement',
+      name: 'Evénement',
       slug: generateSlug('Evenement'),
       imagepath: 'event.png',
     });
