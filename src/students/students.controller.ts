@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -11,7 +11,7 @@ export class StudentsController {
 
   @Post()
   @CheckPolicies(new ManageStudentsPolicyHandler())
-  create(@Body() createStudentDto: CreateStudentDto, @Body('create-account') createAccount: boolean){
+  create(@Body() createStudentDto: CreateStudentDto, @Body('create-account') createAccount: boolean , @UploadedFile() file: Array<Express.Multer.File>){
     return this.studentsService.create(createStudentDto, createAccount);}
 
   @Get()

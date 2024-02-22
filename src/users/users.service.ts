@@ -6,6 +6,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { RolesService } from 'src/roles/roles.service';
 import { RoleName } from 'src/auth/enums/RoleName';
 import { Director } from 'src/director/entities/director.entity';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class UsersService {
@@ -15,22 +18,26 @@ export class UsersService {
     private roleService: RolesService,
   ) {}
 
-  async create(user: User): Promise<User> {
+  async create(user: User ,files: Array<Express.Multer.File>): Promise<User> {
     const existingUser = await this.findByEmail(user.email);
     if (existingUser) {
       throw new HttpException('User already exists', HttpStatus.CONFLICT);
     }
+    if (files?.length > 0) {
+      const profileImage = await this.saveProfileImages(files ,user);
+      user.profileImage = profileImage[0]; // Assign the first element of the profileImage array
+    }
     return this.usersRepository.save(user);
   }
 
-  async createForDirector(createUserDto: CreateUserDto, director: Director): Promise<User> {
+  async createForDirector(createUserDto: CreateUserDto, director: Director, files: Array<Express.Multer.File>): Promise<User> {
     const role = await this.roleService.findByName(RoleName.Director);
 
     const user = this.usersRepository.create(createUserDto);
     user.director = director;
     user.role = role;
 
-    return this.create(user);
+    return this.create(user, files);
   }
 
   async createForAdministrator(createUserDto: CreateUserDto, administrator): Promise<User> {
@@ -40,7 +47,7 @@ export class UsersService {
     user.administrator = administrator;
     user.role = role;
 
-    return this.create(user);
+    return this.create(user, []); // Pass an empty array as the second argument
   }
 
   async createForTeacher(createUserDto: CreateUserDto, teacher): Promise<User> {
@@ -50,7 +57,7 @@ export class UsersService {
     user.teacher = teacher;
     user.role = role;
 
-    return this.create(user);
+    return this.create(user, []); // Pass an empty array as the second argument
   }
 
   async createForStudent(createUserDto: CreateUserDto, student): Promise<User> {
@@ -60,7 +67,7 @@ export class UsersService {
     user.student = student;
     user.role = role;
 
-    return this.create(user);
+    return this.create(user, []); // Pass an empty array as the second argument
   }
   async createForParent(createUserDto: CreateUserDto, parent): Promise<User> {
     const role = await this.roleService.findByName(RoleName.Parent);
@@ -69,7 +76,7 @@ export class UsersService {
     user.parent = parent;
     user.role = role;
 
-    return this.create(user);
+    return this.create(user, []); // Pass an empty array as the second argument
   }
 
   async findAll(role: RoleName): Promise<User[]> {
@@ -108,6 +115,35 @@ export class UsersService {
   
     return userToDelete;
   }
+
+  public async saveProfileImages(files: Array<Express.Multer.File>, user: User) {
+    return Promise.all(
+      files.map(async (file) => {
+        const filename = file.originalname;
+        const fileHash = this.generateRandomHash() + filename;
+  
+        const execpath = path.join(__dirname, '..', '..', 'uploads', 'profileImage', fileHash);
+        const filepath = path.join('profileImage', fileHash); // Update the filepath
+  
+        user.profileImage = filepath; // Set the profileImage property on the user entity
+  
+        fs.writeFileSync(execpath, file.buffer);
+  
+        // If you need to save the user entity to update the profileImage attribute in the database, uncomment the line below
+        await this.usersRepository.save(user);
+  
+        return user.profileImage;
+      }),
+    );
+  }
+  public async uploadProfileImage(files: Array<Express.Multer.File>, user: User): Promise<string[]> {
+    return this.saveProfileImages(files, user);
+  }
+
+  private generateRandomHash() {
+    return crypto.randomBytes(16).toString('hex');
+  }
+  
   
   
 }

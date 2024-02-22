@@ -47,6 +47,9 @@ export class User {
   @JoinColumn()
   director: Director;
 
+  @Column({nullable : true})
+  profileImage: string;
+
   @OneToOne(() => Administrator, (administrator) => administrator.user, {
     nullable: true,
     onDelete: 'CASCADE',
