@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Administrator } from './entities/administrator.entity';
 import { DataSource, Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
+import { profile } from 'console';
 
 @Injectable()
 export class AdministratorsService {
@@ -13,23 +14,25 @@ export class AdministratorsService {
     private administratorRepository: Repository<Administrator>,
     private dataSource: DataSource,
     private userService: UsersService,
-  ) {}
+  ) { }
 
-  async create(createAdministratorDto: CreateAdministratorDto, createAccount: boolean) {
+  async create(createAdministratorDto: CreateAdministratorDto, createAccount: boolean, file: Express.Multer.File) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     let administrator: Administrator;
     try {
+
       const { createUserDto, ...administratorDto } = createAdministratorDto;
 
       administrator = this.administratorRepository.create(administratorDto);
       await this.administratorRepository.save(administrator);
 
       if (createAccount && createUserDto) {
-        const user = await this.userService.createForAdministrator(createUserDto, administrator);
+        const user = await this.userService.createForAdministrator(createUserDto, administrator, file);
         administrator.user = user;
-      }
+     }
+
     } catch (error) {
       await queryRunner.rollbackTransaction();
       await queryRunner.release();
@@ -38,6 +41,8 @@ export class AdministratorsService {
     await queryRunner.release();
     return administrator;
   }
+
+
 
   findAll() {
     return this.administratorRepository.find();

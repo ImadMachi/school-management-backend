@@ -35,7 +35,7 @@ export class UsersController {
       console.log('User not found');
     }
     // Call the public wrapper method
-    await this.usersService.uploadProfileImage([file], user);
+    await this.usersService.uploadProfileImage(file, user);
     return user;
   }
 }

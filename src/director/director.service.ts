@@ -27,7 +27,7 @@ export class DirectorService {
       await this.directorRepository.save(director);
 
       if (createAccount && createUserDto) {
-        const user = await this.userService.createForDirector(createUserDto, director);
+        const user = await this.userService.createForDirector(createUserDto, director );
         director.user = user;
       }
     } catch (error) {
