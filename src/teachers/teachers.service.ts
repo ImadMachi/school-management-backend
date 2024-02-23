@@ -16,7 +16,7 @@ export class TeachersService {
     private userService: UsersService,
   ) {}
 
-  async create(createTeacherDto: CreateTeacherDto, createAccount: boolean) {
+  async create(createTeacherDto: CreateTeacherDto, createAccount: boolean , file: Express.Multer.File) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -28,7 +28,7 @@ export class TeachersService {
       await this.teacherRepository.save(teacher);
 
       if (createAccount && createUserDto) {
-        const user = await this.userService.createForTeacher(createUserDto, teacher);
+        const user = await this.userService.createForTeacher(createUserDto, teacher , file);
         teacher.user = user;
       }
     } catch (error) {

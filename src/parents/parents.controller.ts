@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CheckPolicies, PoliciesGuard } from 'src/casl/guards/policies.guard';
 import { ParentsService } from './parents.service';
 import { CreateParentDto } from './dto/create-parent.dto';
 import { UpdateParentDto } from './dto/update-parent.dto';
 import { ManageParentsPolicyHandler } from 'src/casl/policies/parents/manage-parents-policy';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 
 @Controller('parents')
@@ -12,9 +13,10 @@ export class ParentsController {
   constructor(private readonly parentsService: ParentsService) { }
 
   @Post()
+  @UseInterceptors(FileInterceptor('profileImage'))
   @CheckPolicies(new ManageParentsPolicyHandler())
-  create(@Body() createParentDto: CreateParentDto, @Query('create-account') createAccount: boolean) {
-    return this.parentsService.create(createParentDto, createAccount);
+  create(@Body() createParentDto: CreateParentDto, @Query('create-account') createAccount: boolean, @UploadedFile() file: Express.Multer.File){
+    return this.parentsService.create(createParentDto, createAccount, file);
   }
 
   @Get()

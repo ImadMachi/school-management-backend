@@ -34,7 +34,7 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
-  async createForDirector(createUserDto: CreateUserDto, director: Director,) {
+  async createForDirector(createUserDto: CreateUserDto, director: Director, file : Express.Multer.File) {
     const role = await this.roleService.findByName(RoleName.Director);
 
     const user = this.usersRepository.create(createUserDto);
@@ -42,7 +42,7 @@ export class UsersService {
     user.role = role;
     
 
-    return this.create(user, null); // Pass null as the second argument
+    return this.create(user, file); // Pass null as the second argument
   }
 
   async createForAdministrator(createUserDto: CreateUserDto, administrator, file: Express.Multer.File): Promise<User> {
@@ -54,36 +54,36 @@ export class UsersService {
     console.log('user', user);  
     console.log('file', file);
 
-    return this.create(user,file); // Pass an empty array as the second argument
+    return this.create(user,file); 
   }
 
-  async createForTeacher(createUserDto: CreateUserDto, teacher): Promise<User> {
+  async createForTeacher(createUserDto: CreateUserDto, teacher, file : Express.Multer.File ): Promise<User> {
     const role = await this.roleService.findByName(RoleName.Teacher);
 
     const user = this.usersRepository.create(createUserDto);
     user.teacher = teacher;
     user.role = role;
 
-    return this.create(user, null); // Pass an empty array as the second argument
+    return this.create(user, file); 
   }
 
-  async createForStudent(createUserDto: CreateUserDto, student): Promise<User> {
+  async createForStudent(createUserDto: CreateUserDto, student,file :Express.Multer.File ): Promise<User> {
     const role = await this.roleService.findByName(RoleName.Student);
 
     const user = this.usersRepository.create(createUserDto);
     user.student = student;
     user.role = role;
 
-    return this.create(user, null); // Pass an empty array as the second argument
+    return this.create(user, file); 
   }
-  async createForParent(createUserDto: CreateUserDto, parent): Promise<User> {
+  async createForParent(createUserDto: CreateUserDto, parent, file :Express.Multer.File): Promise<User> {
     const role = await this.roleService.findByName(RoleName.Parent);
 
     const user = this.usersRepository.create(createUserDto);
     user.parent = parent;
     user.role = role;
 
-    return this.create(user, null); // Pass an empty array as the second argument
+    return this.create(user, file); // Pass an empty array as the second argument
   }
 
   async findAll(role: RoleName): Promise<User[]> {

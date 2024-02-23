@@ -15,7 +15,7 @@ export class DirectorService {
     private userService: UsersService,
   ) {}
 
-  async create(createDirectorDto: CreateDirectorDto, createAccount: boolean) {
+  async create(createDirectorDto: CreateDirectorDto, createAccount: boolean , file: Express.Multer.File) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -27,7 +27,7 @@ export class DirectorService {
       await this.directorRepository.save(director);
 
       if (createAccount && createUserDto) {
-        const user = await this.userService.createForDirector(createUserDto, director );
+        const user = await this.userService.createForDirector(createUserDto, director, file);
         director.user = user;
       }
     } catch (error) {

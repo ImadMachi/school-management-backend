@@ -1,18 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { CheckPolicies } from 'src/casl/guards/policies.guard';
 import { ManageStudentsPolicyHandler } from 'src/casl/policies/students/manage-students-policy';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
   @Post()
+  @UseInterceptors(FileInterceptor('profileImage'))
   @CheckPolicies(new ManageStudentsPolicyHandler())
-  create(@Body() createStudentDto: CreateStudentDto, @Body('create-account') createAccount: boolean , @UploadedFile() file: Array<Express.Multer.File>){
-    return this.studentsService.create(createStudentDto, createAccount);}
+  create(@Body() createStudentDto: CreateStudentDto, @Body('create-account') createAccount: boolean , @UploadedFile() file: Express.Multer.File){
+    return this.studentsService.create(createStudentDto, createAccount,file);}
 
   @Get()
   @CheckPolicies(new ManageStudentsPolicyHandler())

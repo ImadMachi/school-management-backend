@@ -1,18 +1,20 @@
-import { Controller, Get, Post, Body, Query, Delete, Patch, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Delete, Patch, Param, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { DirectorService } from './director.service';
 import { CreateDirectorDto } from './dto/create-director.dto';
 import { CheckPolicies } from 'src/casl/guards/policies.guard';
 import { ManageDirectorsPolicyHandler } from 'src/casl/policies/directors/manage-directors.policy';
 import { UpdateDirectorDto } from './dto/update-director.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('directors')
 export class DirectorController {
   constructor(private readonly directorService: DirectorService) {}
 
   @Post()
+  @UseInterceptors(FileInterceptor('profileImage'))
   @CheckPolicies(new ManageDirectorsPolicyHandler())
-  create(@Body() createDirectorDto: CreateDirectorDto, @Query('create-account') createAccount: boolean) {
-    return this.directorService.create(createDirectorDto, createAccount);
+  create(@Body() createDirectorDto: CreateDirectorDto, @Query('create-account') createAccount: boolean, @UploadedFile() file: Express.Multer.File){
+    return this.directorService.create(createDirectorDto, createAccount , file);
   }
 
   @Get()
