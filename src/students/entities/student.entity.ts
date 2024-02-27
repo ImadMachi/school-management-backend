@@ -20,14 +20,14 @@ export class Student {
   @Column()
   sex: string;
 
-  @Exclude()
   @OneToOne(() => User, (user) => user.student, {
     nullable: true,
     eager: true,
   })
+  @Exclude()
   user: User;
 
-  @ManyToMany(() => Class, (cls) => cls.students)
+  @ManyToMany(() => Class, (cls) => cls.teachers)
   classes: Class[];
 
   @Expose()

@@ -16,7 +16,7 @@ export class Parent {
   @Column()
   phoneNumber: string;
 
-  @OneToOne(() => User, (user) => user.administrator, {
+  @OneToOne(() => User, (user) => user.parent, {
     nullable: true,
     eager: true,
   })
