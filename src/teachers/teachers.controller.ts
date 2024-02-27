@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, Query } from '@nestjs/common';
 import { TeachersService } from './teachers.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
@@ -14,7 +14,7 @@ export class TeachersController {
   @Post()
   @UseInterceptors(FileInterceptor('profileImage'))
   @CheckPolicies(new ManageTeachersPolicyHandler())
-  create(@Body() createTeacherDto: CreateTeacherDto, @Body('create-account') createAccount: boolean, file : Express.Multer.File) {
+  create(@Body() createTeacherDto: CreateTeacherDto, @Query('create-account') createAccount: boolean, file : Express.Multer.File) {
     return this.teachersService.create(createTeacherDto, createAccount, file)
   }
 
