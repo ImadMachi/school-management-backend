@@ -36,7 +36,7 @@ export class ParentsService {
       throw new HttpException(error.message, error.status);
     }
     await queryRunner.release();
-    return Parent;
+    return parent;
   }
 
   findAll() {
@@ -68,7 +68,7 @@ export class ParentsService {
       throw new HttpException(error.message, error.status);
     }
     await queryRunner.release();
-    return Parent;
+    return parent;
   }
   async remove(id: number) {
     const parent = await this.parentRepository.findOne({
