@@ -104,11 +104,18 @@ export default class AppSeeder implements Seeder {
       administrator: administrators[2],
     });
 
-    const userTeacher = await userFactory.save({
+    const userTeacher1 = await userFactory.save({
       email: `${teachers[0].lastName.toLowerCase()}@gmail.com`,
       password: '123456',
       role: teacherRole,
       teacher: teachers[0],
+    });
+
+    const userTeacher2 = await userFactory.save({
+      email: `${teachers[1].lastName.toLowerCase()}@gmail.com`,
+      password: '123456',
+      role: teacherRole,
+      teacher: teachers[1],
     });
 
     const userStudent1 = await userFactory.save({
@@ -180,7 +187,7 @@ export default class AppSeeder implements Seeder {
     });
 
     const message3 = await messageFactory.save({
-      sender: userTeacher,
+      sender: userTeacher1,
       recipients: [userStudent1, userStudent2],
       category: messageCategory4,
       subject: 'Devoir de mathématiques',
@@ -211,7 +218,7 @@ export default class AppSeeder implements Seeder {
     });
 
     const message5 = await messageFactory.save({
-      sender: userTeacher,
+      sender: userTeacher1,
       recipients: [userStudent1, userStudent2],
       category: messageCategory2,
       subject: 'Annonce',

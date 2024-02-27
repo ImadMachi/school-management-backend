@@ -25,9 +25,12 @@ export class MessagesController {
 
   @Get('auth')
   getAuthenticatedUserMessages(@Request() req, @Query() query: GetMessageQueryDto) {
-    console.log(query.timestamp, typeof query.timestamp);
-
     return this.messagesService.getMessagesByFolder(req.user.id, query.folder, query.timestamp);
+  }
+
+  @Get('new')
+  getNewMessages(@Request() req, @Query('timestamp') timestamp: string) {
+    return this.messagesService.getNewMessages(timestamp, req.user.id);
   }
 
   @Get(':id')

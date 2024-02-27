@@ -1,8 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Put } from '@nestjs/common';
 import { ClassesService } from './classes.service';
 import { CreateClassDto } from './dto/create-class.dto';
 import { UpdateClassDto } from './dto/update-class.dto';
-import { AnyFilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('classes')
 export class ClassesController {
@@ -11,6 +10,16 @@ export class ClassesController {
   @Post()
   create(@Body() createClassDto: CreateClassDto) {
     return this.classesService.create(createClassDto);
+  }
+
+  @Put()
+  update(@Body() updateClassDto: UpdateClassDto) {
+    return this.classesService.update(updateClassDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: number) {
+    return this.classesService.remove(id);
   }
 
   @Get()

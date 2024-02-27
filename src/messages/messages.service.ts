@@ -37,7 +37,8 @@ export class MessagesService {
       message.attachments = attachments;
     }
 
-    return this.messageRepository.save(message);
+    const newMessage = await this.messageRepository.save(message);
+    return this.getMessage(newMessage.id);
   }
 
   async getMessage(id: number) {
