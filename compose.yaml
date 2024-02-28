@@ -1,0 +1,64 @@
+version: '3.7'
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: school-db
+    ports:
+      - 5432:5432
+    mem_limit: 512m
+
+  backend:
+    build: ./backend
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres
+    environment:
+      - DB_TYPE=postgres
+      - DB_HOST=postgres
+      - DB_NAME=school-db
+      - DB_PORT=5432
+      - DB_USER=root
+      - DB_PASS=root
+      - NODE_ENV=development
+      - JWT_SECRET=thisismysecret
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    mem_limit: 512m
+
+  frontend:
+    build:
+      context: ./frontend
+      target: dev
+    volumes:
+        - ./frontend:/app
+        - /app/node_modules
+        - /app/.next
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    mem_limit: 2048m
+    
+  # mobile:
+  #   build: ./mobile
+  #   volumes:
+  #     - ./mobile:/app
+  #     - /app/node_modules
+  #     - /app/.expo
+  #   ports:
+  #     - 19000:19000
+  #     - 19001:19001
+  #     - 19002:19002
+  #     - 19006:19006
+  #     - 8081:8081
+  #   # depends_on:
+  #   #   - backend
+  #   mem_limit: 1014m
