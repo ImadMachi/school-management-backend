@@ -10,6 +10,7 @@ import * as crypto from 'crypto';
 import { Attachment } from './entities/attachment.entity';
 import { MailFolder } from './enums/mail-folder.enum';
 import { MessageCategoriesService } from 'src/message-categories/message-categories.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class MessagesService {
@@ -19,6 +20,7 @@ export class MessagesService {
     @InjectRepository(Attachment)
     private attachmentRepository: Repository<Attachment>,
     private messageCategoryService: MessageCategoriesService,
+    private usersService: UsersService,
   ) {}
 
   async createMessage(createMessageDto: CreateMessageDto, user: User, files: Array<Express.Multer.File>) {
@@ -38,10 +40,10 @@ export class MessagesService {
     }
 
     const newMessage = await this.messageRepository.save(message);
-    return this.getMessage(newMessage.id);
+    return this.getMessage(newMessage.id, user.id);
   }
 
-  async getMessage(id: number) {
+  async getMessage(id: number, userId: number) {
     const message = await this.messageRepository
       .createQueryBuilder('message')
       .where('message.id = :id', { id })
@@ -52,13 +54,17 @@ export class MessagesService {
       .leftJoinAndSelect('sender.student', 'student')
       .leftJoinAndSelect('sender.parent', 'parent')
       .leftJoinAndSelect('message.attachments', 'attachments')
+      .leftJoinAndSelect('message.readBy', 'readBy')
       .innerJoinAndSelect('sender.role', 'role')
       .getOne();
 
     if (!message) {
       throw new NotFoundException('Message not found');
     }
-    return message;
+
+    const isRead = message.readBy.some((u) => u.id === userId);
+    delete message.readBy;
+    return { ...message, isRead };
   }
 
   async getMessagesByFolder(userId: number, folder: string, timestamp: string) {
@@ -87,22 +93,29 @@ export class MessagesService {
         .innerJoinAndSelect('message.sender', 'sender');
     }
 
-    return queryBuilder
+    const messages = await queryBuilder
       .leftJoinAndSelect('sender.director', 'director')
       .leftJoinAndSelect('sender.administrator', 'administrator')
       .leftJoinAndSelect('sender.teacher', 'teacher')
       .leftJoinAndSelect('sender.student', 'student')
       .leftJoinAndSelect('sender.parent', 'parent')
       .leftJoinAndSelect('message.attachments', 'attachments')
+      .leftJoinAndSelect('message.readBy', 'readBy')
       .innerJoinAndSelect('sender.role', 'role')
       .innerJoinAndSelect('message.category', 'category')
       .orderBy('message.createdAt', 'DESC')
       .getMany();
+
+    return messages.map((message) => {
+      const isRead = message.readBy.some((u) => u.id === userId);
+      delete message.readBy;
+      return { ...message, isRead };
+    });
   }
 
   async getNewMessages(timestamp: string, userId: number) {
     const queryBuilder = this.messageRepository.createQueryBuilder('message');
-    queryBuilder
+    const messages = await queryBuilder
       .innerJoin('message.recipients', 'recipient')
       .where('recipient.id = :userId', { userId })
       .andWhere('message.createdAt > :timestamp', { timestamp: new Date(timestamp) })
@@ -113,11 +126,37 @@ export class MessagesService {
       .leftJoinAndSelect('sender.student', 'student')
       .leftJoinAndSelect('sender.parent', 'parent')
       .leftJoinAndSelect('message.attachments', 'attachments')
+      .leftJoinAndSelect('message.readBy', 'readBy')
       .innerJoinAndSelect('sender.role', 'role')
       .innerJoinAndSelect('message.category', 'category')
-      .orderBy('message.createdAt', 'DESC');
+      .orderBy('message.createdAt', 'DESC')
+      .getMany();
 
-    return queryBuilder.getMany();
+    return messages.map((message) => {
+      const isRead = message.readBy.some((u) => u.id === userId);
+      delete message.readBy;
+      return { ...message, isRead };
+    });
+  }
+
+  async markMessageAsRead(messageId: number, userId: number) {
+    const message = await this.messageRepository.findOne({ where: { id: messageId }, relations: ['readBy'] });
+
+    if (!message) {
+      throw new NotFoundException('Message not found');
+    }
+
+    const user = await this.usersService.findOne(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (!message.readBy.some((u) => u.id === userId)) {
+      message.readBy.push(user);
+    }
+
+    await this.messageRepository.save(message);
   }
 
   private async saveAttachments(files: Array<Express.Multer.File>) {

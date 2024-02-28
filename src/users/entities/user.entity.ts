@@ -90,6 +90,9 @@ export class User {
   @ManyToMany(() => Message, (message) => message.trashedBy)
   trashMessages: Message[];
 
+  @ManyToMany(() => Message, (message) => message.readBy)
+  readMessages: Message[];
+
   @BeforeInsert()
   @BeforeUpdate()
   emailToLowerCase() {

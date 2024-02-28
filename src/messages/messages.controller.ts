@@ -33,8 +33,13 @@ export class MessagesController {
     return this.messagesService.getNewMessages(timestamp, req.user.id);
   }
 
+  @Post(':id/read')
+  markMessageAsRead(@Param('id') id: number, @Request() req) {
+    return this.messagesService.markMessageAsRead(id, req.user.id);
+  }
+
   @Get(':id')
-  getMessage(@Param('id') id: number) {
-    return this.messagesService.getMessage(id);
+  getMessage(@Param('id') id: number, @Request() req) {
+    return this.messagesService.getMessage(id, req.user.id);
   }
 }

@@ -11,7 +11,7 @@ services:
     mem_limit: 512m
 
   backend:
-    build: ../backend
+    build: ./
     ports:
       - 8000:8000
     depends_on:
@@ -26,7 +26,7 @@ services:
       - NODE_ENV=development
       - JWT_SECRET=thisismysecret
     volumes:
-      - ../backend:/app
+      - ./:/app
       - /app/node_modules
     mem_limit: 512m
 

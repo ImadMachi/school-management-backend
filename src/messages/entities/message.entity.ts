@@ -45,6 +45,10 @@ export class Message {
   @JoinTable()
   trashedBy: User[];
 
+  @ManyToMany(() => User, (user) => user.readMessages)
+  @JoinTable()
+  readBy: User[];
+
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
