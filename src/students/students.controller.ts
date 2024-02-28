@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, Query } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -10,12 +10,13 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
+
   @Post()
   @UseInterceptors(FileInterceptor('profileImage'))
   @CheckPolicies(new ManageStudentsPolicyHandler())
-  create(@Body() createStudentDto: CreateStudentDto, @Body('create-account') createAccount: boolean , @UploadedFile() file: Express.Multer.File){
-    return this.studentsService.create(createStudentDto, createAccount,file);}
-
+  create(@Body() createStudentDto: CreateStudentDto, @Query('create-account') createAccount: boolean, @UploadedFile() file: Express.Multer.File) {
+    return this.studentsService.create(createStudentDto, createAccount, file);
+  }
   @Get()
   @CheckPolicies(new ManageStudentsPolicyHandler())
   findAll() {
