@@ -11,7 +11,7 @@ services:
     mem_limit: 512m
 
   backend:
-    build: ./backend
+    build: ../backend
     ports:
       - 8000:8000
     depends_on:
@@ -26,18 +26,18 @@ services:
       - NODE_ENV=development
       - JWT_SECRET=thisismysecret
     volumes:
-      - ./backend:/app
+      - ../backend:/app
       - /app/node_modules
     mem_limit: 512m
 
   frontend:
     build:
-      context: ./frontend
+      context: ../frontend
       target: dev
     volumes:
-        - ./frontend:/app
-        - /app/node_modules
-        - /app/.next
+      - ../frontend:/app
+      - /app/node_modules
+      - /app/.next
     ports:
       - 3000:3000
     depends_on:
@@ -46,7 +46,7 @@ services:
       - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://localhost:8000
     mem_limit: 2048m
-    
+
   # mobile:
   #   build: ./mobile
   #   volumes:
