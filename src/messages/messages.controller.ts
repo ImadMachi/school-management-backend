@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, Request, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, Request, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
@@ -36,6 +36,26 @@ export class MessagesController {
   @Post(':id/read')
   markMessageAsRead(@Param('id') id: number, @Request() req) {
     return this.messagesService.markMessageAsRead(id, req.user.id);
+  }
+
+  @Post(':id/star')
+  markMessageAsStarred(@Param('id') id: number, @Request() req) {
+    return this.messagesService.markMessageAsStarred(id, req.user.id);
+  }
+
+  @Delete(':id/unstar')
+  markMessageAsUnstarred(@Param('id') id: number, @Request() req) {
+    return this.messagesService.markMessageAsUnstarred(id, req.user.id);
+  }
+
+  @Post(':id/trash')
+  moveMessageToTrash(@Param('id') id: number, @Request() req) {
+    return this.messagesService.moveMessageToTrash(id, req.user.id);
+  }
+
+  @Delete(':id/untrash')
+  moveMessageFromTrash(@Param('id') id: number, @Request() req) {
+    return this.messagesService.moveMessageFromTrash(id, req.user.id);
   }
 
   @Get(':id')

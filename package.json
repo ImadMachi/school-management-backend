@@ -5,6 +5,10 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "extensionKind": [
+    "ui",
+    "workspace"
+  ],
   "scripts": {
     "build": "nest build",
     "migration:run": "node ./node_modules/typeorm/cli.js migration:run --dataSource ./dist/database/data-source.js",
@@ -19,7 +23,9 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "list-vscode-extensions": "code --list-extensions > extensions.txt",
+    "install-vscode-extensions": "while read extension; do code --install-extension \"$extension\"; done < extensions.txt"
   },
   "dependencies": {
     "@casl/ability": "^6.5.0",

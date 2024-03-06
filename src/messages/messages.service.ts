@@ -55,6 +55,8 @@ export class MessagesService {
       .leftJoinAndSelect('sender.parent', 'parent')
       .leftJoinAndSelect('message.attachments', 'attachments')
       .leftJoinAndSelect('message.readBy', 'readBy')
+      .leftJoinAndSelect('message.starredBy', 'starredBy')
+      .leftJoinAndSelect('message.trashedBy', 'trashedBy')
       .innerJoinAndSelect('sender.role', 'role')
       .getOne();
 
@@ -63,15 +65,26 @@ export class MessagesService {
     }
 
     const isRead = message.readBy.some((u) => u.id === userId);
+    const isStarred = message.starredBy.some((u) => u.id === userId);
+    const isTrashed = message.trashedBy.some((u) => u.id === userId);
     delete message.readBy;
-    return { ...message, isRead };
+    delete message.starredBy;
+    delete message.trashedBy;
+    return { ...message, isRead, isStarred, isTrashed };
   }
 
   async getMessagesByFolder(userId: number, folder: string, timestamp: string) {
-    const queryBuilder = this.messageRepository.createQueryBuilder('message');
+    const queryBuilder = this.messageRepository
+      .createQueryBuilder('message')
+      .leftJoinAndSelect('message.starredBy', 'starredBy')
+      .leftJoinAndSelect('message.trashedBy', 'trashedBy');
+
+    if (folder != MailFolder.TrashedBy) {
+      queryBuilder.andWhere('trashedBy.id != :userId', { userId });
+    }
 
     if (timestamp) {
-      queryBuilder.where('message.createdAt > :timestamp', { timestamp: new Date(timestamp) });
+      queryBuilder.andWhere('message.createdAt > :timestamp', { timestamp: new Date(timestamp) });
     }
 
     if (folder === MailFolder.Sender) {
@@ -82,15 +95,9 @@ export class MessagesService {
         .where('recipient.id = :userId', { userId })
         .innerJoinAndSelect('message.sender', 'sender');
     } else if (folder === MailFolder.StarredBy) {
-      queryBuilder
-        .innerJoin('message.starredBy', 'starredBy')
-        .where('starredBy.id = :userId', { userId })
-        .innerJoinAndSelect('message.sender', 'sender');
+      queryBuilder.where('starredBy.id = :userId', { userId }).innerJoinAndSelect('message.sender', 'sender');
     } else if (folder === MailFolder.TrashedBy) {
-      queryBuilder
-        .innerJoin('message.trashedBy', 'trashedBy')
-        .where('trashedBy.id = :userId', { userId })
-        .innerJoinAndSelect('message.sender', 'sender');
+      queryBuilder.where('trashedBy.id = :userId', { userId }).innerJoinAndSelect('message.sender', 'sender');
     }
 
     const messages = await queryBuilder
@@ -108,8 +115,12 @@ export class MessagesService {
 
     return messages.map((message) => {
       const isRead = message.readBy.some((u) => u.id === userId);
+      const isStarred = message.starredBy.some((u) => u.id === userId);
+      const isTrashed = message.trashedBy.some((u) => u.id === userId);
       delete message.readBy;
-      return { ...message, isRead };
+      delete message.starredBy;
+      delete message.trashedBy;
+      return { ...message, isRead, isStarred, isTrashed };
     });
   }
 
@@ -127,6 +138,8 @@ export class MessagesService {
       .leftJoinAndSelect('sender.parent', 'parent')
       .leftJoinAndSelect('message.attachments', 'attachments')
       .leftJoinAndSelect('message.readBy', 'readBy')
+      .leftJoinAndSelect('message.starredBy', 'starredBy')
+      .leftJoinAndSelect('message.trashedBy', 'trashedBy')
       .innerJoinAndSelect('sender.role', 'role')
       .innerJoinAndSelect('message.category', 'category')
       .orderBy('message.createdAt', 'DESC')
@@ -134,8 +147,12 @@ export class MessagesService {
 
     return messages.map((message) => {
       const isRead = message.readBy.some((u) => u.id === userId);
+      const isStarred = message.starredBy.some((u) => u.id === userId);
+      const isTrashed = message.trashedBy.some((u) => u.id === userId);
       delete message.readBy;
-      return { ...message, isRead };
+      delete message.starredBy;
+      delete message.trashedBy;
+      return { ...message, isRead, isStarred, isTrashed };
     });
   }
 
@@ -155,6 +172,82 @@ export class MessagesService {
     if (!message.readBy.some((u) => u.id === userId)) {
       message.readBy.push(user);
     }
+
+    await this.messageRepository.save(message);
+  }
+
+  async markMessageAsStarred(messageId: number, userId: number) {
+    const message = await this.messageRepository.findOne({ where: { id: messageId }, relations: ['starredBy'] });
+
+    if (!message) {
+      throw new NotFoundException('Message not found');
+    }
+
+    const user = await this.usersService.findOne(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (!message.starredBy.some((u) => u.id === userId)) {
+      message.starredBy.push(user);
+    }
+
+    await this.messageRepository.save(message);
+  }
+
+  async markMessageAsUnstarred(messageId: number, userId: number) {
+    const message = await this.messageRepository.findOne({ where: { id: messageId }, relations: ['starredBy'] });
+
+    if (!message) {
+      throw new NotFoundException('Message not found');
+    }
+
+    const user = await this.usersService.findOne(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    message.starredBy = message.starredBy.filter((u) => u.id !== userId);
+
+    await this.messageRepository.save(message);
+  }
+
+  async moveMessageToTrash(messageId: number, userId: number) {
+    const message = await this.messageRepository.findOne({ where: { id: messageId }, relations: ['trashedBy'] });
+
+    if (!message) {
+      throw new NotFoundException('Message not found');
+    }
+
+    const user = await this.usersService.findOne(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (!message.trashedBy.some((u) => u.id === userId)) {
+      message.trashedBy.push(user);
+    }
+
+    await this.messageRepository.save(message);
+  }
+
+  async moveMessageFromTrash(messageId: number, userId: number) {
+    const message = await this.messageRepository.findOne({ where: { id: messageId }, relations: ['trashedBy'] });
+
+    if (!message) {
+      throw new NotFoundException('Message not found');
+    }
+
+    const user = await this.usersService.findOne(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    message.trashedBy = message.trashedBy.filter((u) => u.id !== userId);
 
     await this.messageRepository.save(message);
   }
