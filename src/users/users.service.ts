@@ -111,6 +111,23 @@ export class UsersService {
     });
   }
   
+  async findOneByrole(id: number, role: RoleName): Promise<User | null> {
+    const query = this.usersRepository.createQueryBuilder('user').leftJoinAndSelect('user.role', 'role').where('user.id = :id', { id });
+
+    if (Object.values(RoleName).includes(role)) {
+      query.andWhere('role.name = :role', { role });
+    }
+
+    query.leftJoinAndSelect('user.student', 'student');
+    query.leftJoinAndSelect('user.administrator', 'administrator');
+    query.leftJoinAndSelect('user.teacher', 'teacher');
+    query.leftJoinAndSelect('user.parent', 'parent');
+    query.leftJoinAndSelect('user.director', 'director');
+
+    return query.getOne();
+  }
+
+  
   async remove(id: number): Promise<User | null> {
     const userToDelete = await this.usersRepository.findOne({
       where: { id }

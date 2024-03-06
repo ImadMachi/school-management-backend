@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, Delete, Get, NotFoundException, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CheckPolicies, PoliciesGuard } from 'src/casl/guards/policies.guard';
 import { ReadUsersPolicyHandler } from 'src/casl/policies/users/read-users.policy';
@@ -15,6 +15,12 @@ export class UsersController {
   // @CheckPolicies(new ReadUsersPolicyHandler())
   findAll(@Query('role') role: string = '') {
     return this.usersService.findAll(role as RoleName);
+  }
+
+  @Get(':id')
+  @CheckPolicies(new ReadUsersPolicyHandler())
+  findOneByrole(@Param('id') id: string, @Query('role') role: string = '') {
+    return this.usersService.findOneByrole(+id, role as RoleName);
   }
 
   @Delete(':id')
@@ -34,7 +40,7 @@ export class UsersController {
       // Handle the error
       console.log('User not found');
     }
-    // Call the public wrapper method
+    // Call the correct method name
     await this.usersService.uploadProfileImage(file, user);
     return user;
   }
