@@ -5,6 +5,7 @@ const userFactory = setSeederFactory(User, (faker) => {
   const user = new User();
   user.email = faker.internet.email();
   user.password = faker.internet.password();
+  user.profileImage = null;
   return user;
 });
 

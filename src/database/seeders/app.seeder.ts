@@ -75,6 +75,8 @@ export default class AppSeeder implements Seeder {
     const studentRole = await roleFactory.save({ name: RoleName.Student });
     const parentRole = await roleFactory.save({ name: RoleName.Parent });
 
+    console.log('****** 1');
+
     // Users
     const userDirector1 = await userFactory.save({
       email: 'admin@gmail.com',
@@ -82,6 +84,8 @@ export default class AppSeeder implements Seeder {
       role: directorRole,
       director: directors[0],
     });
+
+    console.log('****** 2');
 
     const userAdministrator1 = await userFactory.save({
       email: `${administrators[0].lastName.toLowerCase()}@gmail.com`,

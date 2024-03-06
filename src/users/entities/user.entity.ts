@@ -47,7 +47,7 @@ export class User {
   @JoinColumn()
   director: Director;
 
-  @Column('simple-array', { nullable: true })
+  @Column({ nullable: true })
   profileImage: string;
 
   @OneToOne(() => Administrator, (administrator) => administrator.user, {

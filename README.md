@@ -27,8 +27,6 @@ $ docker system prune --all --volumes --force
 ```bash
 # DOCKER
 $ docker compose exec backend npm run seed
-# NPM
-$ npm run seed
 ```
 
 ## Run migrations
