@@ -12,7 +12,7 @@ export class TeachersController {
   constructor(private readonly teachersService: TeachersService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('profileImage'))
+  @UseInterceptors(FileInterceptor('profile-images'))
   @CheckPolicies(new ManageTeachersPolicyHandler())
   create(@Body() createTeacherDto: CreateTeacherDto, @Query('create-account') createAccount: boolean, file : Express.Multer.File) {
     return this.teachersService.create(createTeacherDto, createAccount, file)

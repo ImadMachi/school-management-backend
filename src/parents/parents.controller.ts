@@ -13,7 +13,7 @@ export class ParentsController {
   constructor(private readonly parentsService: ParentsService) { }
 
   @Post()
-  @UseInterceptors(FileInterceptor('profileImage'))
+  @UseInterceptors(FileInterceptor('profile-images'))
   @CheckPolicies(new ManageParentsPolicyHandler())
   create(@Body() createParentDto: CreateParentDto, @Query('create-account') createAccount: boolean, @UploadedFile() file: Express.Multer.File){
     return this.parentsService.create(createParentDto, createAccount, file);

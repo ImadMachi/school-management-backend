@@ -12,7 +12,7 @@ export class AdministratorsController {
   constructor(private readonly administratorsService: AdministratorsService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('profileImage'))
+  @UseInterceptors(FileInterceptor('profile-images'))
   @CheckPolicies(new ManageAdministratorsPolicyHandler())
   create(@Body() createAdministratorDto: CreateAdministratorDto, @Query('create-account') createAccount: boolean, @UploadedFile() file: Express.Multer.File) {
     return this.administratorsService.create(createAdministratorDto, createAccount, file);

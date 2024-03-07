@@ -11,7 +11,7 @@ export class DirectorController {
   constructor(private readonly directorService: DirectorService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('profileImage'))
+  @UseInterceptors(FileInterceptor('profile-images'))
   @CheckPolicies(new ManageDirectorsPolicyHandler())
   create(@Body() createDirectorDto: CreateDirectorDto, @Query('create-account') createAccount: boolean, @UploadedFile() file: Express.Multer.File){
     return this.directorService.create(createDirectorDto, createAccount , file);
