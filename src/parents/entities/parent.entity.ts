@@ -1,6 +1,7 @@
 import { Exclude, Expose } from 'class-transformer';
 import { User } from '../../users/entities/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, OneToMany } from 'typeorm';
+import { Student } from 'src/students/entities/student.entity';
 
 @Entity()
 export class Parent {
@@ -12,7 +13,7 @@ export class Parent {
 
   @Column()
   lastName: string;
-  
+
   @Column()
   phoneNumber: string;
 
@@ -22,6 +23,9 @@ export class Parent {
   })
   @Exclude()
   user: User;
+
+  @OneToMany(() => Student, (student) => student.parent)
+  students: Student[];
 
   @Expose()
   get userId() {

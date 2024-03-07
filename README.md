@@ -22,6 +22,12 @@ $ docker compose build --no-cache <service-name>
 $ docker system prune --all --volumes --force
 ```
 
+## Override docker permission
+
+```bash
+$ sudo chmod -R a+rxw node_modules
+```
+
 ## Seed the database
 
 ```bash

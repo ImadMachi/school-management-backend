@@ -20,7 +20,6 @@ export class MessageCategoriesController {
   }
 
   @Get()
-  @CheckPolicies(new ReadMessageCategoryPolicyHandler())
   findAll() {
     return this.messageCategoriesService.findAll();
   }

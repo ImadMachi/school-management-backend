@@ -1,7 +1,8 @@
 import { Exclude, Expose } from 'class-transformer';
 import { User } from '../../users/entities/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, ManyToMany, ManyToOne } from 'typeorm';
 import { Class } from 'src/classes/entities/class.entity';
+import { Parent } from 'src/parents/entities/parent.entity';
 
 @Entity()
 export class Student {
@@ -29,6 +30,9 @@ export class Student {
 
   @ManyToMany(() => Class, (cls) => cls.teachers)
   classes: Class[];
+
+  @ManyToOne(() => Parent, (parent) => parent.students, { nullable: true })
+  parent: Parent;
 
   @Expose()
   get userId() {

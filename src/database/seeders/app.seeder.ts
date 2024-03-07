@@ -34,12 +34,17 @@ export default class AppSeeder implements Seeder {
     const administrators = await administratorFactory.saveMany(5);
     const teachers = await teacherFactory.saveMany(5);
     const students = await studentFactory.saveMany(5);
+    const parents = await parentFactory.saveMany(5);
+    const customParent1 = await parentFactory.save({
+      firstName: 'Ali',
+      lastName: 'Lahlou',
+    });
     const customStudent1 = await studentFactory.save({
       firstName: 'Ahmed',
       lastName: 'Lahlou',
       sex: 'mâle',
+      parent: customParent1,
     });
-    const parents = await parentFactory.saveMany(5);
 
     // Classes
     const classe1 = await classFactory.save({
@@ -75,8 +80,6 @@ export default class AppSeeder implements Seeder {
     const studentRole = await roleFactory.save({ name: RoleName.Student });
     const parentRole = await roleFactory.save({ name: RoleName.Parent });
 
-    console.log('****** 1');
-
     // Users
     const userDirector1 = await userFactory.save({
       email: 'admin@gmail.com',
@@ -84,8 +87,6 @@ export default class AppSeeder implements Seeder {
       role: directorRole,
       director: directors[0],
     });
-
-    console.log('****** 2');
 
     const userAdministrator1 = await userFactory.save({
       email: `${administrators[0].lastName.toLowerCase()}@gmail.com`,
@@ -136,10 +137,10 @@ export default class AppSeeder implements Seeder {
     });
 
     const userParent1 = await userFactory.save({
-      email: `${parents[0].lastName.toLowerCase()}@gmail.com`,
+      email: `${customParent1.lastName.toLowerCase()}.parent@gmail.com`,
       password: '123456',
       role: parentRole,
-      parent: parents[0],
+      parent: customParent1,
     });
 
     // Message Categories
@@ -256,6 +257,14 @@ export default class AppSeeder implements Seeder {
       category: messageCategory1,
       subject: 'Retoour de vacances',
       body: "J'espère que vous avez passé de bonnes vacances",
+    });
+
+    const message9 = await messageFactory.save({
+      sender: userTeacher1,
+      recipients: [userParent1],
+      category: messageCategory4,
+      subject: 'Demande de rendez-vous',
+      body: 'Je souhaiterais avoir un rendez-vous avec vous',
     });
   }
 }
