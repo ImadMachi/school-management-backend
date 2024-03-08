@@ -12,7 +12,7 @@ export class StudentsController {
 
 
   @Post()
-  @UseInterceptors(FileInterceptor('profileImage'))
+  @UseInterceptors(FileInterceptor('profile-images'))
   @CheckPolicies(new ManageStudentsPolicyHandler())
   create(@Body() createStudentDto: CreateStudentDto, @Query('create-account') createAccount: boolean, @UploadedFile() file: Express.Multer.File) {
     return this.studentsService.create(createStudentDto, createAccount, file);

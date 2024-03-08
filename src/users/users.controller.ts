@@ -29,8 +29,8 @@ export class UsersController {
     return this.usersService.remove(+id);
   }
 
-  @Post(':id/upload-profile-image')
-  @UseInterceptors(FileInterceptor('profileImage'))
+  @Post(':id/update-profile-image')
+  @UseInterceptors(FileInterceptor('profile-images'))
   async uploadProfileImage(
     @Param('id') id: number,
     @UploadedFile() file: Express.Multer.File,
