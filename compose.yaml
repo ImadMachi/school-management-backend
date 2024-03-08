@@ -30,22 +30,22 @@ services:
       - /app/node_modules
     mem_limit: 512m
 
-  # frontend:
-  #   build:
-  #     context: ../frontend
-  #     target: dev
-  #   volumes:
-  #     - ../frontend:/app
-  #     - /app/node_modules
-  #     - /app/.next
-  #   ports:
-  #     - 3000:3000
-  #   depends_on:
-  #     - backend
-  #   environment:
-  #     - NODE_ENV=development
-  #     - NEXT_PUBLIC_API_URL=http://localhost:8000
-  #   mem_limit: 2048m
+  frontend:
+    build:
+      context: ../frontend
+      target: dev
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    mem_limit: 2048m
 
   # mobile:
   #   build: ./mobile
@@ -59,6 +59,6 @@ services:
   #     - 19002:19002
   #     - 19006:19006
   #     - 8081:8081
-  #   # depends_on:
-  #   #   - backend
+  #   depends_on:
+  #     - backend
   #   mem_limit: 1014m

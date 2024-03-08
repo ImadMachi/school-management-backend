@@ -11,6 +11,7 @@ import { Attachment } from './entities/attachment.entity';
 import { MailFolder } from './enums/mail-folder.enum';
 import { MessageCategoriesService } from 'src/message-categories/message-categories.service';
 import { UsersService } from 'src/users/users.service';
+import { ParentsService } from 'src/parents/parents.service';
 
 @Injectable()
 export class MessagesService {
@@ -21,6 +22,7 @@ export class MessagesService {
     private attachmentRepository: Repository<Attachment>,
     private messageCategoryService: MessageCategoriesService,
     private usersService: UsersService,
+    private parentService: ParentsService,
   ) {}
 
   async createMessage(createMessageDto: CreateMessageDto, user: User, files: Array<Express.Multer.File>) {
@@ -73,7 +75,7 @@ export class MessagesService {
     return { ...message, isRead, isStarred, isTrashed };
   }
 
-  async getMessagesByFolder(userId: number, folder: string, timestamp: string) {
+  async getMessagesByFolder(userId: number, folder: string, timestamp?: string) {
     const queryBuilder = this.messageRepository
       .createQueryBuilder('message')
       .leftJoinAndSelect('message.starredBy', 'starredBy')
@@ -154,6 +156,24 @@ export class MessagesService {
       delete message.trashedBy;
       return { ...message, isRead, isStarred, isTrashed };
     });
+  }
+
+  async getStudentMessagesByParent(parentId: number) {
+    const parent = await this.parentService.findOne(parentId);
+    if (!parent) {
+      throw new NotFoundException('Parent not found');
+    }
+
+    const studentUsersIds = parent.students.map((student) => student.userId);
+
+    return Promise.all(
+      studentUsersIds.map(async (studenUsertId) => {
+        return {
+          studentData: await this.usersService.findOne(studenUsertId),
+          messages: await this.getMessagesByFolder(studenUsertId, MailFolder.Recipients),
+        };
+      }),
+    );
   }
 
   async markMessageAsRead(messageId: number, userId: number) {

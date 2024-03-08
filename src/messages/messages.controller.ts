@@ -23,6 +23,11 @@ export class MessagesController {
     return this.messagesService.getMessagesByFolder(userId, query.folder, query.timestamp);
   }
 
+  @Get('parent/:parentId/students')
+  getMessagesByParent(@Param('parentId') parentId: number) {
+    return this.messagesService.getStudentMessagesByParent(parentId);
+  }
+
   @Get('auth')
   getAuthenticatedUserMessages(@Request() req, @Query() query: GetMessageQueryDto) {
     return this.messagesService.getMessagesByFolder(req.user.id, query.folder, query.timestamp);

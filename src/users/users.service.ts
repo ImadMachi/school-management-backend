@@ -18,29 +18,28 @@ export class UsersService {
     private roleService: RolesService,
   ) {}
 
-  async create(user: User ,file: Express.Multer.File): Promise<User> {
+  async create(user: User, file: Express.Multer.File): Promise<User> {
     const existingUser = await this.findByEmail(user.email);
     if (existingUser) {
       throw new HttpException('User already exists', HttpStatus.CONFLICT);
     }
     if (file) {
-      const profileImage = await this.saveProfileImage(file ,user);
+      const profileImage = await this.saveProfileImage(file, user);
       user.profileImage = profileImage;
       console.log('profileImage', profileImage);
     }
 
-    console.log('user', user);  
+    console.log('user', user);
 
     return this.usersRepository.save(user);
   }
 
-  async createForDirector(createUserDto: CreateUserDto, director: Director, file : Express.Multer.File) {
+  async createForDirector(createUserDto: CreateUserDto, director: Director, file: Express.Multer.File) {
     const role = await this.roleService.findByName(RoleName.Director);
 
     const user = this.usersRepository.create(createUserDto);
     user.director = director;
     user.role = role;
-    
 
     return this.create(user, file); // Pass null as the second argument
   }
@@ -51,32 +50,32 @@ export class UsersService {
     const user = this.usersRepository.create(createUserDto);
     user.administrator = administrator;
     user.role = role;
-    console.log('user', user);  
+    console.log('user', user);
     console.log('file', file);
 
-    return this.create(user,file); 
+    return this.create(user, file);
   }
 
-  async createForTeacher(createUserDto: CreateUserDto, teacher, file : Express.Multer.File ): Promise<User> {
+  async createForTeacher(createUserDto: CreateUserDto, teacher, file: Express.Multer.File): Promise<User> {
     const role = await this.roleService.findByName(RoleName.Teacher);
 
     const user = this.usersRepository.create(createUserDto);
     user.teacher = teacher;
     user.role = role;
 
-    return this.create(user, file); 
+    return this.create(user, file);
   }
 
-  async createForStudent(createUserDto: CreateUserDto, student,file :Express.Multer.File ): Promise<User> {
+  async createForStudent(createUserDto: CreateUserDto, student, file: Express.Multer.File): Promise<User> {
     const role = await this.roleService.findByName(RoleName.Student);
 
     const user = this.usersRepository.create(createUserDto);
     user.student = student;
     user.role = role;
 
-    return this.create(user, file); 
+    return this.create(user, file);
   }
-  async createForParent(createUserDto: CreateUserDto, parent, file :Express.Multer.File): Promise<User> {
+  async createForParent(createUserDto: CreateUserDto, parent, file: Express.Multer.File): Promise<User> {
     const role = await this.roleService.findByName(RoleName.Parent);
 
     const user = this.usersRepository.create(createUserDto);
@@ -107,10 +106,10 @@ export class UsersService {
   findOne(id: number): Promise<User | null> {
     return this.usersRepository.findOne({
       where: { id },
-      relations: ['role', 'administrator', 'teacher', 'student', 'parent' , 'director'],
+      relations: ['role', 'administrator', 'teacher', 'student', 'parent', 'director'],
     });
   }
-  
+
   async findOneByrole(id: number, role: RoleName): Promise<User | null> {
     const query = this.usersRepository.createQueryBuilder('user').leftJoinAndSelect('user.role', 'role').where('user.id = :id', { id });
 
@@ -127,22 +126,20 @@ export class UsersService {
     return query.getOne();
   }
 
-  
   async remove(id: number): Promise<User | null> {
     const userToDelete = await this.usersRepository.findOne({
-      where: { id }
+      where: { id },
     });
     if (!userToDelete) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-    // Manually delete related messages  
-     this.usersRepository.delete(id);
-  
+    // Manually delete related messages
+    this.usersRepository.delete(id);
+
     return userToDelete;
   }
 
   public async saveProfileImage(file: Express.Multer.File, user: User) {
-
     const filename = file.originalname;
     const fileHash = this.generateRandomHash() + filename;
 
@@ -158,7 +155,7 @@ export class UsersService {
     console.log('Profile image saved');
 
     return user.profileImage;
-}
+  }
 
   public async uploadProfileImage(file: Express.Multer.File, user: User): Promise<string> {
     return this.saveProfileImage(file, user);
@@ -167,7 +164,4 @@ export class UsersService {
   private generateRandomHash() {
     return crypto.randomBytes(16).toString('hex');
   }
-  
-  
-  
 }

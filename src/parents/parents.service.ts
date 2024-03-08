@@ -15,7 +15,7 @@ export class ParentsService {
     private userService: UsersService,
   ) {}
 
-  async create(createParentDto: CreateParentDto, createAccount: boolean, file : Express.Multer.File) {
+  async create(createParentDto: CreateParentDto, createAccount: boolean, file: Express.Multer.File) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -27,7 +27,7 @@ export class ParentsService {
       await this.parentRepository.save(parent);
 
       if (createAccount && createUserDto) {
-        const user = await this.userService.createForParent(createUserDto, parent , file);
+        const user = await this.userService.createForParent(createUserDto, parent, file);
         parent.user = user;
       }
     } catch (error) {
@@ -45,7 +45,8 @@ export class ParentsService {
 
   findOne(id: number) {
     return this.parentRepository.findOne({
-      where: { id }
+      where: { id },
+      relations: ['students'],
     });
   }
 
@@ -55,7 +56,7 @@ export class ParentsService {
     await queryRunner.startTransaction();
     let parent: Parent;
     try {
-        parent = await this.parentRepository.findOne({ where: { id } });
+      parent = await this.parentRepository.findOne({ where: { id } });
       if (!parent) {
         throw new NotFoundException();
       }

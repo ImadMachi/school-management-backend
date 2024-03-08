@@ -266,5 +266,21 @@ export default class AppSeeder implements Seeder {
       subject: 'Demande de rendez-vous',
       body: 'Je souhaiterais avoir un rendez-vous avec vous',
     });
+
+    const message10 = await messageFactory.save({
+      sender: userTeacher1,
+      recipients: [userStudent1, userStudent2],
+      category: messageCategory4,
+      subject: 'Devoir de mathématiques',
+      body: 'Devoir de mathématiques pour le 20 septembre 2023',
+    });
+
+    const message11 = await messageFactory.save({
+      sender: userTeacher1,
+      recipients: [userStudent1, userStudent2],
+      category: messageCategory4,
+      subject: 'Devoir de mathématiques',
+      body: 'Devoir de mathématiques pour le 20 septembre 2023',
+    });
   }
 }
