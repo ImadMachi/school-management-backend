@@ -32,4 +32,9 @@ export class UpdateClassDto {
   @ValidateNested()
   @Type(() => Id)
   administrator: Id;
+
+  @IsObject()
+  @ValidateNested()
+  @Type(() => Id)
+  level: Id;
 }

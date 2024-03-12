@@ -1,4 +1,16 @@
-import { Controller, Delete, Get, NotFoundException, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Query,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CheckPolicies, PoliciesGuard } from 'src/casl/guards/policies.guard';
 import { ReadUsersPolicyHandler } from 'src/casl/policies/users/read-users.policy';
@@ -9,7 +21,7 @@ import { User } from './entities/user.entity';
 @Controller('users')
 @UseGuards(PoliciesGuard)
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Get()
   // @CheckPolicies(new ReadUsersPolicyHandler())
@@ -31,17 +43,26 @@ export class UsersController {
 
   @Post(':id/update-profile-image')
   @UseInterceptors(FileInterceptor('profile-images'))
-  async uploadProfileImage(
-    @Param('id') id: number,
-    @UploadedFile() file: Express.Multer.File,
-  ): Promise<User> {
+  async uploadProfileImage(@Param('id') id: number, @UploadedFile() file: Express.Multer.File): Promise<User> {
     const user: User = await this.usersService.findOne(id);
     if (!user) {
-      // Handle the error
       console.log('User not found');
     }
-    // Call the correct method name
     await this.usersService.uploadProfileImage(file, user);
     return user;
+  }
+
+  @Post(':id/change-password')
+  async changePassword(@Param('id') id: number, @Body('newPassword') newPassword: string): Promise<void> {
+    try {
+      await this.usersService.changePassword(id, newPassword);
+      console.log('Password changed successfully');
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else {
+        throw error;
+      }
+    }
   }
 }

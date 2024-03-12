@@ -13,6 +13,7 @@ import generateSlug from 'src/common/utils/generate-slug.util';
 import { Director } from 'src/director/entities/director.entity';
 import { Class } from 'src/classes/entities/class.entity';
 import { Attachment } from 'src/messages/entities/attachment.entity';
+import { Level } from 'src/levels/entities/level.entity';
 
 export default class AppSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
@@ -27,6 +28,7 @@ export default class AppSeeder implements Seeder {
     const messageFactory = await factoryManager.get(Message);
     const messageCategoryFactory = await factoryManager.get(MessageCategory);
     const classFactory = await factoryManager.get(Class);
+    const levelFactory = await factoryManager.get(Level);
     const attachmentFactory = await factoryManager.get(Attachment);
 
     // Persons
@@ -64,6 +66,25 @@ export default class AppSeeder implements Seeder {
       teachers: [teachers[4]],
       students: [students[0], students[1], students[2], students[3], students[4]],
       administrator: administrators[2],
+    });
+
+    // Levels
+    const level1 = await levelFactory.save({
+      name: 'Level 1',
+      schoolYear: '2023-2024',
+      classes: [classe1, classe2],
+    });
+
+    const level2 = await levelFactory.save({
+      name: 'Level 2',
+      schoolYear: '2023-2024',
+      classes: [classe3],
+    });
+
+    const level3 = await levelFactory.save({
+      name: 'Level 3',
+      schoolYear: '2022-2023',
+      classes: [classe1, classe2, classe3],
     });
 
     // Roles

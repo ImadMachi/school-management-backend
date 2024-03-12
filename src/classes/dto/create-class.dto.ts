@@ -29,4 +29,9 @@ export class CreateClassDto {
   @ValidateNested()
   @Type(() => Id)
   administrator: Id;
+
+  @IsObject()
+  @ValidateNested()
+  @Type(() => Id)
+  level: Id;
 }
