@@ -9,6 +9,7 @@ export class ClassesController {
 
   @Post()
   create(@Body() createClassDto: CreateClassDto) {
+    console.log(createClassDto)
     return this.classesService.create(createClassDto);
   }
 

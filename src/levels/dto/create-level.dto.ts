@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsArray, IsNotEmpty, IsNumber, IsString, ValidateNested, isNotEmpty } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 
 class Id {
   @IsNumber()
