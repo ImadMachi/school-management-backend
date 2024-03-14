@@ -56,9 +56,9 @@ $ docker system prune --all --volumes --force
 ## Create a resource with Nest CLI
 
 ```bash
-$ nest g resource <resource-name>
+$ npx nest g resource <resource-name>
 # Example
-$ nest g resource users
+$ npx nest g resource users
 ```
 
 ## Working with git

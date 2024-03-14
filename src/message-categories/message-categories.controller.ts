@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, UseGuards, Put } from '@nestjs/common';
 import { MessageCategoriesService } from './message-categories.service';
 import { UpdateMessageCategoryDto } from './dto/update-message-category.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -29,9 +29,10 @@ export class MessageCategoriesController {
     return this.messageCategoriesService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMessageCategoryDto: UpdateMessageCategoryDto) {
-    return this.messageCategoriesService.update(+id, updateMessageCategoryDto);
+  @Put(':id')
+  @UseInterceptors(FileInterceptor('image'))
+  update(@Param('id') id: number, @Body() updateMessageCategoryDto: UpdateMessageCategoryDto, @UploadedFile() file: Express.Multer.File) {
+    return this.messageCategoriesService.update(id, updateMessageCategoryDto, file);
   }
 
   @Delete(':id')

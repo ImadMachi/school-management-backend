@@ -14,6 +14,7 @@ import parentFactory from './factories/parent.factory';
 import directorFactory from './factories/director.factory';
 import classFactory from './factories/class.factory';
 import attachmentFactory from './factories/attachment.factory';
+import templateFactory from './factories/template.factor';
 
 async function seed() {
   const options: DataSourceOptions & SeederOptions = {
@@ -28,6 +29,7 @@ async function seed() {
       parentFactory,
       userFactory,
       messageFactory,
+      templateFactory,
       messageCategoryFactory,
       classFactory,
       attachmentFactory,

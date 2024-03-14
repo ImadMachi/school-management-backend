@@ -13,6 +13,7 @@ import generateSlug from 'src/common/utils/generate-slug.util';
 import { Director } from 'src/director/entities/director.entity';
 import { Class } from 'src/classes/entities/class.entity';
 import { Attachment } from 'src/messages/entities/attachment.entity';
+import { Template } from 'src/templates/entities/template.entity';
 
 export default class AppSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
@@ -25,6 +26,7 @@ export default class AppSeeder implements Seeder {
     const userFactory = await factoryManager.get(User);
     const roleFactory = await factoryManager.get(Role);
     const messageFactory = await factoryManager.get(Message);
+    const templateFactory = await factoryManager.get(Template);
     const messageCategoryFactory = await factoryManager.get(MessageCategory);
     const classFactory = await factoryManager.get(Class);
     const attachmentFactory = await factoryManager.get(Attachment);
@@ -281,6 +283,23 @@ export default class AppSeeder implements Seeder {
       category: messageCategory4,
       subject: 'Devoir de mathématiques',
       body: 'Devoir de mathématiques pour le 20 septembre 2023',
+    });
+
+    // Templates
+    const template1 = await templateFactory.save({
+      title: 'Rentrée scolaire',
+      description: 'Rentrée scolaire',
+      subject: 'Rentrée scolaire',
+      body: 'La rentrée scolaire aura lieu le 15 mars 2023',
+      category: messageCategory1,
+    });
+
+    const template2 = await templateFactory.save({
+      title: 'Sortie scolaire',
+      description: 'Sortie scolaire',
+      subject: 'Sortie scolaire',
+      body: 'Sortie scolaire le 25 septembre 2021',
+      category: messageCategory5,
     });
   }
 }

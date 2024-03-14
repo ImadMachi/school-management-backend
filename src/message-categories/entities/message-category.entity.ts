@@ -18,6 +18,9 @@ export class MessageCategory {
   @Column()
   imagepath: string;
 
+  @Column({ default: true })
+  isActive: boolean;
+
   @OneToMany(() => Message, (message) => message.category)
   messages: Message[];
 }

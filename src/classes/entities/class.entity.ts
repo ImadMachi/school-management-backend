@@ -1,4 +1,3 @@
-import { IsDate } from 'class-validator';
 import { Administrator } from 'src/administrators/entities/administrator.entity';
 import { Student } from 'src/students/entities/student.entity';
 import { Teacher } from 'src/teachers/entities/teacher.entity';
