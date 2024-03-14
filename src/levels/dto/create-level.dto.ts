@@ -1,4 +1,4 @@
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { IsArray, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 
 class Id {
@@ -17,5 +17,6 @@ export class CreateLevelDto {
 
   @IsArray()
   @ValidateNested({ each: true })
+  @Type(() => Id)
   classes: Id[];
 }

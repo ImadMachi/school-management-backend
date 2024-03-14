@@ -1,5 +1,5 @@
 import { IsArray, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 
 class Id {
   @IsNumber()
@@ -20,5 +20,6 @@ export class UpdateLevelDto {
 
   @IsArray()
   @ValidateNested({ each: true })
+  @Type(() => Id)
   classes: Id[];
 }
