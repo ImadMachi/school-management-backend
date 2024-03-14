@@ -10,5 +10,6 @@ import { UsersModule } from 'src/users/users.module';
   imports: [TypeOrmModule.forFeature([Class]), CaslModule, UsersModule],
   controllers: [ClassesController],
   providers: [ClassesService],
+  exports: [ClassesService],
 })
 export class ClassesModule {}

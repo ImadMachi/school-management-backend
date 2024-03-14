@@ -161,6 +161,17 @@ export class UsersService {
     return this.saveProfileImage(file, user);
   }
 
+  public async changePassword(id: number, newPassword: string): Promise<void> {
+    const user = await this.findOne(id);
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    user.password = newPassword;
+    await this.usersRepository.save(user);
+  }
+
   private generateRandomHash() {
     return crypto.randomBytes(16).toString('hex');
   }

@@ -13,6 +13,8 @@ import { Director } from '../director/entities/director.entity';
 import { MessageCategory } from '../message-categories/entities/message-category.entity';
 import { Class } from 'src/classes/entities/class.entity';
 import { Template } from 'src/templates/entities/template.entity';
+import { Level } from 'src/levels/entities/level.entity';
+import { Cycle } from 'src/cycles/entities/cycle.entity';
 const { parse } = require('pg-connection-string');
 
 dotenv.config();
@@ -42,7 +44,22 @@ export const dataSourceOptions: DataSourceOptions = {
   username,
   password,
   database,
-  entities: [User, Role, Student, Teacher, Administrator, Parent, Message, Template, Attachment, Director, MessageCategory, Class],
+  entities: [
+    User,
+    Role,
+    Student,
+    Teacher,
+    Administrator,
+    Parent,
+    Message,
+    Template,
+    Attachment,
+    Director,
+    MessageCategory,
+    Class,
+    Level,
+    Cycle,
+  ],
   synchronize: process.env.NODE_ENV == 'development',
   // @ts-ignore
   autoLoadEntities: true,

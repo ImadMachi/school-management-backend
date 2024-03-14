@@ -1,5 +1,5 @@
+import { IsArray, IsNotEmpty, IsNumber, IsObject, IsString, ValidateNested } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
-import { IsArray, IsDate, IsNotEmpty, IsNumber, IsObject, IsString, ValidateNested } from 'class-validator';
 
 class Id {
   @IsNumber()
@@ -7,7 +7,7 @@ class Id {
   id: number;
 }
 
-export class UpdateClassDto {
+export class UpdateLevelDto {
   @IsNumber()
   id: number;
 
@@ -18,23 +18,13 @@ export class UpdateClassDto {
   @IsNotEmpty()
   schoolYear: string;
 
-  @IsArray()
+  @IsArray()s
   @ValidateNested({ each: true })
   @Type(() => Id)
-  teachers: Id[];
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => Id)
-  students: Id[];
+  classes: Id[];
 
   @IsObject()
   @ValidateNested()
   @Type(() => Id)
-  administrator: Id;
-
-  @IsObject()
-  @ValidateNested()
-  @Type(() => Id)
-  level: Id;
+  cycle: Id;
 }

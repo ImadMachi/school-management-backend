@@ -19,6 +19,8 @@ import { MessageCategoriesModule } from './message-categories/message-categories
 import { ParentsModule } from './parents/parents.module';
 import { ClassesModule } from './classes/classes.module';
 import { TemplatesModule } from './templates/templates.module';
+import { LevelsModule } from './levels/levels.module';
+import { CyclesModule } from './cycles/cycles.module';
 
 @Module({
   imports: [
@@ -44,6 +46,8 @@ import { TemplatesModule } from './templates/templates.module';
     ParentsModule,
     ClassesModule,
     TemplatesModule,
+    LevelsModule,
+    CyclesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

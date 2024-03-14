@@ -1,5 +1,6 @@
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
+import generateSlug from 'src/common/utils/generate-slug.util';
 import { User } from '../../users/entities/user.entity';
 import { Parent } from 'src/parents/entities/parent.entity';
 import { Teacher } from '../../teachers/entities/teacher.entity';
@@ -9,11 +10,12 @@ import { RoleName } from '../../auth/enums/RoleName';
 import { Role } from '../../roles/entities/role.entity';
 import { Message } from '../../messages/entities/message.entity';
 import { MessageCategory } from '../../message-categories/entities/message-category.entity';
-import generateSlug from 'src/common/utils/generate-slug.util';
 import { Director } from 'src/director/entities/director.entity';
 import { Class } from 'src/classes/entities/class.entity';
 import { Attachment } from 'src/messages/entities/attachment.entity';
 import { Template } from 'src/templates/entities/template.entity';
+import { Level } from 'src/levels/entities/level.entity';
+import { Cycle } from 'src/cycles/entities/cycle.entity';
 
 export default class AppSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
@@ -29,6 +31,8 @@ export default class AppSeeder implements Seeder {
     const templateFactory = await factoryManager.get(Template);
     const messageCategoryFactory = await factoryManager.get(MessageCategory);
     const classFactory = await factoryManager.get(Class);
+    const levelFactory = await factoryManager.get(Level);
+    const cycleFactory = await factoryManager.get(Cycle);
     const attachmentFactory = await factoryManager.get(Attachment);
 
     // Persons
@@ -71,6 +75,42 @@ export default class AppSeeder implements Seeder {
       teachers: [teachers[4]],
       students: [students[0], students[1], students[2], students[3], students[4]],
       administrator: administrators[2],
+    });
+
+    // Levels
+    const level1 = await levelFactory.save({
+      name: 'Level 1',
+      schoolYear: '2023-2024',
+      classes: [classe1, classe2],
+    });
+
+    const level2 = await levelFactory.save({
+      name: 'Level 2',
+      schoolYear: '2023-2024',
+      classes: [classe3],
+    });
+
+    const level3 = await levelFactory.save({
+      name: 'Level 3',
+      schoolYear: '2022-2023',
+      classes: [classe1, classe2, classe3],
+    });
+
+    //Cycles
+    const cycle1 = await cycleFactory.save({
+      name: 'Cycle A',
+      schoolYear: '2022-2023',
+      levels: [level1, level2, level3],
+    });
+    const cycle2 = await cycleFactory.save({
+      name: 'Cycle B',
+      schoolYear: '2022-2023',
+      levels: [level2, level3],
+    });
+    const cycle3 = await cycleFactory.save({
+      name: 'Cycle C',
+      schoolYear: '2022-2023',
+      levels: [level1, level3],
     });
 
     // Roles

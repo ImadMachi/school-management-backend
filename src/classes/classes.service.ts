@@ -25,7 +25,7 @@ export class ClassesService {
     const newClass = await this.classRepository.save(createClassDto);
     return this.classRepository.findOne({
       where: { id: newClass.id },
-      relations: ['administrator', 'teachers', 'students'],
+      relations: ['administrator', 'teachers', 'students','level'],
     });
   }
 
@@ -39,7 +39,7 @@ export class ClassesService {
     const updatedClass = await this.classRepository.save(updateClassDto);
     return this.classRepository.findOne({
       where: { id: updatedClass.id },
-      relations: ['administrator', 'teachers', 'students'],
+      relations: ['administrator', 'teachers', 'students','level'],
     });
   }
 
@@ -53,7 +53,7 @@ export class ClassesService {
 
   findAll() {
     return this.classRepository.find({
-      relations: ['administrator', 'teachers', 'students'],
+      relations: ['administrator', 'teachers', 'students', 'level']
     });
   }
 

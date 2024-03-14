@@ -13,8 +13,10 @@ import messageCategoryFactory from './factories/message-category.factory';
 import parentFactory from './factories/parent.factory';
 import directorFactory from './factories/director.factory';
 import classFactory from './factories/class.factory';
+import levelFactory from './factories/level.factory';
 import attachmentFactory from './factories/attachment.factory';
 import templateFactory from './factories/template.factor';
+import cycleFactory from './factories/cycle.factory';
 
 async function seed() {
   const options: DataSourceOptions & SeederOptions = {
@@ -32,6 +34,8 @@ async function seed() {
       templateFactory,
       messageCategoryFactory,
       classFactory,
+      levelFactory,
+      cycleFactory,
       attachmentFactory,
     ],
   };
