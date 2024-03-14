@@ -14,6 +14,8 @@ import { Director } from 'src/director/entities/director.entity';
 import { Class } from 'src/classes/entities/class.entity';
 import { Attachment } from 'src/messages/entities/attachment.entity';
 import { Level } from 'src/levels/entities/level.entity';
+import cycleFactory from '../factories/cycle.factory';
+import { Cycle } from 'src/cycles/entities/cycle.entity';
 
 export default class AppSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
@@ -29,6 +31,7 @@ export default class AppSeeder implements Seeder {
     const messageCategoryFactory = await factoryManager.get(MessageCategory);
     const classFactory = await factoryManager.get(Class);
     const levelFactory = await factoryManager.get(Level);
+    const cycleFactory = await factoryManager.get(Cycle);
     const attachmentFactory = await factoryManager.get(Attachment);
 
     // Persons
@@ -85,6 +88,23 @@ export default class AppSeeder implements Seeder {
       name: 'Level 3',
       schoolYear: '2022-2023',
       classes: [classe1, classe2, classe3],
+    });
+
+    //Cycles
+    const cycle1 = await cycleFactory.save({
+      name: 'Cycle A',
+      schoolYear: '2022-2023',
+      levels: [level1, level2, level3],
+    });
+    const cycle2 = await cycleFactory.save({
+      name: 'Cycle B',
+      schoolYear: '2022-2023',
+      levels: [level2, level3],
+    });
+    const cycle3 = await cycleFactory.save({
+      name: 'Cycle C',
+      schoolYear: '2022-2023',
+      levels: [level1, level3],
     });
 
     // Roles

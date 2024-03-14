@@ -19,7 +19,7 @@ import { MessageCategoriesModule } from './message-categories/message-categories
 import { ParentsModule } from './parents/parents.module';
 import { ClassesModule } from './classes/classes.module';
 import { LevelsModule } from './levels/levels.module';
-
+import { CyclesModule } from './cycles/cycles.module';
 @Module({
   imports: [
     UsersModule,
@@ -44,6 +44,7 @@ import { LevelsModule } from './levels/levels.module';
     ParentsModule,
     ClassesModule,
     LevelsModule,
+    CyclesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
