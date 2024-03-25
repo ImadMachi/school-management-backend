@@ -75,3 +75,6 @@ $ git fetch origin feature_management:feature_management # updating the remote b
 ```bash
 $ eas build -p android --profile preview
 ```
+## To use npm install or yarn install 
+ ```bash
+$ sudo chmod -R a+rxw node_modules

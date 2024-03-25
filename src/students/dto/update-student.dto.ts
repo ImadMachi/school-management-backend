@@ -12,6 +12,10 @@ export class UpdateStudentDto extends PartialType(CreateStudentDto) {
     lastName: string;
 
     @IsOptional()
+    @IsNotEmpty()   
+    identification: string;
+
+    @IsOptional()
     @IsNotEmpty()
     dateOfBirth: Date;
 

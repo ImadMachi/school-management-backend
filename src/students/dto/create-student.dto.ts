@@ -10,6 +10,9 @@ export class CreateStudentDto {
     lastName: string;
 
     @IsNotEmpty()
+    identification: string;
+
+    @IsNotEmpty()
     dateOfBirth: Date;
     
     @IsNotEmpty()

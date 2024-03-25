@@ -11,6 +11,7 @@ const studentFactory = setSeederFactory(Student, (faker) => {
   const student = new Student();
   student.firstName = getRandomElement(arabicFirstNames);
   student.lastName = getRandomElement(arabicLastNames);
+  student.identification = faker.string.hexadecimal({length: 8});
   student.dateOfBirth = faker.date.past(20);
   student.sex = faker.helpers.arrayElement(['mâle', 'femelle']);
   return student;

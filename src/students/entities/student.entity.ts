@@ -15,6 +15,9 @@ export class Student {
   @Column()
   lastName: string;
 
+  @Column()
+  identification: string;
+
   @Column({ type: 'timestamp', nullable: true })
   dateOfBirth: Date;
 
