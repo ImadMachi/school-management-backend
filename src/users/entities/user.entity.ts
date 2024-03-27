@@ -1,5 +1,4 @@
 import {
-  Admin,
   BeforeInsert,
   BeforeUpdate,
   Column,
@@ -20,6 +19,7 @@ import { Role } from '../../roles/entities/role.entity';
 import { Message } from '../../messages/entities/message.entity';
 import { Parent } from 'src/parents/entities/parent.entity';
 import { Director } from 'src/director/entities/director.entity';
+import { Group } from 'src/groups/entities/group.entity';
 
 @Entity()
 export class User {
@@ -92,6 +92,12 @@ export class User {
 
   @ManyToMany(() => Message, (message) => message.readBy)
   readMessages: Message[];
+
+  @ManyToMany(() => Group, (group) => group.users)
+  groups: Group[];
+
+  @ManyToMany(() => Group, (group) => group.administratorUsers)
+  administratorGroups: Group[];
 
   @BeforeInsert()
   @BeforeUpdate()

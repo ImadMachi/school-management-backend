@@ -81,25 +81,25 @@ export class MessagesService {
       .leftJoinAndSelect('message.starredBy', 'starredBy')
       .leftJoinAndSelect('message.trashedBy', 'trashedBy');
 
-    if (folder != MailFolder.TrashedBy) {
-      queryBuilder.andWhere('trashedBy.id != :userId', { userId });
-    }
-
     if (timestamp) {
       queryBuilder.andWhere('message.createdAt > :timestamp', { timestamp: new Date(timestamp) });
     }
 
+    // if (folder != MailFolder.TrashedBy) {
+    //   queryBuilder.andWhere('trashedBy.id = :userId', { userId });
+    // }
+
     if (folder === MailFolder.Sender) {
-      queryBuilder.innerJoinAndSelect('message.sender', 'sender').where('sender.id = :userId', { userId });
+      queryBuilder.innerJoinAndSelect('message.sender', 'sender').andWhere('sender.id = :userId', { userId });
     } else if (folder === MailFolder.Recipients) {
       queryBuilder
         .innerJoin('message.recipients', 'recipient')
-        .where('recipient.id = :userId', { userId })
+        .andWhere('recipient.id = :userId', { userId })
         .innerJoinAndSelect('message.sender', 'sender');
     } else if (folder === MailFolder.StarredBy) {
-      queryBuilder.where('starredBy.id = :userId', { userId }).innerJoinAndSelect('message.sender', 'sender');
+      queryBuilder.andWhere('starredBy.id = :userId', { userId }).innerJoinAndSelect('message.sender', 'sender');
     } else if (folder === MailFolder.TrashedBy) {
-      queryBuilder.where('trashedBy.id = :userId', { userId }).innerJoinAndSelect('message.sender', 'sender');
+      queryBuilder.andWhere('trashedBy.id = :userId', { userId }).innerJoinAndSelect('message.sender', 'sender');
     }
 
     const messages = await queryBuilder

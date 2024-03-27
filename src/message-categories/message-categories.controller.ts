@@ -25,8 +25,8 @@ export class MessageCategoriesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.messageCategoriesService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.messageCategoriesService.findOne(id);
   }
 
   @Put(':id')
@@ -36,7 +36,7 @@ export class MessageCategoriesController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.messageCategoriesService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.messageCategoriesService.remove(id);
   }
 }

@@ -15,6 +15,7 @@ import { Class } from 'src/classes/entities/class.entity';
 import { Template } from 'src/templates/entities/template.entity';
 import { Level } from 'src/levels/entities/level.entity';
 import { Cycle } from 'src/cycles/entities/cycle.entity';
+import { Group } from 'src/groups/entities/group.entity';
 const { parse } = require('pg-connection-string');
 
 dotenv.config();
@@ -52,10 +53,11 @@ export const dataSourceOptions: DataSourceOptions = {
     Administrator,
     Parent,
     Message,
+    MessageCategory,
     Template,
+    Group,
     Attachment,
     Director,
-    MessageCategory,
     Class,
     Level,
     Cycle,

@@ -16,6 +16,7 @@ import { Attachment } from 'src/messages/entities/attachment.entity';
 import { Template } from 'src/templates/entities/template.entity';
 import { Level } from 'src/levels/entities/level.entity';
 import { Cycle } from 'src/cycles/entities/cycle.entity';
+import { Group } from 'src/groups/entities/group.entity';
 
 export default class AppSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
@@ -29,6 +30,7 @@ export default class AppSeeder implements Seeder {
     const roleFactory = await factoryManager.get(Role);
     const messageFactory = await factoryManager.get(Message);
     const templateFactory = await factoryManager.get(Template);
+    const groupFactory = await factoryManager.get(Group);
     const messageCategoryFactory = await factoryManager.get(MessageCategory);
     const classFactory = await factoryManager.get(Class);
     const levelFactory = await factoryManager.get(Level);
@@ -340,6 +342,23 @@ export default class AppSeeder implements Seeder {
       subject: 'Sortie scolaire',
       body: 'Sortie scolaire le 25 septembre 2021',
       category: messageCategory5,
+    });
+
+    // Groups
+    const group1 = await groupFactory.save({
+      name: 'Transport',
+      description: 'Gestion des transports scolaires',
+      imagePath: 'school-trips-managers.jpg',
+      administratorUsers: [userAdministrator1],
+      users: [userStudent1, userStudent2, userTeacher1, userTeacher2],
+    });
+
+    const group2 = await groupFactory.save({
+      name: 'Surveillance',
+      description: 'Gestion de la surveillance',
+      imagePath: 'academic.jpg',
+      administratorUsers: [userAdministrator2],
+      users: [userTeacher1, userTeacher2, userAdministrator3],
     });
   }
 }

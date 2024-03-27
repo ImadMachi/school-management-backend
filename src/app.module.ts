@@ -21,6 +21,7 @@ import { ClassesModule } from './classes/classes.module';
 import { TemplatesModule } from './templates/templates.module';
 import { LevelsModule } from './levels/levels.module';
 import { CyclesModule } from './cycles/cycles.module';
+import { GroupsModule } from './groups/groups.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { CyclesModule } from './cycles/cycles.module';
     TemplatesModule,
     LevelsModule,
     CyclesModule,
+    GroupsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
