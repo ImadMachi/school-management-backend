@@ -20,6 +20,7 @@ import { Role } from '../../roles/entities/role.entity';
 import { Message } from '../../messages/entities/message.entity';
 import { Parent } from 'src/parents/entities/parent.entity';
 import { Director } from 'src/director/entities/director.entity';
+import { Agent } from 'http';
 
 @Entity()
 export class User {
@@ -77,6 +78,9 @@ export class User {
   })
   @JoinColumn()
   parent: Parent;
+
+  @JoinColumn()
+  agent: Agent;
 
   @OneToMany(() => Message, (message) => message.sender)
   sentMessages: Message[];

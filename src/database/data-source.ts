@@ -15,6 +15,7 @@ import { Class } from 'src/classes/entities/class.entity';
 import { Template } from 'src/templates/entities/template.entity';
 import { Level } from 'src/levels/entities/level.entity';
 import { Cycle } from 'src/cycles/entities/cycle.entity';
+import { Subject } from 'src/subjects/entities/subject.entity';
 const { parse } = require('pg-connection-string');
 
 dotenv.config();
@@ -59,6 +60,7 @@ export const dataSourceOptions: DataSourceOptions = {
     Class,
     Level,
     Cycle,
+    Subject,
   ],
   synchronize: process.env.NODE_ENV == 'development',
   // @ts-ignore

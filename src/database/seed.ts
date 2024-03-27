@@ -17,6 +17,7 @@ import levelFactory from './factories/level.factory';
 import attachmentFactory from './factories/attachment.factory';
 import templateFactory from './factories/template.factor';
 import cycleFactory from './factories/cycle.factory';
+import subjectFactory from './factories/subject.factory';
 
 async function seed() {
   const options: DataSourceOptions & SeederOptions = {
@@ -36,6 +37,7 @@ async function seed() {
       classFactory,
       levelFactory,
       cycleFactory,
+      subjectFactory,
       attachmentFactory,
     ],
   };

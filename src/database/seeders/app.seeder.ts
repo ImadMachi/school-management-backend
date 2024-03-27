@@ -16,6 +16,7 @@ import { Attachment } from 'src/messages/entities/attachment.entity';
 import { Template } from 'src/templates/entities/template.entity';
 import { Level } from 'src/levels/entities/level.entity';
 import { Cycle } from 'src/cycles/entities/cycle.entity';
+import { Subject } from 'src/subjects/entities/subject.entity';
 
 export default class AppSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
@@ -33,6 +34,7 @@ export default class AppSeeder implements Seeder {
     const classFactory = await factoryManager.get(Class);
     const levelFactory = await factoryManager.get(Level);
     const cycleFactory = await factoryManager.get(Cycle);
+    const subjectFactory = await factoryManager.get(Subject);
     const attachmentFactory = await factoryManager.get(Attachment);
 
     // Persons
@@ -111,6 +113,24 @@ export default class AppSeeder implements Seeder {
       name: 'Cycle C',
       schoolYear: '2022-2023',
       levels: [level1, level3],
+    });
+
+    // Subjects
+    const subject1 = await subjectFactory.save({
+      name: 'French',
+      classes: [classe1, classe2, classe3],
+      teachers: [teachers[0], teachers[1], teachers[2]],
+    });
+    const subject2 = await subjectFactory.save({
+      name: ' English',
+      classes: [classe1, classe3],
+      teachers: [teachers[1], teachers[2]],
+
+    });
+    const subject3 = await subjectFactory.save({
+      name: 'Mathematics',
+      classes: [classe1, classe3],
+      teachers: [teachers[4], teachers[5]],
     });
 
     // Roles

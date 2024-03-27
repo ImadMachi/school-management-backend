@@ -9,6 +9,7 @@ import { MessageCategory } from 'src/message-categories/entities/message-categor
 import { Student } from 'src/students/entities/student.entity';
 import { Parent } from 'src/parents/entities/parent.entity';
 import { Director } from 'src/director/entities/director.entity';
+import { Agent } from 'src/agent/entities/agent.entity';
 
 type Subjects =
   | InferSubjects<
@@ -18,6 +19,7 @@ type Subjects =
       | typeof Teacher
       | typeof Student
       | typeof Parent
+      | typeof Agent      
       | typeof Message
       | typeof MessageCategory
     >
