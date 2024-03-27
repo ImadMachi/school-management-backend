@@ -17,6 +17,7 @@ import { Template } from 'src/templates/entities/template.entity';
 import { Level } from 'src/levels/entities/level.entity';
 import { Cycle } from 'src/cycles/entities/cycle.entity';
 import { Subject } from 'src/subjects/entities/subject.entity';
+import { Agent } from 'src/agent/entities/agent.entity';
 
 export default class AppSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
@@ -26,6 +27,7 @@ export default class AppSeeder implements Seeder {
     const teacherFactory = await factoryManager.get(Teacher);
     const studentFactory = await factoryManager.get(Student);
     const parentFactory = await factoryManager.get(Parent);
+    const agentFactory = await factoryManager.get(Agent);
     const userFactory = await factoryManager.get(User);
     const roleFactory = await factoryManager.get(Role);
     const messageFactory = await factoryManager.get(Message);
@@ -46,6 +48,10 @@ export default class AppSeeder implements Seeder {
     const customParent1 = await parentFactory.save({
       firstName: 'Ali',
       lastName: 'Lahlou',
+    });
+    const customAgent1 = await parentFactory.save({
+      firstName: 'Ahmed',
+      lastName: 'Mohsin',
     });
     const customStudent1 = await studentFactory.save({
       firstName: 'Ahmed',
@@ -141,6 +147,7 @@ export default class AppSeeder implements Seeder {
     const teacherRole = await roleFactory.save({ name: RoleName.Teacher });
     const studentRole = await roleFactory.save({ name: RoleName.Student });
     const parentRole = await roleFactory.save({ name: RoleName.Parent });
+    const agentRole = await roleFactory.save({ name: RoleName.Agent });
 
     // Users
     const userDirector1 = await userFactory.save({
@@ -203,6 +210,12 @@ export default class AppSeeder implements Seeder {
       password: '123456',
       role: parentRole,
       parent: customParent1,
+    });
+    const userAgent1 = await userFactory.save({
+      email: `${customAgent1.lastName.toLowerCase()}.agent@gmail.com`,
+      password: '123456',
+      role: agentRole,
+      parent: customAgent1,
     });
 
     // Message Categories
