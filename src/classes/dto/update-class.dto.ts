@@ -37,4 +37,9 @@ export class UpdateClassDto {
   @ValidateNested()
   @Type(() => Id)
   level: Id;
+
+  @IsObject()
+  @ValidateNested()
+  @Type(() => Id)
+  subjects: Id[];
 }

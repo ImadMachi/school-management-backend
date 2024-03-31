@@ -45,11 +45,12 @@ export default class AppSeeder implements Seeder {
     const teachers = await teacherFactory.saveMany(5);
     const students = await studentFactory.saveMany(5);
     const parents = await parentFactory.saveMany(5);
+    const agents = await agentFactory.saveMany(5);
     const customParent1 = await parentFactory.save({
       firstName: 'Ali',
       lastName: 'Lahlou',
     });
-    const customAgent1 = await parentFactory.save({
+    const customAgent1 = await agentFactory.save({
       firstName: 'Ahmed',
       lastName: 'Mohsin',
     });
@@ -59,6 +60,8 @@ export default class AppSeeder implements Seeder {
       sex: 'mâle',
       parent: customParent1,
     });
+
+
 
     // Classes
     const classe1 = await classFactory.save({
@@ -122,22 +125,18 @@ export default class AppSeeder implements Seeder {
     });
 
     // Subjects
-    const subject1 = await subjectFactory.save({
-      name: 'French',
-      classes: [classe1, classe2, classe3],
-      teachers: [teachers[0], teachers[1], teachers[2]],
-    });
-    const subject2 = await subjectFactory.save({
-      name: ' English',
-      classes: [classe1, classe3],
-      teachers: [teachers[1], teachers[2]],
 
-    });
-    const subject3 = await subjectFactory.save({
-      name: 'Mathematics',
-      classes: [classe1, classe3],
-      teachers: [teachers[4], teachers[5]],
-    });
+     const subject1 = await subjectFactory.save({
+       name: 'French',
+       teachers: [teachers[0], teachers[1]],
+     });
+
+    // const subject2 = await subjectFactory.save({
+    //   name: ' English',
+    //   teachers: [teachers[0], teachers[1]],
+    //   classes: [classe1, classe3],
+    // });
+
 
     // Roles
     const directorRole = await roleFactory.save({ name: RoleName.Director });
@@ -215,7 +214,6 @@ export default class AppSeeder implements Seeder {
       email: `${customAgent1.lastName.toLowerCase()}.agent@gmail.com`,
       password: '123456',
       role: agentRole,
-      parent: customAgent1,
     });
 
     // Message Categories

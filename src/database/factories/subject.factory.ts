@@ -3,7 +3,7 @@ import { setSeederFactory } from 'typeorm-extension';
 
 const subjectFactory = setSeederFactory(Subject, (faker) => {
   const subjects = new Subject();
-  subjects.name = faker.lorem.word();
+  subjects.name = faker.lorem.word()
   return subjects;
 });
 

@@ -20,7 +20,7 @@ import { Role } from '../../roles/entities/role.entity';
 import { Message } from '../../messages/entities/message.entity';
 import { Parent } from 'src/parents/entities/parent.entity';
 import { Director } from 'src/director/entities/director.entity';
-import { Agent } from 'http';
+import { Agent } from 'src/agent/entities/agent.entity';
 
 @Entity()
 export class User {
@@ -79,6 +79,10 @@ export class User {
   @JoinColumn()
   parent: Parent;
 
+  @OneToOne(() => Agent, (agent) => agent.user, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   agent: Agent;
 

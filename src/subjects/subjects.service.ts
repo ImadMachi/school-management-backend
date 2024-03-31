@@ -11,7 +11,6 @@ export class SubjectsService {
   constructor(
     @InjectRepository(Subject)
     private subjectRepository: Repository<Subject>,
-    private usersSerivce: UsersService,
   ) {}
 
   async create(createSubjectDto: CreateSubjectDto) {
@@ -25,7 +24,7 @@ export class SubjectsService {
     const newSubject = await this.subjectRepository.save(createSubjectDto);
     return this.subjectRepository.findOne({
       where: { id: newSubject.id },
-      relations: ['teachers','class'],
+      relations: ['teachers','classes'],
     });
   }
 
@@ -39,7 +38,7 @@ export class SubjectsService {
     const updatedSubject = await this.subjectRepository.save(updateSubjectDto);
     return this.subjectRepository.findOne({
       where: { id: updatedSubject.id },
-      relations: [ 'teachers','class'],
+      relations: [ 'teachers','classes'],
     });
   }
 
@@ -53,7 +52,7 @@ export class SubjectsService {
 
   findAll() {
     return this.subjectRepository.find({
-      relations: [ 'teachers','class'],
+      relations: [ 'teachers','classes'],
     });
   }
 

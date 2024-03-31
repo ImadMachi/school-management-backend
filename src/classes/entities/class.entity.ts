@@ -1,6 +1,8 @@
 import { Administrator } from 'src/administrators/entities/administrator.entity';
+import { Agent } from 'src/agent/entities/agent.entity';
 import { Level } from 'src/levels/entities/level.entity';
 import { Student } from 'src/students/entities/student.entity';
+import { Subject } from 'src/subjects/entities/subject.entity';
 import { Teacher } from 'src/teachers/entities/teacher.entity';
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -26,7 +28,11 @@ export class Class {
   @JoinTable()
   students: Student[];
 
-  @ManyToOne(()=> Level, (level) => level.classes)
+  @ManyToOne(() => Level, (level) => level.classes)
   level: Level;
-  
+
+  @ManyToMany(() => Subject, (sub) => sub.classes)
+  @JoinTable()
+  subjects: Subject[];
+
 }
