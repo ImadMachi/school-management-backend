@@ -17,7 +17,7 @@ export class UpdateAbsentDto {
 
   @IsNotEmpty()
   @IsString()
-  hours: string;
+  hours: string[];
 
   @IsNotEmpty()
   @Type(() => Date)

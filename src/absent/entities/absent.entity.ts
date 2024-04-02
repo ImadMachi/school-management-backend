@@ -5,15 +5,14 @@ import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, 
 
 @Entity()
 export class Absent {
-  
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   day: string;
 
-  @Column()
-  hours: string;
+  @Column({ type: 'text', array: true, nullable: true })
+  hours: string[] | null;
 
   @Column()
   date: Date;
@@ -34,11 +33,11 @@ export class Absent {
   @JoinTable()
   replaceUser: User[];
 
-  @ManyToMany(() => Class, (cls) =>cls.absents)
-  classes :Class[];
+  @ManyToMany(() => Class, (cls) => cls.absents)
+  classes: Class[];
 
-  @ManyToMany(() => Subject, (sub) =>sub.absents)
-  subjects :Subject[];
+  @ManyToMany(() => Subject, (sub) => sub.absents)
+  subjects: Subject[];
 
   @Column()
   title: string;

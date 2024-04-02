@@ -3,7 +3,7 @@ import { AbsentService } from './absent.service';
 import { CreateAbsentDto } from './dto/create-absent.dto';
 import { UpdateAbsentDto } from './dto/update-absent.dto';
 
-@Controller('absent')
+@Controller('absents')
 export class AbsentController {
   constructor(private readonly absentService: AbsentService) {}
 

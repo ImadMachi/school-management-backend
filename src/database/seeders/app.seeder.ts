@@ -142,7 +142,7 @@ export default class AppSeeder implements Seeder {
 
     const absent1 = await absentFactory.save({
       day: 'Monday',
-      hours: '8:00',
+      hours: ['8:00', '9:00', '10:00'],
       date: new Date(),
       reason: 'Sick',
       justified: true,
@@ -153,7 +153,6 @@ export default class AppSeeder implements Seeder {
       classes: [classe1],
       subjects: [subject1],
       status: 'Pending',
-
       
     });
 

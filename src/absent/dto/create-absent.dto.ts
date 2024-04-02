@@ -11,9 +11,10 @@ export class CreateAbsentDto {
   @IsString()
   day: string;
 
+  @IsArray()
   @IsNotEmpty()
   @IsString()
-  hours: string;
+  hours: string[];
 
   @IsNotEmpty()
   @Type(() => Date)
