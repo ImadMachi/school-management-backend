@@ -1,11 +1,10 @@
 import { Subject } from 'src/subjects/entities/subject.entity';
 import { Class } from 'src/classes/entities/class.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Absent {
-  
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -21,7 +20,7 @@ export class Absent {
   @Column()
   reason: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   justified: boolean;
 
   @ManyToOne(() => User, (user) => user.absents)
@@ -35,11 +34,11 @@ export class Absent {
   @JoinTable()
   replaceUser: User[];
 
-  @ManyToMany(() => Class, (cls) =>cls.absents)
-  classes :Class[];
+  @ManyToMany(() => Class, (cls) => cls.absents)
+  classes: Class[];
 
-  @ManyToMany(() => Subject, (sub) =>sub.absents)
-  subjects :Subject[];
+  @ManyToMany(() => Subject, (sub) => sub.absents)
+  subjects: Subject[];
 
   @Column()
   title: string;
@@ -49,5 +48,4 @@ export class Absent {
 
   @Column()
   status: string;
-  
 }
