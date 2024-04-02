@@ -12,7 +12,7 @@ export class CreateAbsentDto {
   day: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsArray()
   hours: string;
 
   @IsNotEmpty()

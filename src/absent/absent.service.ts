@@ -4,25 +4,15 @@ import { UpdateAbsentDto } from './dto/update-absent.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Absent } from './entities/absent.entity';
 import { Repository } from 'typeorm';
-import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AbsentService {
   constructor(
     @InjectRepository(Absent)
     private absentRepository: Repository<Absent>,
-    private usersSerivce: UsersService,
   ) {}
 
   async create(createAbsentDto: CreateAbsentDto) {
-    const existingAbsent = await this.absentRepository
-      .createQueryBuilder('absent')
-      .where('LOWER(class.date) = LOWER(:date)', { name: createAbsentDto.date })
-      .andWhere('class.day= :day', { day: createAbsentDto.day })
-      .getOne();
-    if (existingAbsent) {
-      throw new BadRequestException('Cette classe existe déjà');
-    }
     const newAbsent = await this.absentRepository.save(createAbsentDto);
     return this.absentRepository.findOne({
       where: { id: newAbsent.id },
@@ -55,6 +45,6 @@ export class AbsentService {
   findAll() {
     return this.absentRepository.find({
       relations: ['absentUser', 'replaceUser'],
-     });
+    });
   }
 }

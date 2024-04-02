@@ -58,11 +58,9 @@ export default class AppSeeder implements Seeder {
       firstName: 'Ahmed',
       lastName: 'Mohsin',
     });
-    const customStudent1 = await studentFactory.save({
-      firstName: 'Ahmed',
-      lastName: 'Lahlou',
-      sex: 'mâle',
-      parent: customParent1,
+    const customTeacher1 = await teacherFactory.save({
+      firstName: 'Karim',
+      lastName: 'Rahim',
     });
 
     // Classes
@@ -72,6 +70,14 @@ export default class AppSeeder implements Seeder {
       teachers: [teachers[0], teachers[1]],
       students: [students[0], students[1], students[2], students[3], students[4]],
       administrator: administrators[0],
+    });
+
+    const customStudent1 = await studentFactory.save({
+      firstName: 'Ahmed',
+      lastName: 'Lahlou',
+      sex: 'mâle',
+      parent: customParent1,
+      classe: classe1,
     });
 
     const classe2 = await classFactory.save({
@@ -194,10 +200,10 @@ export default class AppSeeder implements Seeder {
     });
 
     const userTeacher1 = await userFactory.save({
-      email: `${teachers[0].lastName.toLowerCase()}@gmail.com`,
+      email: `${customTeacher1.lastName.toLowerCase()}.enseignant@gmail.com`,
       password: '123456',
       role: teacherRole,
-      teacher: teachers[0],
+      teacher: customTeacher1,
     });
 
     const userTeacher2 = await userFactory.save({
@@ -226,10 +232,12 @@ export default class AppSeeder implements Seeder {
       role: parentRole,
       parent: customParent1,
     });
+
     const userAgent1 = await userFactory.save({
       email: `${customAgent1.lastName.toLowerCase()}.agent@gmail.com`,
       password: '123456',
       role: agentRole,
+      agent: customAgent1,
     });
 
     // Message Categories
