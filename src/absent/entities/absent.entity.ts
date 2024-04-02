@@ -9,14 +9,11 @@ export class Absent {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  day: string;
+  @Column({nullable: true})
+  datedebut: Date;
 
-  @Column({ type: 'text', array: true, nullable: true })
-  hours: string[] | null;
-
-  @Column()
-  date: Date;
+  @Column({nullable: true})
+  datefin: Date;
 
   @Column()
   reason: string;
@@ -35,11 +32,11 @@ export class Absent {
   @JoinTable()
   replaceUser: User[];
 
-  @ManyToMany(() => Class, (cls) =>cls.absents)
-  classes :Class[];
+  // @ManyToMany(() => Class, (cls) =>cls.absents)
+  // classes :Class[];
 
-  @ManyToMany(() => Subject, (sub) =>sub.absents)
-  subjects :Subject[];
+  // @ManyToMany(() => Subject, (sub) =>sub.absents)
+  // subjects :Subject[];
 
   @Column()
   title: string;
