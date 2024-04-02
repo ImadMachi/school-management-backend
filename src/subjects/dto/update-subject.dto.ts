@@ -7,7 +7,7 @@ class Id {
   id: number;
 }
 
-export class UpdateClassDto {
+export class UpdateSubjectDto {
   @IsNumber()
   id: number;
 
@@ -15,31 +15,13 @@ export class UpdateClassDto {
   @IsString()
   name: string;
 
-  @IsNotEmpty()
-  schoolYear: string;
-
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => Id)
   teachers: Id[];
 
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => Id)
-  students: Id[];
-
   @IsObject()
   @ValidateNested()
   @Type(() => Id)
-  administrator: Id;
-
-  @IsObject()
-  @ValidateNested()
-  @Type(() => Id)
-  level: Id;
-
-  @IsObject()
-  @ValidateNested()
-  @Type(() => Id)
-  subjects: Id[];
+  classes: Id[];
 }

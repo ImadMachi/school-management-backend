@@ -18,6 +18,9 @@ import attachmentFactory from './factories/attachment.factory';
 import templateFactory from './factories/template.factor';
 import cycleFactory from './factories/cycle.factory';
 import groupFactory from './factories/group.factory';
+import subjectFactory from './factories/subject.factory';
+import agentFactory from './factories/agent.factory';
+import absentFactory from './factories/absent.factory';
 
 async function seed() {
   const options: DataSourceOptions & SeederOptions = {
@@ -30,6 +33,7 @@ async function seed() {
       studentFactory,
       teacherFactory,
       parentFactory,
+      agentFactory,
       userFactory,
       messageFactory,
       templateFactory,
@@ -38,7 +42,9 @@ async function seed() {
       classFactory,
       levelFactory,
       cycleFactory,
+      subjectFactory,
       attachmentFactory,
+      absentFactory,
     ],
   };
 

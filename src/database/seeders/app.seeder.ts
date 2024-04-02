@@ -17,6 +17,9 @@ import { Template } from 'src/templates/entities/template.entity';
 import { Level } from 'src/levels/entities/level.entity';
 import { Cycle } from 'src/cycles/entities/cycle.entity';
 import { Group } from 'src/groups/entities/group.entity';
+import { Subject } from 'src/subjects/entities/subject.entity';
+import { Agent } from 'src/agent/entities/agent.entity';
+import { Absent } from 'src/absent/entities/absent.entity';
 
 export default class AppSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
@@ -26,6 +29,7 @@ export default class AppSeeder implements Seeder {
     const teacherFactory = await factoryManager.get(Teacher);
     const studentFactory = await factoryManager.get(Student);
     const parentFactory = await factoryManager.get(Parent);
+    const agentFactory = await factoryManager.get(Agent);
     const userFactory = await factoryManager.get(User);
     const roleFactory = await factoryManager.get(Role);
     const messageFactory = await factoryManager.get(Message);
@@ -35,6 +39,8 @@ export default class AppSeeder implements Seeder {
     const classFactory = await factoryManager.get(Class);
     const levelFactory = await factoryManager.get(Level);
     const cycleFactory = await factoryManager.get(Cycle);
+    const subjectFactory = await factoryManager.get(Subject);
+    const absentFactory = await factoryManager.get(Absent);
     const attachmentFactory = await factoryManager.get(Attachment);
 
     // Persons
@@ -43,9 +49,14 @@ export default class AppSeeder implements Seeder {
     const teachers = await teacherFactory.saveMany(5);
     const students = await studentFactory.saveMany(5);
     const parents = await parentFactory.saveMany(5);
+    const agents = await agentFactory.saveMany(5);
     const customParent1 = await parentFactory.save({
       firstName: 'Ali',
       lastName: 'Lahlou',
+    });
+    const customAgent1 = await agentFactory.save({
+      firstName: 'Ahmed',
+      lastName: 'Mohsin',
     });
     const customStudent1 = await studentFactory.save({
       firstName: 'Ahmed',
@@ -115,6 +126,34 @@ export default class AppSeeder implements Seeder {
       levels: [level1, level3],
     });
 
+    // Subjects
+
+    const subject1 = await subjectFactory.save({
+      name: 'French',
+      teachers: [teachers[0], teachers[1]],
+    });
+
+    // const subject2 = await subjectFactory.save({
+    //   name: ' English',
+    //   teachers: [teachers[0], teachers[1]],
+    //   classes: [classe1, classe3],
+    // });
+
+    const absent1 = await absentFactory.save({
+      day: 'Monday',
+      hours: '8:00',
+      date: new Date(),
+      reason: 'Sick',
+      justified: true,
+      title: 'Absent',
+      body: 'Absent',
+      absentUser: User[0],
+      replaceUser: [User[1], User[2]],
+      classes: [classe1],
+      subjects: [subject1],
+      status: 'Pending',
+    });
+
     // Roles
     const directorRole = await roleFactory.save({ name: RoleName.Director });
     const administratorRole = await roleFactory.save({
@@ -123,6 +162,7 @@ export default class AppSeeder implements Seeder {
     const teacherRole = await roleFactory.save({ name: RoleName.Teacher });
     const studentRole = await roleFactory.save({ name: RoleName.Student });
     const parentRole = await roleFactory.save({ name: RoleName.Parent });
+    const agentRole = await roleFactory.save({ name: RoleName.Agent });
 
     // Users
     const userDirector1 = await userFactory.save({
@@ -185,6 +225,11 @@ export default class AppSeeder implements Seeder {
       password: '123456',
       role: parentRole,
       parent: customParent1,
+    });
+    const userAgent1 = await userFactory.save({
+      email: `${customAgent1.lastName.toLowerCase()}.agent@gmail.com`,
+      password: '123456',
+      role: agentRole,
     });
 
     // Message Categories

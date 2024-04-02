@@ -83,6 +83,16 @@ export class UsersService {
     user.role = role;
 
     return this.create(user, file); // Pass an empty array as the second argument
+  }  
+  
+  async createForAgent(createUserDto: CreateUserDto, agent, file: Express.Multer.File): Promise<User> {
+    const role = await this.roleService.findByName(RoleName.Agent);
+
+    const user = this.usersRepository.create(createUserDto);
+    user.agent = agent;
+    user.role = role;
+
+    return this.create(user, file); // Pass an empty array as the second argument
   }
 
   async findAll(role: RoleName): Promise<User[]> {
@@ -95,6 +105,8 @@ export class UsersService {
     query.leftJoinAndSelect('user.teacher', 'teacher');
     query.leftJoinAndSelect('user.parent', 'parent');
     query.leftJoinAndSelect('user.director', 'director');
+    query.leftJoinAndSelect('user.agent', 'agent');
+
 
     return query.getMany();
   }
@@ -106,7 +118,7 @@ export class UsersService {
   findOne(id: number): Promise<User | null> {
     return this.usersRepository.findOne({
       where: { id },
-      relations: ['role', 'administrator', 'teacher', 'student', 'parent', 'director'],
+      relations: ['role', 'administrator', 'teacher', 'student', 'parent', 'director','agent'],
     });
   }
 
@@ -122,7 +134,8 @@ export class UsersService {
     query.leftJoinAndSelect('user.teacher', 'teacher');
     query.leftJoinAndSelect('user.parent', 'parent');
     query.leftJoinAndSelect('user.director', 'director');
-
+    query.leftJoinAndSelect('user.agent', 'agent');
+    
     return query.getOne();
   }
 

@@ -34,4 +34,11 @@ export class CreateClassDto {
   @ValidateNested()
   @Type(() => Id)
   level: Id;
+
+  @IsObject()
+  @ValidateNested()
+  @Type(() => Id)
+  subjects: Id[];
+
+  
 }
