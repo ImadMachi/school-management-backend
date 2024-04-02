@@ -18,6 +18,7 @@ import { Level } from 'src/levels/entities/level.entity';
 import { Cycle } from 'src/cycles/entities/cycle.entity';
 import { Subject } from 'src/subjects/entities/subject.entity';
 import { Agent } from 'src/agent/entities/agent.entity';
+import { Absent } from 'src/absent/entities/absent.entity';
 
 export default class AppSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
@@ -37,6 +38,7 @@ export default class AppSeeder implements Seeder {
     const levelFactory = await factoryManager.get(Level);
     const cycleFactory = await factoryManager.get(Cycle);
     const subjectFactory = await factoryManager.get(Subject);
+    const absentFactory = await factoryManager.get(Absent);
     const attachmentFactory = await factoryManager.get(Attachment);
 
     // Persons
@@ -136,6 +138,25 @@ export default class AppSeeder implements Seeder {
     //   teachers: [teachers[0], teachers[1]],
     //   classes: [classe1, classe3],
     // });
+
+
+    const absent1 = await absentFactory.save({
+      day: 'Monday',
+      hours: '8:00',
+      date: new Date(),
+      reason: 'Sick',
+      justified: true,
+      title: 'Absent',
+      body: 'Absent',
+      absentUser: User[0],
+      replaceUser: [User[1], User[2]],
+      classes: [classe1],
+      subjects: [subject1],
+      status: 'Pending',
+
+      
+    });
+
 
 
     // Roles

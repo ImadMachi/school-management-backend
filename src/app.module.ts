@@ -23,6 +23,7 @@ import { LevelsModule } from './levels/levels.module';
 import { CyclesModule } from './cycles/cycles.module';
 import { AgentsModule } from './agent/agents.module';
 import { SubjectModule } from './subjects/subjects.module';
+import { AbsentModule } from './absent/absent.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { SubjectModule } from './subjects/subjects.module';
     CyclesModule,
     AgentsModule,
     SubjectModule,
+    AbsentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

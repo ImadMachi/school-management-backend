@@ -1,3 +1,4 @@
+import { Absent } from 'src/absent/entities/absent.entity';
 import { Class } from 'src/classes/entities/class.entity';
 import { Teacher } from 'src/teachers/entities/teacher.entity';
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
@@ -16,5 +17,9 @@ export class Subject {
   @ManyToMany(() => Class, (cls) => cls.subjects)
   @JoinTable()
   classes: Class[];
+
+  @ManyToMany(() => Absent, (absent) => absent.subjects)
+  @JoinTable()
+  absents: Absent[];
 
 }

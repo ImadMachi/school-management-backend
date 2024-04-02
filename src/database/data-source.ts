@@ -17,6 +17,7 @@ import { Level } from 'src/levels/entities/level.entity';
 import { Cycle } from 'src/cycles/entities/cycle.entity';
 import { Subject } from 'src/subjects/entities/subject.entity';
 import { Agent } from 'src/agent/entities/agent.entity';
+import { Absent } from 'src/absent/entities/absent.entity';
 const { parse } = require('pg-connection-string');
 
 dotenv.config();
@@ -63,6 +64,7 @@ export const dataSourceOptions: DataSourceOptions = {
     Level,
     Cycle,
     Subject,
+    Absent
   ],
   synchronize: process.env.NODE_ENV == 'development',
   // @ts-ignore

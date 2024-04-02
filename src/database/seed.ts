@@ -19,6 +19,7 @@ import templateFactory from './factories/template.factor';
 import cycleFactory from './factories/cycle.factory';
 import subjectFactory from './factories/subject.factory';
 import agentFactory from './factories/agent.factory';
+import absentFactory from './factories/absent.factory';
 
 async function seed() {
   const options: DataSourceOptions & SeederOptions = {
@@ -41,6 +42,7 @@ async function seed() {
       cycleFactory,
       subjectFactory,
       attachmentFactory,
+      absentFactory,
     ],
   };
 

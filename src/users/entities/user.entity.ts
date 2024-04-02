@@ -21,6 +21,7 @@ import { Message } from '../../messages/entities/message.entity';
 import { Parent } from 'src/parents/entities/parent.entity';
 import { Director } from 'src/director/entities/director.entity';
 import { Agent } from 'src/agent/entities/agent.entity';
+import { Absent } from 'src/absent/entities/absent.entity';
 
 @Entity()
 export class User {
@@ -101,11 +102,18 @@ export class User {
   @ManyToMany(() => Message, (message) => message.readBy)
   readMessages: Message[];
 
+  @ManyToMany(()=> Absent, (absent) => absent.replaceUser)
+  replacements: Absent[];
+
+  @OneToMany(() => Absent, (absent) => absent.absentUser)
+  absents: Absent[];
+
   @BeforeInsert()
   @BeforeUpdate()
   emailToLowerCase() {
     this.email = this.email.toLowerCase();
   }
+
 
   @BeforeInsert()
   @BeforeUpdate()

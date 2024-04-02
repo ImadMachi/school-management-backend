@@ -21,6 +21,4 @@ export class CreateSubjectDto {
   @ValidateNested({ each: true })
   @Type(() => Id)
   classes: Id[];
-
-
 }
