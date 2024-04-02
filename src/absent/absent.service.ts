@@ -17,8 +17,8 @@ export class AbsentService {
   async create(createAbsentDto: CreateAbsentDto) {
     const existingAbsent = await this.absentRepository
       .createQueryBuilder('absent')
-      .where('LOWER(class.date) = LOWER(:date)', { name: createAbsentDto.date })
-      .andWhere('class.day= :day', { day: createAbsentDto.day })
+      .where('absent.date = :date', { date: createAbsentDto.date })
+      .andWhere('absent.day = :day', { day: createAbsentDto.day })
       .getOne();
     if (existingAbsent) {
       throw new BadRequestException('Cette classe existe déjà');
