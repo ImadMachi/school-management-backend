@@ -12,9 +12,6 @@ const getRandomHour = () => {
 
 
 const absentFactory = setSeederFactory(Absent, (faker) => {
-
-
-
   const absent = new Absent();
   absent.day = faker.date.weekday();
   absent.hours = getRandomHour();

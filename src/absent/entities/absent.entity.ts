@@ -5,6 +5,7 @@ import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, 
 
 @Entity()
 export class Absent {
+  
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -20,10 +21,11 @@ export class Absent {
   @Column()
   reason: string;
 
-  @Column()
+  @Column({nullable: true})
   justified: boolean;
 
   @ManyToOne(() => User, (user) => user.absents)
+  @JoinTable()
   absentUser: User;
 
   @ManyToMany(() => User, (user) => user.replacements, {
@@ -33,11 +35,11 @@ export class Absent {
   @JoinTable()
   replaceUser: User[];
 
-  @ManyToMany(() => Class, (cls) => cls.absents)
-  classes: Class[];
+  @ManyToMany(() => Class, (cls) =>cls.absents)
+  classes :Class[];
 
-  @ManyToMany(() => Subject, (sub) => sub.absents)
-  subjects: Subject[];
+  @ManyToMany(() => Subject, (sub) =>sub.absents)
+  subjects :Subject[];
 
   @Column()
   title: string;
@@ -47,4 +49,5 @@ export class Absent {
 
   @Column()
   status: string;
+  
 }

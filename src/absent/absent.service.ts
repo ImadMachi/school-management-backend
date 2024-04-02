@@ -26,7 +26,7 @@ export class AbsentService {
     const newAbsent = await this.absentRepository.save(createAbsentDto);
     return this.absentRepository.findOne({
       where: { id: newAbsent.id },
-      relations: ['absentUser', 'replaceUser'],
+      relations: ['absentUser', 'replaceUser', 'classes', 'subjects'],
     });
   }
 
@@ -40,7 +40,7 @@ export class AbsentService {
     const updatedAbsent = await this.absentRepository.save(updateAbsentDto);
     return this.absentRepository.findOne({
       where: { id: updatedAbsent.id },
-      relations: ['absentUser', 'replaceUser'],
+      relations: ['absentUser', 'replaceUser', 'classes', 'subjects'],
     });
   }
 
@@ -54,7 +54,13 @@ export class AbsentService {
 
   findAll() {
     return this.absentRepository.find({
-      relations: ['absentUser', 'replaceUser'],
-     });
+      relations: ['absentUser', 'replaceUser', 'classes', 'subjects'],
+    });
+  }
+  findOne(id: number) {
+    return this.absentRepository.find({
+      where: { id },
+      relations: ['absentUser', 'replaceUser', 'classes', 'subjects'],
+    });
   }
 }
