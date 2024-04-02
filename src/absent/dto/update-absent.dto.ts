@@ -10,19 +10,13 @@ export class UpdateAbsentDto {
 
   @IsNumber()
   id: number;
-
   @IsNotEmpty()
-  @IsString()
-  day: string;
-
-  @IsArray()
-  @IsNotEmpty()
-  hours: string[];
+  @Type(() => Date)
+  datedebut: Date;
 
   @IsNotEmpty()
   @Type(() => Date)
-  date: Date;
-
+  datefin: Date;
   @IsNotEmpty()
   @IsString()
   reason: string;
@@ -40,15 +34,15 @@ export class UpdateAbsentDto {
   @Type(() => Id)
   replaceUser: Id[];
 
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => Id)
-  classes: Id[];
+  // @IsArray()
+  // @ValidateNested({ each: true })
+  // @Type(() => Id)
+  // classes: Id[];
 
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => Id)
-  subjects: Id[];
+  // @IsArray()
+  // @ValidateNested({ each: true })
+  // @Type(() => Id)
+  // subjects: Id[];
 
   @IsString()
   title: string;
@@ -58,5 +52,4 @@ export class UpdateAbsentDto {
 
   @IsString()
   status: string;
-
 }

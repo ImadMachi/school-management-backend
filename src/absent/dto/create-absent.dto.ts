@@ -8,17 +8,12 @@ class Id {
 }
 export class CreateAbsentDto {
   @IsNotEmpty()
-  @IsString()
-  day: string;
-
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  hours?: string[] | null;
+  @Type(() => Date)
+  datedebut: Date;
 
   @IsNotEmpty()
   @Type(() => Date)
-  date: Date;
+  datefin: Date;
 
   @IsNotEmpty()
   @IsString()
@@ -37,15 +32,15 @@ export class CreateAbsentDto {
   @Type(() => Id)
   replaceUser: Id[];
 
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => Id)
-  classes: Id[];
+  // @IsArray()
+  // @ValidateNested({ each: true })
+  // @Type(() => Id)
+  // classes: Id[];
 
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => Id)
-  subjects: Id[];
+  // @IsArray()
+  // @ValidateNested({ each: true })
+  // @Type(() => Id)
+  // subjects: Id[];
 
   @IsString()
   title: string;
