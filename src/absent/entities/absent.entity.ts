@@ -12,8 +12,8 @@ export class Absent {
   @Column()
   day: string;
 
-  @Column()
-  hours: string;
+  @Column({ type: 'text', array: true, nullable: true })
+  hours: string[] | null;
 
   @Column()
   date: Date;
@@ -21,10 +21,11 @@ export class Absent {
   @Column()
   reason: string;
 
-  @Column()
+  @Column({nullable: true})
   justified: boolean;
 
   @ManyToOne(() => User, (user) => user.absents)
+  @JoinTable()
   absentUser: User;
 
   @ManyToMany(() => User, (user) => user.replacements, {
@@ -48,4 +49,5 @@ export class Absent {
 
   @Column()
   status: string;
+  
 }

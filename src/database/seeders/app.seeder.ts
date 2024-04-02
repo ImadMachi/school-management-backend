@@ -147,7 +147,37 @@ export default class AppSeeder implements Seeder {
 
     const absent1 = await absentFactory.save({
       day: 'Monday',
-      hours: '8:00',
+      hours: ['8:00', '9:00', '10:00', '11:00'],
+      date: new Date(),
+      reason: 'Sick',
+      justified: true,
+      title: 'Absent',
+      body: 'Absent',
+      absentUser: User[0],
+      replaceUser: [User[1], User[2]],
+      classes: [classe1],
+      subjects: [subject1],
+      status: 'Pending',
+    });
+
+    const absent2 = await absentFactory.save({
+      day: 'Tuesday',
+      hours: ['8:00', '9:00', '10:00', '11:00'],
+      date: new Date(),
+      reason: 'Sick',
+      justified: true,
+      title: 'Absent',
+      body: 'Absent',
+      absentUser: User[0],
+      replaceUser: [User[1], User[2]],
+      classes: [classe1],
+      subjects: [subject1],
+      status: 'Pending',
+    });
+
+    const absent3 = await absentFactory.save({
+      day: 'Wednesday',
+      hours: ['8:00', '9:00', '10:00', '11:00'],
       date: new Date(),
       reason: 'Sick',
       justified: true,

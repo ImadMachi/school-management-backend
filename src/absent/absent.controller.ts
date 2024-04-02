@@ -26,4 +26,9 @@ export class AbsentController {
   findAll() {
     return this.absentService.findAll();
   }
+  @Get(':id')
+  findOne(@Param('id') id: number) {
+    return this.absentService.findOne(id);
+  }
+
 }
