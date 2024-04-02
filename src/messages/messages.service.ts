@@ -12,6 +12,7 @@ import { MailFolder } from './enums/mail-folder.enum';
 import { MessageCategoriesService } from 'src/message-categories/message-categories.service';
 import { UsersService } from 'src/users/users.service';
 import { ParentsService } from 'src/parents/parents.service';
+import { ContactAdministrationDto } from './dto/contact-administration.dto';
 
 @Injectable()
 export class MessagesService {
@@ -43,6 +44,20 @@ export class MessagesService {
 
     const newMessage = await this.messageRepository.save(message);
     return this.getMessage(newMessage.id, user.id);
+  }
+
+  async contactAdministration(user: User, contactAdministrationDto: ContactAdministrationDto) {
+    const directorUser = await this.usersService.findDirectorForUser(user.id);
+    return this.createMessage(
+      {
+        subject: contactAdministrationDto.subject,
+        body: contactAdministrationDto.body,
+        recipients: [{ id: directorUser.id }],
+        categoryId: 1,
+      },
+      user,
+      [],
+    );
   }
 
   async getMessage(id: number, userId: number) {

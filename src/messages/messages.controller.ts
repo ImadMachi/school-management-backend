@@ -5,6 +5,7 @@ import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { CheckPolicies, PoliciesGuard } from 'src/casl/guards/policies.guard';
 import { ManageMessagesPolicyHandler } from 'src/casl/policies/messages/manage-messages.policy';
 import { GetMessageQueryDto } from './dto/get-message-query.dto';
+import { ContactAdministrationDto } from './dto/contact-administration.dto';
 
 @Controller('messages')
 @UseGuards(PoliciesGuard)
@@ -36,6 +37,11 @@ export class MessagesController {
   @Get('new')
   getNewMessages(@Request() req, @Query('timestamp') timestamp: string) {
     return this.messagesService.getNewMessages(timestamp, req.user.id);
+  }
+
+  @Post('contact-administration')
+  contactAdministration(@Request() req, @Body() contactAdministrationDto: ContactAdministrationDto) {
+    return this.messagesService.contactAdministration(req.user, contactAdministrationDto);
   }
 
   @Post(':id/read')

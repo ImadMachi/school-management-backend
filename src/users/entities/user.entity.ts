@@ -11,6 +11,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+
 import { Teacher } from '../../teachers/entities/teacher.entity';
 import { Student } from '../../students/entities/student.entity';
 import { Administrator } from '../../administrators/entities/administrator.entity';
@@ -40,15 +41,15 @@ export class User {
   @Transform(({ value }) => value.name)
   role: Role;
 
+  @Column({ nullable: true })
+  profileImage: string;
+
   @OneToOne(() => Director, (director) => director.user, {
     nullable: true,
     onDelete: 'CASCADE',
   })
   @JoinColumn()
   director: Director;
-
-  @Column({ nullable: true })
-  profileImage: string;
 
   @OneToOne(() => Administrator, (administrator) => administrator.user, {
     nullable: true,
@@ -105,10 +106,11 @@ export class User {
     this.email = this.email.toLowerCase();
   }
 
-  @BeforeInsert()
-  @BeforeUpdate()
-  async hashPassword() {
-    const salt = await bcrypt.genSalt();
-    this.password = await bcrypt.hash(this.password, salt);
-  }
+  // @BeforeInsert()
+  // @BeforeUpdate()
+  // async hashPassword() {
+  //   const salt = await bcrypt.genSalt();
+
+  //   this.password = await bcrypt.hash(this.password, salt);
+  // }
 }

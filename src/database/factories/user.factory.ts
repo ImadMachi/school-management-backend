@@ -6,11 +6,10 @@ const userFactory = setSeederFactory(User, (faker) => {
   const user = new User();
   user.email = faker.internet.email();
   user.password = faker.internet.password();
-  const isMale = Math.random() < 0.5; // Assume a 50% chance of being male
+  const isMale = Math.random() < 0.5;
   user.profileImage = isMale
     ? menProfileImages[Math.floor(Math.random() * menProfileImages.length)]
     : womenProfileImages[Math.floor(Math.random() * womenProfileImages.length)];
-
   return user;
 });
 

@@ -31,8 +31,8 @@ export class Student {
   @Exclude()
   user: User;
 
-  @ManyToMany(() => Class, (cls) => cls.teachers)
-  classes: Class[];
+  @ManyToOne(() => Class, (cls) => cls.students)
+  classe: Class;
 
   @ManyToOne(() => Parent, (parent) => parent.students, { nullable: true })
   parent: Parent;

@@ -2,7 +2,7 @@ import { Administrator } from 'src/administrators/entities/administrator.entity'
 import { Level } from 'src/levels/entities/level.entity';
 import { Student } from 'src/students/entities/student.entity';
 import { Teacher } from 'src/teachers/entities/teacher.entity';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Class {
@@ -22,11 +22,9 @@ export class Class {
   @JoinTable()
   teachers: Teacher[];
 
-  @ManyToMany(() => Student, (student) => student.classes)
-  @JoinTable()
+  @OneToMany(() => Student, (student) => student.classe)
   students: Student[];
 
-  @ManyToOne(()=> Level, (level) => level.classes)
+  @ManyToOne(() => Level, (level) => level.classes)
   level: Level;
-  
 }
