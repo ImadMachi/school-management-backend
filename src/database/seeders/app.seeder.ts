@@ -149,10 +149,8 @@ export default class AppSeeder implements Seeder {
       justified: true,
       title: 'Absent',
       body: 'Absent',
-      absentUser: User[0],
+      absentUser: User[6],
       replaceUser: [User[1], User[2]],
-      // classes: [classe1],
-      // subjects: [subject1],
       status: 'Pending',
     });
 
@@ -164,10 +162,8 @@ export default class AppSeeder implements Seeder {
       justified: true,
       title: 'Absent',
       body: 'Absent',
-      absentUser: User[0],
-      replaceUser: [User[1], User[2]],
-      // classes: [classe1],
-      // subjects: [subject1],
+      absentUser: User[5],
+      replaceUser: [User[4], User[6]],
       status: 'Pending',
     });
 
@@ -178,17 +174,10 @@ export default class AppSeeder implements Seeder {
       justified: true,
       title: 'Absent',
       body: 'Absent',
-      absentUser: User[0],
-      replaceUser: [User[1], User[2]],
-      // classes: [classe1],
-      // subjects: [subject1],
+      absentUser: User[8],
+      replaceUser: [User[4], User[6]],
       status: 'Pending',
     });
-
-
-    
-
-
 
     // Roles
     const directorRole = await roleFactory.save({ name: RoleName.Director });

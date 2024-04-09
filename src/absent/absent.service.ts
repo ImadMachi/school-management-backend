@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAbsentDto } from './dto/create-absent.dto';
 import { UpdateAbsentDto } from './dto/update-absent.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,8 +17,7 @@ export class AbsentService {
   async create(createAbsentDto: CreateAbsentDto) {
     const existingAbsent = await this.absentRepository
       .createQueryBuilder('absent')
-      .where('absent.datedebut = :datedebut', { datedebut: createAbsentDto.datedebut })
-      .andWhere('absent.datefin = :datefin', { datefin: createAbsentDto.datefin })
+      .where('absent.absentUser.id = :id', { id: createAbsentDto.absentUser.id })
       .getOne();
     if (existingAbsent) {
       throw new BadRequestException('Cette Absence existe déjà');
@@ -57,10 +56,56 @@ export class AbsentService {
       relations: ['absentUser', 'replaceUser'],
     });
   }
-  findOne(id: number) {
-    return this.absentRepository.find({
-      where: { id },
-      relations: ['absentUser', 'replaceUser'],
-    });
+
+  async getAbsent(absentId: number) {
+    const absent = await this.absentRepository
+      .createQueryBuilder('absent')
+      .where('absent.id = :id', { id: absentId })
+      .innerJoinAndSelect('absent.absentUser', 'absentUser')
+      .leftJoinAndSelect('absentUser.director', 'director') 
+      .leftJoinAndSelect('absentUser.administrator', 'administrator')
+      .leftJoinAndSelect('absentUser.teacher', 'teacher')
+      .leftJoinAndSelect('absentUser.student', 'student')
+      .leftJoinAndSelect('absentUser.parent', 'parent')
+      .innerJoinAndSelect('absentUser.role', 'role')
+      .leftJoinAndSelect('absent.replaceUser', 'replaceUser') 
+      .leftJoinAndSelect('replaceUser.director', 'replaceDirector') 
+      .leftJoinAndSelect('replaceUser.administrator', 'replaceAdministrator') 
+      .leftJoinAndSelect('replaceUser.teacher', 'replaceTeacher') 
+      .leftJoinAndSelect('replaceUser.student', 'replaceStudent') 
+      .leftJoinAndSelect('replaceUser.parent', 'replaceParent')
+      .innerJoinAndSelect('replaceUser.role', 'replaceRole') 
+      .getOne();
+
+    if (!absent) {
+      throw new NotFoundException('Absent record not found');
+    }
+
+    return {
+      ...absent,
+    };
   }
+
+  async getAllAbsents() {
+    const absents = await this.absentRepository
+      .createQueryBuilder('absent')
+      .innerJoinAndSelect('absent.absentUser', 'absentUser')
+      .leftJoinAndSelect('absentUser.director', 'director') 
+      .leftJoinAndSelect('absentUser.administrator', 'administrator')
+      .leftJoinAndSelect('absentUser.teacher', 'teacher')
+      .leftJoinAndSelect('absentUser.student', 'student')
+      .leftJoinAndSelect('absentUser.parent', 'parent')
+      .innerJoinAndSelect('absentUser.role', 'role')
+      .leftJoinAndSelect('absent.replaceUser', 'replaceUser') 
+      .leftJoinAndSelect('replaceUser.director', 'replaceDirector') 
+      .leftJoinAndSelect('replaceUser.administrator', 'replaceAdministrator') 
+      .leftJoinAndSelect('replaceUser.teacher', 'replaceTeacher') 
+      .leftJoinAndSelect('replaceUser.student', 'replaceStudent') 
+      .leftJoinAndSelect('replaceUser.parent', 'replaceParent')
+      .innerJoinAndSelect('replaceUser.role', 'replaceRole') 
+      .getMany();
+
+    return absents;
+  }
+
 }

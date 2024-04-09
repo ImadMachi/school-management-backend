@@ -8,7 +8,7 @@ import { UsersModule } from 'src/users/users.module';
 import { SubjectModule } from 'src/subjects/subjects.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Absent]), CaslModule, UsersModule,SubjectModule,CaslModule],
+  imports: [TypeOrmModule.forFeature([Absent]), CaslModule, UsersModule,CaslModule],
   controllers: [AbsentController],
   providers: [AbsentService],
   exports: [AbsentService],

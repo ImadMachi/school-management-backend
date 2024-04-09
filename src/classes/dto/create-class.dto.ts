@@ -35,7 +35,7 @@ export class CreateClassDto {
   @Type(() => Id)
   level: Id;
 
-  @IsObject()
+  @IsArray()
   @ValidateNested()
   @Type(() => Id)
   subjects: Id[];
