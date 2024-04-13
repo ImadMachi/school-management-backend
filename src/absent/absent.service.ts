@@ -95,6 +95,7 @@ export class AbsentService {
       .leftJoinAndSelect('absentUser.teacher', 'teacher')
       .leftJoinAndSelect('absentUser.student', 'student')
       .leftJoinAndSelect('absentUser.parent', 'parent')
+      .leftJoinAndSelect('absentUser.parent', 'agent')
       .innerJoinAndSelect('absentUser.role', 'role')
       .leftJoinAndSelect('absent.replaceUser', 'replaceUser') 
       .leftJoinAndSelect('replaceUser.director', 'replaceDirector') 
@@ -102,6 +103,7 @@ export class AbsentService {
       .leftJoinAndSelect('replaceUser.teacher', 'replaceTeacher') 
       .leftJoinAndSelect('replaceUser.student', 'replaceStudent') 
       .leftJoinAndSelect('replaceUser.parent', 'replaceParent')
+      .leftJoinAndSelect('replaceUser.agent', 'replaceAgent')
       .innerJoinAndSelect('replaceUser.role', 'replaceRole') 
       .getMany();
 
