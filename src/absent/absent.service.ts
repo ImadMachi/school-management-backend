@@ -20,7 +20,7 @@ export class AbsentService {
       .where('absent.absentUser.id = :id', { id: createAbsentDto.absentUser.id })
       .getOne();
     if (existingAbsent) {
-      throw new BadRequestException('Cette Absence existe déjà');
+      throw new BadRequestException('Ce Absent existe déjà');
     }
     const newAbsent = await this.absentRepository.save(createAbsentDto);
     return this.absentRepository.findOne({
@@ -29,24 +29,24 @@ export class AbsentService {
     });
   }
 
-  async update(updateAbsentDto: UpdateAbsentDto) {
-    const absentToUpdate = await this.absentRepository.findOne({
-      where: { id: updateAbsentDto.id },
-    });
-    if (!absentToUpdate) {
-      throw new BadRequestException("Cette user n'existe pas");
+    async update(updateAbsentDto: UpdateAbsentDto) {
+      const absentToUpdate = await this.absentRepository.findOne({
+        where: { id: updateAbsentDto.id },
+      });
+      if (!absentToUpdate) {
+        throw new BadRequestException("Ce Absent n'existe pas");
+      }
+      const updatedAbsent = await this.absentRepository.save(updateAbsentDto);
+      return this.absentRepository.findOne({
+        where: { id: updatedAbsent.id },
+        relations: ['absentUser', 'replaceUser'],
+      });
     }
-    const updatedAbsent = await this.absentRepository.save(updateAbsentDto);
-    return this.absentRepository.findOne({
-      where: { id: updatedAbsent.id },
-      relations: ['absentUser', 'replaceUser'],
-    });
-  }
 
   async remove(id: number) {
     const { affected } = await this.absentRepository.delete(id);
     if (affected === 0) {
-      throw new BadRequestException("Cette classe n'existe pas");
+      throw new BadRequestException("Ce Absent n'existe pas");
     }
     return id;
   }

@@ -149,8 +149,8 @@ export default class AppSeeder implements Seeder {
       justified: true,
       title: 'Absent',
       body: 'Absent',
-      absentUser: User[6],
-      replaceUser: [User[1], User[2]],
+      absentUser: User[2],
+      replaceUser: [User[2], User[3]],
       status: 'Pending',
     });
 
@@ -162,8 +162,8 @@ export default class AppSeeder implements Seeder {
       justified: true,
       title: 'Absent',
       body: 'Absent',
-      absentUser: User[5],
-      replaceUser: [User[4], User[6]],
+      absentUser: User[4],
+      replaceUser: [User[5], User[6]],
       status: 'Pending',
     });
 
