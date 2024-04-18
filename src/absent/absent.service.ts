@@ -29,19 +29,19 @@ export class AbsentService {
     });
   }
 
-    async update(updateAbsentDto: UpdateAbsentDto) {
-      const absentToUpdate = await this.absentRepository.findOne({
-        where: { id: updateAbsentDto.id },
-      });
-      if (!absentToUpdate) {
-        throw new BadRequestException("Ce Absent n'existe pas");
-      }
-      const updatedAbsent = await this.absentRepository.save(updateAbsentDto);
-      return this.absentRepository.findOne({
-        where: { id: updatedAbsent.id },
-        relations: ['absentUser', 'replaceUser'],
-      });
+  async update(updateAbsentDto: UpdateAbsentDto) {
+    const absentToUpdate = await this.absentRepository.findOne({
+      where: { id: updateAbsentDto.id },
+    });
+    if (!absentToUpdate) {
+      throw new BadRequestException("Ce Absent n'existe pas");
     }
+    const updatedAbsent = await this.absentRepository.save(updateAbsentDto);
+    return this.absentRepository.findOne({
+      where: { id: updatedAbsent.id },
+      relations: ['absentUser', 'replaceUser'],
+    });
+  }
 
   async remove(id: number) {
     const { affected } = await this.absentRepository.delete(id);
@@ -51,63 +51,117 @@ export class AbsentService {
     return id;
   }
 
-  findAll() {
-    return this.absentRepository.find({
-      relations: ['absentUser', 'replaceUser'],
-    });
-  }
+  // async getAbsent(absentId: number) {
+  //   const absent = await this.absentRepository
+  //     .createQueryBuilder('absent')
+  //     .where('absent.id = :id', { id: absentId })
+  //     .innerJoinAndSelect('absent.absentUser', 'absentUser')
+  //     .leftJoinAndSelect('absentUser.director', 'director')
+  //     .leftJoinAndSelect('absentUser.administrator', 'administrator')
+  //     .leftJoinAndSelect('absentUser.teacher', 'teacher')
+  //     .leftJoinAndSelect('absentUser.student', 'student')
+  //     .leftJoinAndSelect('absentUser.parent', 'parent')
+  //     .innerJoinAndSelect('absentUser.role', 'role')
+  //     .leftJoinAndSelect('absent.replaceUser', 'replaceUser')
+  //     .leftJoinAndSelect('replaceUser.director', 'replaceDirector')
+  //     .leftJoinAndSelect('replaceUser.administrator', 'replaceAdministrator')
+  //     .leftJoinAndSelect('replaceUser.teacher', 'replaceTeacher')
+  //     .leftJoinAndSelect('replaceUser.student', 'replaceStudent')
+  //     .leftJoinAndSelect('replaceUser.parent', 'replaceParent')
+  //     .innerJoinAndSelect('replaceUser.role', 'replaceRole')
+  //     .getOne();
 
-  async getAbsent(absentId: number) {
-    const absent = await this.absentRepository
+  //   if (!absent) {
+  //     throw new NotFoundException('Absent record not found');
+  //   }
+
+  //   return {
+  //     ...absent,
+  //   };
+  // }
+
+  async getAbsent(absentId?: number) {
+    const absents = await this.absentRepository
       .createQueryBuilder('absent')
-      .where('absent.id = :id', { id: absentId })
       .innerJoinAndSelect('absent.absentUser', 'absentUser')
-      .leftJoinAndSelect('absentUser.director', 'director') 
+      .leftJoinAndSelect('absentUser.director', 'director')
       .leftJoinAndSelect('absentUser.administrator', 'administrator')
       .leftJoinAndSelect('absentUser.teacher', 'teacher')
       .leftJoinAndSelect('absentUser.student', 'student')
       .leftJoinAndSelect('absentUser.parent', 'parent')
+      .leftJoinAndSelect('absentUser.agent', 'agent')
       .innerJoinAndSelect('absentUser.role', 'role')
-      .leftJoinAndSelect('absent.replaceUser', 'replaceUser') 
-      .leftJoinAndSelect('replaceUser.director', 'replaceDirector') 
-      .leftJoinAndSelect('replaceUser.administrator', 'replaceAdministrator') 
-      .leftJoinAndSelect('replaceUser.teacher', 'replaceTeacher') 
-      .leftJoinAndSelect('replaceUser.student', 'replaceStudent') 
+      .leftJoinAndSelect('absent.replaceUser', 'replaceUser')
+      .getMany();
+  
+    let absentsWithReplaceUser = absents;
+  
+    const absents2 = await this.absentRepository
+      .createQueryBuilder('absent')
+      .leftJoinAndSelect('absent.replaceUser', 'replaceUser')
+      .leftJoinAndSelect('replaceUser.director', 'replaceDirector')
+      .leftJoinAndSelect('replaceUser.administrator', 'replaceAdministrator')
+      .leftJoinAndSelect('replaceUser.teacher', 'replaceTeacher')
+      .leftJoinAndSelect('replaceUser.student', 'replaceStudent')
       .leftJoinAndSelect('replaceUser.parent', 'replaceParent')
-      .innerJoinAndSelect('replaceUser.role', 'replaceRole') 
-      .getOne();
-
-    if (!absent) {
-      throw new NotFoundException('Absent record not found');
+      .leftJoinAndSelect('replaceUser.agent', 'replaceAgent')
+      .innerJoinAndSelect('replaceUser.role', 'replaceRole')
+      .getMany();
+  
+    if (absents2.length > 0) {
+      // Perform the join if absents2 contains data
+      absentsWithReplaceUser = absents.map((absent) => {
+        const found = absents2.find((a) => a.id === absent.id);
+        return found ? { ...absent, replaceUser: found.replaceUser } : absent;
+      });
     }
-
-    return {
-      ...absent,
-    };
+  
+    // If absentId is provided, filter absents to return only the absent with the matching ID
+    if (absentId) {
+      const foundAbsent = absentsWithReplaceUser.find(absent => absent.id === absentId);
+      return foundAbsent ? [foundAbsent] : [];
+    }
+  
+    return absentsWithReplaceUser;
   }
+  
 
   async getAllAbsents() {
     const absents = await this.absentRepository
       .createQueryBuilder('absent')
       .innerJoinAndSelect('absent.absentUser', 'absentUser')
-      .leftJoinAndSelect('absentUser.director', 'director') 
+      .leftJoinAndSelect('absentUser.director', 'director')
       .leftJoinAndSelect('absentUser.administrator', 'administrator')
       .leftJoinAndSelect('absentUser.teacher', 'teacher')
       .leftJoinAndSelect('absentUser.student', 'student')
       .leftJoinAndSelect('absentUser.parent', 'parent')
-      .leftJoinAndSelect('absentUser.parent', 'agent')
+      .leftJoinAndSelect('absentUser.agent', 'agent')
       .innerJoinAndSelect('absentUser.role', 'role')
-      .leftJoinAndSelect('absent.replaceUser', 'replaceUser') 
-      .leftJoinAndSelect('replaceUser.director', 'replaceDirector') 
-      .leftJoinAndSelect('replaceUser.administrator', 'replaceAdministrator') 
-      .leftJoinAndSelect('replaceUser.teacher', 'replaceTeacher') 
-      .leftJoinAndSelect('replaceUser.student', 'replaceStudent') 
-      .leftJoinAndSelect('replaceUser.parent', 'replaceParent')
-      .leftJoinAndSelect('replaceUser.agent', 'replaceAgent')
-      .innerJoinAndSelect('replaceUser.role', 'replaceRole') 
+      .leftJoinAndSelect('absent.replaceUser', 'replaceUser')
       .getMany();
 
-    return absents;
-  }
+    let absentsWithReplaceUser = absents;
 
+    const absents2 = await this.absentRepository
+      .createQueryBuilder('absent')
+      .leftJoinAndSelect('absent.replaceUser', 'replaceUser')
+      .leftJoinAndSelect('replaceUser.director', 'replaceDirector')
+      .leftJoinAndSelect('replaceUser.administrator', 'replaceAdministrator')
+      .leftJoinAndSelect('replaceUser.teacher', 'replaceTeacher')
+      .leftJoinAndSelect('replaceUser.student', 'replaceStudent')
+      .leftJoinAndSelect('replaceUser.parent', 'replaceParent')
+      .leftJoinAndSelect('replaceUser.agent', 'replaceAgent')
+      .innerJoinAndSelect('replaceUser.role', 'replaceRole')
+      .getMany();
+
+    if (absents2.length > 0) {
+      // Perform the join if absents2 contains data
+      absentsWithReplaceUser = absents.map((absent) => {
+        const found = absents2.find((a) => a.id === absent.id);
+        return found ? { ...absent, replaceUser: found.replaceUser } : absent;
+      });
+    }
+
+    return absentsWithReplaceUser;
+  }
 }
