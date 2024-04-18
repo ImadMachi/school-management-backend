@@ -1,5 +1,6 @@
+import { Message } from 'src/messages/entities/message.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Group {
@@ -21,6 +22,9 @@ export class Group {
   @ManyToMany(() => User, (user) => user.administratorGroups)
   @JoinTable()
   administratorUsers: User[];
+
+  @OneToMany(() => Message, (message) => message.group)
+  messages: Message[];
 
   @ManyToMany(() => User, (user) => user.groups)
   @JoinTable()

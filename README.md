@@ -31,14 +31,13 @@ $ sudo chmod -R a+rxw node_modules
 ## Seed the database
 
 ```bash
-# DOCKER
 $ docker compose exec backend npm run seed
 ```
 
 ## Run migrations
 
 ```bash
-$ docker compose exec backend node ./node_modules/typeorm/cli.js migration:run --dataSource ./dist/database/data-source.js
+$ docker compose exec backend npm run migration:run
 ```
 
 ## Get the hostname of running container (for TablePlus)

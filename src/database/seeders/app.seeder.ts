@@ -300,6 +300,23 @@ export default class AppSeeder implements Seeder {
       imagepath: 'school-trips-managers.jpg',
     });
 
+    // Groups
+    const group1 = await groupFactory.save({
+      name: 'Transport',
+      description: 'Gestion des transports scolaires',
+      imagePath: 'school-trips-managers.jpg',
+      administratorUsers: [userAdministrator1],
+      users: [userStudent1, userStudent2, userTeacher1, userTeacher2, userAgent1],
+    });
+
+    const group2 = await groupFactory.save({
+      name: 'Surveillance',
+      description: 'Gestion de la surveillance',
+      imagePath: 'academic.jpg',
+      administratorUsers: [userAdministrator2],
+      users: [userTeacher1, userTeacher2, userAdministrator3],
+    });
+
     // Messages
     const message1 = await messageFactory.save({
       sender: userDirector1,
@@ -409,6 +426,15 @@ export default class AppSeeder implements Seeder {
       body: 'Devoir de mathématiques pour le 20 septembre 2023',
     });
 
+    const message12 = await messageFactory.save({
+      sender: userTeacher1,
+      recipients: [userAgent1],
+      category: messageCategory4,
+      subject: 'Devoir de mathématiques',
+      body: 'Devoir de mathématiques pour le 20 septembre 2023',
+      group: group1,
+    });
+
     // Templates
     const template1 = await templateFactory.save({
       title: 'Rentrée scolaire',
@@ -424,23 +450,6 @@ export default class AppSeeder implements Seeder {
       subject: 'Sortie scolaire',
       body: 'Sortie scolaire le 25 septembre 2021',
       category: messageCategory5,
-    });
-
-    // Groups
-    const group1 = await groupFactory.save({
-      name: 'Transport',
-      description: 'Gestion des transports scolaires',
-      imagePath: 'school-trips-managers.jpg',
-      administratorUsers: [userAdministrator1],
-      users: [userStudent1, userStudent2, userTeacher1, userTeacher2],
-    });
-
-    const group2 = await groupFactory.save({
-      name: 'Surveillance',
-      description: 'Gestion de la surveillance',
-      imagePath: 'academic.jpg',
-      administratorUsers: [userAdministrator2],
-      users: [userTeacher1, userTeacher2, userAdministrator3],
     });
   }
 }

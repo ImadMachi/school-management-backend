@@ -21,6 +21,11 @@ export class GroupsController {
     return this.groupsService.findAll();
   }
 
+  @Get('user/:userId')
+  getGroupsByUser(@Param('userId') userId: number) {
+    return this.groupsService.getGroupsByUser(userId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.groupsService.findOne(id);

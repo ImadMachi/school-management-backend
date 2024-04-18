@@ -15,23 +15,29 @@ export class MessagesController {
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   createMessage(@Body() createMessageDto: CreateMessageDto, @Request() req, @UploadedFiles() files: Array<Express.Multer.File>) {
+    console.log(createMessageDto);
+
     return this.messagesService.createMessage(createMessageDto, req.user, files);
   }
 
   @Get('user/:userId')
   @CheckPolicies(new ManageMessagesPolicyHandler())
   getMessagesByUser(@Param('userId') userId: number, @Query() query: GetMessageQueryDto) {
-    return this.messagesService.getMessagesByFolder(userId, query.folder, query.timestamp);
+    const { folder, timestamp, limit, offset, categoryId, groupId, text } = query;
+    return this.messagesService.getMessagesByFolder(userId, folder, timestamp, categoryId, groupId, text, limit, offset);
   }
 
-  @Get('parent/:parentId/students')
-  getMessagesByParent(@Param('parentId') parentId: number) {
-    return this.messagesService.getStudentMessagesByParent(parentId);
-  }
+  // @Get('children')
+  // getMessagesByParent(@Request() req, @Query() query: GetMessageQueryDto) {
+  //   const { folder, timestamp, limit, offset, categoryId, text } = query;
+  //   return this.messagesService.getStudentMessagesByParent(req.user.id, folder, timestamp, categoryId, text, limit, offset);
+  // }
 
   @Get('auth')
   getAuthenticatedUserMessages(@Request() req, @Query() query: GetMessageQueryDto) {
-    return this.messagesService.getMessagesByFolder(req.user.id, query.folder, query.timestamp);
+    const { folder, timestamp, limit, offset, categoryId, userId, text, groupId } = query;
+    const userIdToUse = userId || req.user.id;
+    return this.messagesService.getMessagesByFolder(userIdToUse, folder, timestamp, categoryId, groupId, text, limit, offset);
   }
 
   @Get('new')

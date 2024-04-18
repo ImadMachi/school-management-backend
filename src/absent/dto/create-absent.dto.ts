@@ -19,7 +19,7 @@ export class CreateAbsentDto {
   @IsString()
   reason: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsBoolean()
   justified: boolean;
 

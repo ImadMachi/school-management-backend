@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 import { Attachment } from './attachment.entity';
 import { MessageCategory } from '../../message-categories/entities/message-category.entity';
+import { Group } from 'src/groups/entities/group.entity';
 
 @Entity()
 export class Message {
@@ -37,6 +38,12 @@ export class Message {
   @JoinTable()
   recipients: User[];
 
+  @ManyToMany(() => User, (user) => user.readMessages)
+  @JoinTable({
+    name: 'message_users_read_by',
+  })
+  readBy: User[];
+
   @ManyToMany(() => User, (user) => user.starredMessages)
   @JoinTable()
   starredBy: User[];
@@ -45,9 +52,14 @@ export class Message {
   @JoinTable()
   trashedBy: User[];
 
-  @ManyToMany(() => User, (user) => user.readMessages)
-  @JoinTable()
-  readBy: User[];
+  @ManyToOne(() => Message, (message) => message.replies)
+  parentMessage: Message;
+
+  @OneToMany(() => Message, (message) => message.parentMessage)
+  replies: Message[];
+
+  @ManyToOne(() => Group, (group) => group.messages, { nullable: true })
+  group: Group;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

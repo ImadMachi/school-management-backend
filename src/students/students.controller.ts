@@ -10,17 +10,26 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
-
   @Post()
   @UseInterceptors(FileInterceptor('profile-images'))
   @CheckPolicies(new ManageStudentsPolicyHandler())
-  create(@Body() createStudentDto: CreateStudentDto, @Query('create-account') createAccount: boolean, @UploadedFile() file: Express.Multer.File) {
+  create(
+    @Body() createStudentDto: CreateStudentDto,
+    @Query('create-account') createAccount: boolean,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     return this.studentsService.create(createStudentDto, createAccount, file);
   }
+
   @Get()
   @CheckPolicies(new ManageStudentsPolicyHandler())
   findAll() {
     return this.studentsService.findAll();
+  }
+
+  @Get('parent/:parentId')
+  findStudentsByParent(@Param('parentId') parentId: number) {
+    return this.studentsService.findStudentsByParent(parentId);
   }
 
   @Get(':id')
@@ -30,13 +39,9 @@ export class StudentsController {
 
   @Patch(':id')
   @CheckPolicies(new ManageStudentsPolicyHandler())
-  update(
-    @Param('id') id: string,
-    @Body() updateStudentDto: UpdateStudentDto
-  ) {
+  update(@Param('id') id: string, @Body() updateStudentDto: UpdateStudentDto) {
     return this.studentsService.update(+id, updateStudentDto);
   }
-
 
   @Delete(':id')
   @CheckPolicies(new ManageStudentsPolicyHandler())

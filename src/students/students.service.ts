@@ -45,6 +45,15 @@ export class StudentsService {
     });
   }
 
+  findStudentsByParent(parentId: number) {
+    return this.studentRepository
+      .createQueryBuilder('student')
+      .leftJoin('student.parent', 'parent')
+      .where('parent.id = :parentId', { parentId })
+      .leftJoinAndSelect('student.user', 'user')
+      .getMany();
+  }
+
   findOne(id: number) {
     return this.studentRepository.findOne({
       where: { id },

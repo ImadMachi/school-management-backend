@@ -8,12 +8,14 @@ import { UpdateGroupDto } from './dto/update-group.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Group } from './entities/group.entity';
+import { MessagesService } from 'src/messages/messages.service';
 
 @Injectable()
 export class GroupsService {
   constructor(
     @InjectRepository(Group)
     private groupRepository: Repository<Group>,
+    private messageService: MessagesService,
   ) {}
 
   async create(createGroupDto: CreateGroupDto, file: Express.Multer.File) {
@@ -27,6 +29,22 @@ export class GroupsService {
 
     const createdGroup = await this.groupRepository.save(group);
     return this.findOne(createdGroup.id);
+  }
+
+  async getGroupsByUser(userId: number) {
+    const groups = await this.groupRepository
+      .createQueryBuilder('group')
+      .leftJoin('group.users', 'users')
+      .where('users.id = :userId', { userId })
+      .getMany();
+
+    for (const group of groups) {
+      const unReadMessagesCount = await this.messageService.getNumberOfUnreadMessagesByGroup(group.id, userId);
+      // @ts-ignore
+      group.unReadMessagesCount = unReadMessagesCount;
+    }
+    // @ts-ignore
+    return groups.sort((a, b) => b.unReadMessagesCount - a.unReadMessagesCount);
   }
 
   findAll() {
