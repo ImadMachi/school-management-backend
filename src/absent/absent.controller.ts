@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Req, NotFoundException } from '@nestjs/common';
 import { AbsentService } from './absent.service';
 import { CreateAbsentDto } from './dto/create-absent.dto';
 import { UpdateAbsentDto } from './dto/update-absent.dto';
@@ -24,11 +24,16 @@ export class AbsentController {
 
   @Get()
   findAll() {
-    return this.absentService.findAll();
+    return this.absentService.getAllAbsents();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.absentService.findOne(id);
+  async getAbsent(@Param('id') id: number, @Req() req) {
+    const userId = req.user.id;
+    const absent = await this.absentService.getAbsent(id);
+    if (!absent) {
+      throw new NotFoundException('Absent record not found');
+    }
+    return absent;
   }
 }

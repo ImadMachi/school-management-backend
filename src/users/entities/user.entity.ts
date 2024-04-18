@@ -102,6 +102,9 @@ export class User {
 
   @ManyToMany(() => Message, (message) => message.readBy)
   readMessages: Message[];
+  
+  @OneToMany(() => Absent, (absent) => absent.absentUser)
+  absents: Absent[];
 
   @ManyToMany(() => Group, (group) => group.users)
   groups: Group[];
@@ -111,8 +114,7 @@ export class User {
   @ManyToMany(() => Absent, (absent) => absent.replaceUser)
   replacements: Absent[];
 
-  @OneToMany(() => Absent, (absent) => absent.absentUser)
-  absents: Absent[];
+
 
   @BeforeInsert()
   @BeforeUpdate()

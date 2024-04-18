@@ -1,5 +1,5 @@
 import { Transform, Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsObject, IsString, ValidateNested } from 'class-validator';
 
 class Id {
   @IsNumber()
@@ -10,6 +10,7 @@ export class UpdateAbsentDto {
 
   @IsNumber()
   id: number;
+
   @IsNotEmpty()
   @Type(() => Date)
   datedebut: Date;
@@ -17,6 +18,7 @@ export class UpdateAbsentDto {
   @IsNotEmpty()
   @Type(() => Date)
   datefin: Date;
+
   @IsNotEmpty()
   @IsString()
   reason: string;
@@ -25,6 +27,7 @@ export class UpdateAbsentDto {
   @IsBoolean()
   justified: boolean;
 
+  @IsObject()
   @ValidateNested({ each: true })
   @Type(() => Id)
   absentUser: Id;

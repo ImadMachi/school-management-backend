@@ -1,11 +1,12 @@
 import { Transform, Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsObject, IsString, ValidateNested } from 'class-validator';
 
 class Id {
   @IsNumber()
   @Transform(({ value }) => parseInt(value, 10))
   id: number;
 }
+
 export class CreateAbsentDto {
   @IsNotEmpty()
   @Type(() => Date)
@@ -16,13 +17,12 @@ export class CreateAbsentDto {
   datefin: Date;
 
   @IsNotEmpty()
-  @IsString()
   reason: string;
 
-  @IsOptional()
-  @IsBoolean()
+  @IsNotEmpty()
   justified: boolean;
 
+  @IsObject()
   @ValidateNested({ each: true })
   @Type(() => Id)
   absentUser: Id;
@@ -31,16 +31,6 @@ export class CreateAbsentDto {
   @ValidateNested({ each: true })
   @Type(() => Id)
   replaceUser: Id[];
-
-  // @IsArray()
-  // @ValidateNested({ each: true })
-  // @Type(() => Id)
-  // classes: Id[];
-
-  // @IsArray()
-  // @ValidateNested({ each: true })
-  // @Type(() => Id)
-  // subjects: Id[];
 
   @IsString()
   title: string;
