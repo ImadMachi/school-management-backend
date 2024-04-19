@@ -6,10 +6,10 @@ COPY package.json ./
 
 RUN yarn global add @nestjs/cli
 
-RUN yarn install
+RUN npm install
 
 COPY . .
 
 EXPOSE 8000
 
-CMD yarn start:dev
+CMD npm run start:dev

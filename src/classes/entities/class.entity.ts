@@ -25,8 +25,7 @@ export class Class {
   @JoinTable()
   teachers: Teacher[];
 
-  @ManyToMany(() => Student, (student) => student.classes)
-  @JoinTable()
+  @OneToMany(() => Student, (student) => student.classe)
   students: Student[];
 
   @ManyToOne(() => Level, (level) => level.classes)
@@ -39,5 +38,4 @@ export class Class {
   // @ManyToMany(() => Absent, (absent) => absent.classes)
   // @JoinTable()
   // absents: Absent[];
-
 }

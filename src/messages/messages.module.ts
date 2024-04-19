@@ -13,5 +13,6 @@ import { ParentsModule } from 'src/parents/parents.module';
   imports: [TypeOrmModule.forFeature([Message, Attachment]), CaslModule, MessageCategoriesModule, UsersModule, ParentsModule],
   controllers: [MessagesController],
   providers: [MessagesService],
+  exports: [MessagesService],
 })
 export class MessagesModule {}

@@ -14,20 +14,20 @@ export class StudentsService {
     private dataSource: DataSource,
     private userService: UsersService,
   ) {}
-  
-  async create(createStudentDto: CreateStudentDto, createAccount: boolean , file: Express.Multer.File) {
+
+  async create(createStudentDto: CreateStudentDto, createAccount: boolean, file: Express.Multer.File) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     let student: Student;
     try {
       const { createUserDto, ...studentDto } = createStudentDto;
-      
+
       student = this.studentRepository.create(studentDto);
       await this.studentRepository.save(student);
 
       if (createAccount && createUserDto) {
-        const user = await this.userService.createForStudent(createUserDto, student , file);
+        const user = await this.userService.createForStudent(createUserDto, student, file);
         student.user = user;
       }
     } catch (error) {
@@ -40,12 +40,23 @@ export class StudentsService {
   }
 
   findAll() {
-    return this.studentRepository.find();
+    return this.studentRepository.find({
+      relations: ['classe'],
+    });
+  }
+
+  findStudentsByParent(parentId: number) {
+    return this.studentRepository
+      .createQueryBuilder('student')
+      .leftJoin('student.parent', 'parent')
+      .where('parent.id = :parentId', { parentId })
+      .leftJoinAndSelect('student.user', 'user')
+      .getMany();
   }
 
   findOne(id: number) {
     return this.studentRepository.findOne({
-      where: { id }
+      where: { id },
     });
   }
 
@@ -79,5 +90,6 @@ export class StudentsService {
     if (!student) {
       throw new NotFoundException();
     }
-    return this.studentRepository.delete(id);  }
+    return this.studentRepository.delete(id);
+  }
 }

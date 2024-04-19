@@ -15,6 +15,7 @@ import { Class } from 'src/classes/entities/class.entity';
 import { Template } from 'src/templates/entities/template.entity';
 import { Level } from 'src/levels/entities/level.entity';
 import { Cycle } from 'src/cycles/entities/cycle.entity';
+import { Group } from 'src/groups/entities/group.entity';
 import { Subject } from 'src/subjects/entities/subject.entity';
 import { Agent } from 'src/agent/entities/agent.entity';
 import { Absent } from 'src/absent/entities/absent.entity';
@@ -55,7 +56,9 @@ export const dataSourceOptions: DataSourceOptions = {
     Administrator,
     Parent,
     Message,
+    MessageCategory,
     Template,
+    Group,
     Attachment,
     Director,
     Agent,
@@ -64,7 +67,7 @@ export const dataSourceOptions: DataSourceOptions = {
     Level,
     Cycle,
     Subject,
-    Absent
+    Absent,
   ],
   synchronize: process.env.NODE_ENV == 'development',
   // @ts-ignore

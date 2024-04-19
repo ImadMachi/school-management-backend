@@ -16,6 +16,7 @@ import { Attachment } from 'src/messages/entities/attachment.entity';
 import { Template } from 'src/templates/entities/template.entity';
 import { Level } from 'src/levels/entities/level.entity';
 import { Cycle } from 'src/cycles/entities/cycle.entity';
+import { Group } from 'src/groups/entities/group.entity';
 import { Subject } from 'src/subjects/entities/subject.entity';
 import { Agent } from 'src/agent/entities/agent.entity';
 import { Absent } from 'src/absent/entities/absent.entity';
@@ -33,6 +34,7 @@ export default class AppSeeder implements Seeder {
     const roleFactory = await factoryManager.get(Role);
     const messageFactory = await factoryManager.get(Message);
     const templateFactory = await factoryManager.get(Template);
+    const groupFactory = await factoryManager.get(Group);
     const messageCategoryFactory = await factoryManager.get(MessageCategory);
     const classFactory = await factoryManager.get(Class);
     const levelFactory = await factoryManager.get(Level);
@@ -56,14 +58,10 @@ export default class AppSeeder implements Seeder {
       firstName: 'Ahmed',
       lastName: 'Mohsin',
     });
-    const customStudent1 = await studentFactory.save({
-      firstName: 'Ahmed',
-      lastName: 'Lahlou',
-      sex: 'mâle',
-      parent: customParent1,
+    const customTeacher1 = await teacherFactory.save({
+      firstName: 'Karim',
+      lastName: 'Rahim',
     });
-
-
 
     // Classes
     const classe1 = await classFactory.save({
@@ -72,6 +70,14 @@ export default class AppSeeder implements Seeder {
       teachers: [teachers[0], teachers[1]],
       students: [students[0], students[1], students[2], students[3], students[4]],
       administrator: administrators[0],
+    });
+
+    const customStudent1 = await studentFactory.save({
+      firstName: 'Ahmed',
+      lastName: 'Lahlou',
+      sex: 'mâle',
+      parent: customParent1,
+      classe: classe1,
     });
 
     const classe2 = await classFactory.save({
@@ -128,10 +134,10 @@ export default class AppSeeder implements Seeder {
 
     // Subjects
 
-     const subject1 = await subjectFactory.save({
-       name: 'French',
-       teachers: [teachers[0], teachers[1]],
-     });
+    const subject1 = await subjectFactory.save({
+      name: 'French',
+      teachers: [teachers[0], teachers[1]],
+    });
 
     // const subject2 = await subjectFactory.save({
     //   name: ' English',
@@ -139,7 +145,6 @@ export default class AppSeeder implements Seeder {
     //   classes: [classe1, classe3],
     // });
 
-   
     // Absents
 
     const absent1 = await absentFactory.save({
@@ -156,7 +161,6 @@ export default class AppSeeder implements Seeder {
     });
 
     const absent2 = await absentFactory.save({
-
       datedebut: new Date(),
       datefin: new Date(),
       reason: 'Sick',
@@ -222,10 +226,10 @@ export default class AppSeeder implements Seeder {
     });
 
     const userTeacher1 = await userFactory.save({
-      email: `${teachers[0].lastName.toLowerCase()}@gmail.com`,
+      email: `${customTeacher1.lastName.toLowerCase()}.enseignant@gmail.com`,
       password: '123456',
       role: teacherRole,
-      teacher: teachers[0],
+      teacher: customTeacher1,
     });
 
     const userTeacher2 = await userFactory.save({
@@ -254,10 +258,12 @@ export default class AppSeeder implements Seeder {
       role: parentRole,
       parent: customParent1,
     });
+
     const userAgent1 = await userFactory.save({
       email: `${customAgent1.lastName.toLowerCase()}.agent@gmail.com`,
       password: '123456',
       role: agentRole,
+      agent: customAgent1,
     });
 
     // Message Categories
@@ -289,6 +295,23 @@ export default class AppSeeder implements Seeder {
       name: 'Voyage scolaire',
       slug: generateSlug('Voyage scolaire'),
       imagepath: 'school-trips-managers.jpg',
+    });
+
+    // Groups
+    const group1 = await groupFactory.save({
+      name: 'Transport',
+      description: 'Gestion des transports scolaires',
+      imagePath: 'school-trips-managers.jpg',
+      administratorUsers: [userAdministrator1],
+      users: [userStudent1, userStudent2, userTeacher1, userTeacher2, userAgent1],
+    });
+
+    const group2 = await groupFactory.save({
+      name: 'Surveillance',
+      description: 'Gestion de la surveillance',
+      imagePath: 'academic.jpg',
+      administratorUsers: [userAdministrator2],
+      users: [userTeacher1, userTeacher2, userAdministrator3],
     });
 
     // Messages
@@ -398,6 +421,15 @@ export default class AppSeeder implements Seeder {
       category: messageCategory4,
       subject: 'Devoir de mathématiques',
       body: 'Devoir de mathématiques pour le 20 septembre 2023',
+    });
+
+    const message12 = await messageFactory.save({
+      sender: userTeacher1,
+      recipients: [userAgent1],
+      category: messageCategory4,
+      subject: 'Devoir de mathématiques',
+      body: 'Devoir de mathématiques pour le 20 septembre 2023',
+      group: group1,
     });
 
     // Templates

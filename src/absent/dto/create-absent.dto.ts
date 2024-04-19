@@ -8,7 +8,6 @@ class Id {
 }
 
 export class CreateAbsentDto {
-  
   @IsNotEmpty()
   @Type(() => Date)
   datedebut: Date;
@@ -45,5 +44,4 @@ export class CreateAbsentDto {
 
   @IsString()
   status: string;
-
 }

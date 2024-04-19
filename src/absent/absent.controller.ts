@@ -12,7 +12,7 @@ export class AbsentController {
     return this.absentService.create(createAbsentDto);
   }
 
-  @Put() 
+  @Put()
   update(@Body() updateAbsentDto: UpdateAbsentDto) {
     return this.absentService.update(updateAbsentDto);
   }
@@ -36,5 +36,4 @@ export class AbsentController {
     }
     return absent;
   }
-  
 }

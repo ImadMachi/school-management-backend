@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Message } from './entities/message.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { User } from 'src/users/entities/user.entity';
 import * as fs from 'fs';
@@ -12,6 +12,7 @@ import { MailFolder } from './enums/mail-folder.enum';
 import { MessageCategoriesService } from 'src/message-categories/message-categories.service';
 import { UsersService } from 'src/users/users.service';
 import { ParentsService } from 'src/parents/parents.service';
+import { ContactAdministrationDto } from './dto/contact-administration.dto';
 
 @Injectable()
 export class MessagesService {
@@ -45,6 +46,21 @@ export class MessagesService {
     return this.getMessage(newMessage.id, user.id);
   }
 
+  async contactAdministration(user: User, contactAdministrationDto: ContactAdministrationDto) {
+    const directorUser = await this.usersService.findDirectorForUser(user.id);
+    return this.createMessage(
+      {
+        subject: contactAdministrationDto.subject,
+        body: contactAdministrationDto.body,
+        recipients: [{ id: directorUser.id }],
+        categoryId: 1,
+        parentMessage: { id: null },
+      },
+      user,
+      [],
+    );
+  }
+
   async getMessage(id: number, userId: number) {
     const message = await this.messageRepository
       .createQueryBuilder('message')
@@ -53,12 +69,14 @@ export class MessagesService {
       .leftJoinAndSelect('sender.director', 'director')
       .leftJoinAndSelect('sender.administrator', 'administrator')
       .leftJoinAndSelect('sender.teacher', 'teacher')
+      .leftJoinAndSelect('sender.agent', 'agent')
       .leftJoinAndSelect('sender.student', 'student')
       .leftJoinAndSelect('sender.parent', 'parent')
       .leftJoinAndSelect('message.attachments', 'attachments')
       .leftJoinAndSelect('message.readBy', 'readBy')
       .leftJoinAndSelect('message.starredBy', 'starredBy')
       .leftJoinAndSelect('message.trashedBy', 'trashedBy')
+      .leftJoinAndSelect('message.parentMessage', 'parentMessage')
       .innerJoinAndSelect('sender.role', 'role')
       .getOne();
 
@@ -75,45 +93,78 @@ export class MessagesService {
     return { ...message, isRead, isStarred, isTrashed };
   }
 
-  async getMessagesByFolder(userId: number, folder: string, timestamp?: string) {
+  async getMessagesByFolder(
+    userId: number,
+    folder: string,
+    timestamp?: string,
+    categoryId?: number,
+    groupId?: number,
+    text?: string,
+    limit = 10,
+    offset = 0,
+  ) {
     const queryBuilder = this.messageRepository
       .createQueryBuilder('message')
       .leftJoinAndSelect('message.starredBy', 'starredBy')
       .leftJoinAndSelect('message.trashedBy', 'trashedBy');
 
-    if (folder != MailFolder.TrashedBy) {
-      queryBuilder.andWhere('trashedBy.id != :userId', { userId });
-    }
-
     if (timestamp) {
       queryBuilder.andWhere('message.createdAt > :timestamp', { timestamp: new Date(timestamp) });
     }
 
+    if (limit) {
+      queryBuilder.take(limit);
+    }
+    if (offset) {
+      queryBuilder.skip(offset);
+    }
+
+    if (categoryId) {
+      queryBuilder.andWhere('category.id = :categoryId', { categoryId });
+    }
+
     if (folder === MailFolder.Sender) {
-      queryBuilder.innerJoinAndSelect('message.sender', 'sender').where('sender.id = :userId', { userId });
+      queryBuilder.innerJoinAndSelect('message.sender', 'sender').andWhere('sender.id = :userId', { userId });
     } else if (folder === MailFolder.Recipients) {
       queryBuilder
         .innerJoin('message.recipients', 'recipient')
-        .where('recipient.id = :userId', { userId })
+        .andWhere('recipient.id = :userId', { userId })
         .innerJoinAndSelect('message.sender', 'sender');
     } else if (folder === MailFolder.StarredBy) {
-      queryBuilder.where('starredBy.id = :userId', { userId }).innerJoinAndSelect('message.sender', 'sender');
+      queryBuilder.andWhere('starredBy.id = :userId', { userId }).innerJoinAndSelect('message.sender', 'sender');
     } else if (folder === MailFolder.TrashedBy) {
-      queryBuilder.where('trashedBy.id = :userId', { userId }).innerJoinAndSelect('message.sender', 'sender');
+      queryBuilder.andWhere('trashedBy.id = :userId', { userId }).innerJoinAndSelect('message.sender', 'sender');
     }
 
-    const messages = await queryBuilder
+    if (groupId) {
+      queryBuilder.leftJoin('message.group', 'group').andWhere('group.id = :groupId', { groupId });
+    }
+
+    queryBuilder
       .leftJoinAndSelect('sender.director', 'director')
       .leftJoinAndSelect('sender.administrator', 'administrator')
       .leftJoinAndSelect('sender.teacher', 'teacher')
+      .leftJoinAndSelect('sender.agent', 'agent')
       .leftJoinAndSelect('sender.student', 'student')
       .leftJoinAndSelect('sender.parent', 'parent')
       .leftJoinAndSelect('message.attachments', 'attachments')
       .leftJoinAndSelect('message.readBy', 'readBy')
       .innerJoinAndSelect('sender.role', 'role')
       .innerJoinAndSelect('message.category', 'category')
-      .orderBy('message.createdAt', 'DESC')
-      .getMany();
+      .leftJoinAndSelect('message.parentMessage', 'parentMessage');
+
+    if (text) {
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          qb.where('LOWER(message.subject) LIKE :text').orWhere('LOWER(message.body) LIKE :text').orWhere('LOWER(sender.email) LIKE :text');
+        }),
+        { text: `%${text.toLowerCase()}%` },
+      );
+    }
+
+    queryBuilder.orderBy('message.createdAt', 'DESC');
+
+    const messages = await queryBuilder.getMany();
 
     return messages.map((message) => {
       const isRead = message.readBy.some((u) => u.id === userId);
@@ -136,6 +187,7 @@ export class MessagesService {
       .leftJoinAndSelect('sender.director', 'director')
       .leftJoinAndSelect('sender.administrator', 'administrator')
       .leftJoinAndSelect('sender.teacher', 'teacher')
+      .leftJoinAndSelect('sender.agent', 'agent')
       .leftJoinAndSelect('sender.student', 'student')
       .leftJoinAndSelect('sender.parent', 'parent')
       .leftJoinAndSelect('message.attachments', 'attachments')
@@ -144,6 +196,7 @@ export class MessagesService {
       .leftJoinAndSelect('message.trashedBy', 'trashedBy')
       .innerJoinAndSelect('sender.role', 'role')
       .innerJoinAndSelect('message.category', 'category')
+      .leftJoinAndSelect('message.parentMessage', 'parentMessage')
       .orderBy('message.createdAt', 'DESC')
       .getMany();
 
@@ -158,26 +211,52 @@ export class MessagesService {
     });
   }
 
-  async getStudentMessagesByParent(parentId: number) {
-    const parent = await this.parentService.findOne(parentId);
-    if (!parent) {
-      throw new NotFoundException('Parent not found');
-    }
-
-    const studentUsersIds = parent.students.map((student) => student.userId);
-
-    return Promise.all(
-      studentUsersIds.map(async (studenUsertId) => {
-        return {
-          studentData: await this.usersService.findOne(studenUsertId),
-          messages: await this.getMessagesByFolder(studenUsertId, MailFolder.Recipients),
-        };
-      }),
-    );
+  getNumberOfUnreadMessagesByGroup(groupId: number, userId: number) {
+    return this.messageRepository
+      .createQueryBuilder('message')
+      .innerJoin('message.recipients', 'recipient')
+      .where('recipient.id = :userId', { userId })
+      .andWhere('message.groupId = :groupId', { groupId })
+      .andWhere((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('message_users_read_by.messageId')
+          .from('message_users_read_by', 'message_users_read_by')
+          .where('message_users_read_by.userId = :userId', { userId })
+          .getQuery();
+        return 'message.id NOT IN ' + subQuery;
+      })
+      .getCount();
   }
 
+  // async getStudentMessagesByParent(
+  //   parentId: number,
+  //   folder: string,
+  //   timestamp?: string,
+  //   categoryId?: number,
+  //   text?: string,
+  //   limit = 10,
+  //   offset = 0,
+  // ) {
+  //   const parent = await this.parentService.findOne(parentId);
+  //   if (!parent) {
+  //     throw new NotFoundException('Parent not found');
+  //   }
+
+  //   const studentUsersIds = parent.students.map((student) => student.userId);
+
+  //   return Promise.all(
+  //     studentUsersIds.map(async (studenUsertId) => {
+  //       return {
+  //         studentData: await this.usersService.findOne(studenUsertId),
+  //         messages: await this.getMessagesByFolder(studenUsertId, folder, timestamp, categoryId, text, limit, offset),
+  //       };
+  //     }),
+  //   );
+  // }
+
   async markMessageAsRead(messageId: number, userId: number) {
-    const message = await this.messageRepository.findOne({ where: { id: messageId }, relations: ['readBy'] });
+    const message = await this.messageRepository.findOne({ where: { id: messageId }, relations: ['readBy', 'sender'] });
 
     if (!message) {
       throw new NotFoundException('Message not found');
@@ -189,7 +268,7 @@ export class MessagesService {
       throw new NotFoundException('User not found');
     }
 
-    if (!message.readBy.some((u) => u.id === userId)) {
+    if (!message.readBy.some((u) => u.id === userId) && message.sender.id !== userId) {
       message.readBy.push(user);
     }
 

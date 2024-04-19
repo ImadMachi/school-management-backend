@@ -17,6 +17,7 @@ import levelFactory from './factories/level.factory';
 import attachmentFactory from './factories/attachment.factory';
 import templateFactory from './factories/template.factor';
 import cycleFactory from './factories/cycle.factory';
+import groupFactory from './factories/group.factory';
 import subjectFactory from './factories/subject.factory';
 import agentFactory from './factories/agent.factory';
 import absentFactory from './factories/absent.factory';
@@ -36,6 +37,7 @@ async function seed() {
       userFactory,
       messageFactory,
       templateFactory,
+      groupFactory,
       messageCategoryFactory,
       classFactory,
       levelFactory,

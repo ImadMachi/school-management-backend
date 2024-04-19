@@ -1,5 +1,4 @@
 import {
-  Admin,
   BeforeInsert,
   BeforeUpdate,
   Column,
@@ -12,6 +11,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+
 import { Teacher } from '../../teachers/entities/teacher.entity';
 import { Student } from '../../students/entities/student.entity';
 import { Administrator } from '../../administrators/entities/administrator.entity';
@@ -20,6 +20,7 @@ import { Role } from '../../roles/entities/role.entity';
 import { Message } from '../../messages/entities/message.entity';
 import { Parent } from 'src/parents/entities/parent.entity';
 import { Director } from 'src/director/entities/director.entity';
+import { Group } from 'src/groups/entities/group.entity';
 import { Agent } from 'src/agent/entities/agent.entity';
 import { Absent } from 'src/absent/entities/absent.entity';
 
@@ -42,15 +43,15 @@ export class User {
   @Transform(({ value }) => value.name)
   role: Role;
 
+  @Column({ nullable: true })
+  profileImage: string;
+
   @OneToOne(() => Director, (director) => director.user, {
     nullable: true,
     onDelete: 'CASCADE',
   })
   @JoinColumn()
   director: Director;
-
-  @Column({ nullable: true })
-  profileImage: string;
 
   @OneToOne(() => Administrator, (administrator) => administrator.user, {
     nullable: true,
@@ -105,7 +106,12 @@ export class User {
   @OneToMany(() => Absent, (absent) => absent.absentUser)
   absents: Absent[];
 
-  @ManyToMany(()=> Absent, (absent) => absent.replaceUser)
+  @ManyToMany(() => Group, (group) => group.users)
+  groups: Group[];
+
+  @ManyToMany(() => Group, (group) => group.administratorUsers)
+  administratorGroups: Group[];
+  @ManyToMany(() => Absent, (absent) => absent.replaceUser)
   replacements: Absent[];
 
 
@@ -116,11 +122,11 @@ export class User {
     this.email = this.email.toLowerCase();
   }
 
+  // @BeforeInsert()
+  // @BeforeUpdate()
+  // async hashPassword() {
+  //   const salt = await bcrypt.genSalt();
 
-  @BeforeInsert()
-  @BeforeUpdate()
-  async hashPassword() {
-    const salt = await bcrypt.genSalt();
-    this.password = await bcrypt.hash(this.password, salt);
-  }
+  //   this.password = await bcrypt.hash(this.password, salt);
+  // }
 }

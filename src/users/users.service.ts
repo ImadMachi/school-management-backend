@@ -139,6 +139,18 @@ export class UsersService {
     return query.getOne();
   }
 
+  async findDirectorForUser(userId: number): Promise<User | null> {
+    const directorUser = await this.usersRepository.findOne({
+      where: { role: { name: RoleName.Director } },
+      relations: ['director'],
+    });
+
+    if (!directorUser) {
+      throw new HttpException('Director not found', HttpStatus.NOT_FOUND);
+    }
+    return directorUser;
+  }
+
   async remove(id: number): Promise<User | null> {
     const userToDelete = await this.usersRepository.findOne({
       where: { id },

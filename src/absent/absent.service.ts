@@ -4,14 +4,12 @@ import { UpdateAbsentDto } from './dto/update-absent.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Absent } from './entities/absent.entity';
 import { Repository } from 'typeorm';
-import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AbsentService {
   constructor(
     @InjectRepository(Absent)
     private absentRepository: Repository<Absent>,
-    private usersSerivce: UsersService,
   ) {}
 
   async create(createAbsentDto: CreateAbsentDto) {
