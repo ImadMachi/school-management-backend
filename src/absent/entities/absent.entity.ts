@@ -29,6 +29,9 @@ export class Absent {
   replaceUser: User[];
 
   @Column()
+  seance: string;
+
+  @Column()
   title: string;
 
   @Column()

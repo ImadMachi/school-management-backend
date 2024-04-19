@@ -33,6 +33,9 @@ export class CreateAbsentDto {
   @Type(() => Id)
   replaceUser: Id[];
 
+  @IsString()
+  seance: string;
+
 
   @IsString()
   title: string;
