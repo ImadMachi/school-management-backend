@@ -41,7 +41,7 @@ export class StudentsService {
 
   findAll() {
     return this.studentRepository.find({
-      relations: ['classe'],
+      relations: ['classe', 'parent'],
     });
   }
 
@@ -57,6 +57,8 @@ export class StudentsService {
   findOne(id: number) {
     return this.studentRepository.findOne({
       where: { id },
+      relations: ['classe', 'parent'],
+
     });
   }
 

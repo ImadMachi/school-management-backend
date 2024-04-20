@@ -50,6 +50,7 @@ export default class AppSeeder implements Seeder {
     const students = await studentFactory.saveMany(5);
     const parents = await parentFactory.saveMany(5);
     const agents = await agentFactory.saveMany(5);
+
     const customParent1 = await parentFactory.save({
       firstName: 'Ali',
       lastName: 'Lahlou',
