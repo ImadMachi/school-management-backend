@@ -36,6 +36,9 @@ export class User {
   @Exclude()
   password: string;
 
+  @Column({ default: false })
+  disabled: boolean;
+
   @Column({ default: true })
   isActive: boolean;
 

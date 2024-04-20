@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -83,8 +83,8 @@ export class UsersService {
     user.role = role;
 
     return this.create(user, file); // Pass an empty array as the second argument
-  }  
-  
+  }
+
   async createForAgent(createUserDto: CreateUserDto, agent, file: Express.Multer.File): Promise<User> {
     const role = await this.roleService.findByName(RoleName.Agent);
 
@@ -107,7 +107,6 @@ export class UsersService {
     query.leftJoinAndSelect('user.director', 'director');
     query.leftJoinAndSelect('user.agent', 'agent');
 
-
     return query.getMany();
   }
 
@@ -118,7 +117,7 @@ export class UsersService {
   findOne(id: number): Promise<User | null> {
     return this.usersRepository.findOne({
       where: { id },
-      relations: ['role', 'administrator', 'teacher', 'student', 'parent', 'director','agent'],
+      relations: ['role', 'administrator', 'teacher', 'student', 'parent', 'director', 'agent'],
     });
   }
 
@@ -135,7 +134,7 @@ export class UsersService {
     query.leftJoinAndSelect('user.parent', 'parent');
     query.leftJoinAndSelect('user.director', 'director');
     query.leftJoinAndSelect('user.agent', 'agent');
-    
+
     return query.getOne();
   }
 
@@ -184,6 +183,19 @@ export class UsersService {
 
   public async uploadProfileImage(file: Express.Multer.File, user: User): Promise<string> {
     return this.saveProfileImage(file, user);
+  }
+
+  async updateUserStatus(userId: number, disabled: boolean): Promise<User> {
+
+    const user = await this.findOne(userId);
+    
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.disabled = disabled;
+
+    return await this.usersRepository.save(user);
   }
 
   public async changePassword(id: number, newPassword: string): Promise<void> {
