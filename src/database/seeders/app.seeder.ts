@@ -54,6 +54,7 @@ export default class AppSeeder implements Seeder {
     const customParent1 = await parentFactory.save({
       firstName: 'Ali',
       lastName: 'Lahlou',
+      students: [students[0], students[1]],
     });
     const customAgent1 = await agentFactory.save({
       firstName: 'Ahmed',

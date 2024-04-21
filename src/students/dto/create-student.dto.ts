@@ -27,11 +27,6 @@ export class CreateStudentDto {
   @IsObject()
   @ValidateNested()
   @Type(() => Id)
-  classe: Id;
-
-  @IsObject()
-  @ValidateNested()
-  @Type(() => Id)
   parent: Id;
   // @IsOptional()
   @ValidateNested({ each: true })
