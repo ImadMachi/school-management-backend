@@ -36,7 +36,8 @@ export class StudentsService {
       throw new HttpException(error.message, error.status);
     }
     await queryRunner.release();
-    return student;
+    return this.findOne(student.id)
+    //return student;
   }
 
   findAll() {
