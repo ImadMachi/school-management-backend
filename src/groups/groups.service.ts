@@ -34,6 +34,7 @@ export class GroupsService {
   async getGroupsByUser(userId: number) {
     const groups = await this.groupRepository
       .createQueryBuilder('group')
+      .where('group.isActive = :isActive', { isActive: true })
       .leftJoin('group.users', 'users')
       .where('users.id = :userId', { userId })
       .getMany();
@@ -60,6 +61,7 @@ export class GroupsService {
       .leftJoinAndSelect('users.teacher', 'teacher')
       .leftJoinAndSelect('users.student', 'student')
       .leftJoinAndSelect('users.parent', 'parent')
+      .leftJoinAndSelect('users.agent', 'agent')
       .leftJoinAndSelect('users.role', 'rolex')
       .getMany();
   }
@@ -76,6 +78,7 @@ export class GroupsService {
       .leftJoinAndSelect('users.administrator', 'administratorx')
       .leftJoinAndSelect('users.teacher', 'teacher')
       .leftJoinAndSelect('users.student', 'student')
+      .leftJoinAndSelect('users.agent', 'agent')
       .leftJoinAndSelect('users.parent', 'parent')
       .getOne();
   }

@@ -36,6 +36,7 @@ export class MessagesController {
   @Get('auth')
   getAuthenticatedUserMessages(@Request() req, @Query() query: GetMessageQueryDto) {
     const { folder, timestamp, limit, offset, categoryId, userId, text, groupId } = query;
+
     const userIdToUse = userId || req.user.id;
     return this.messagesService.getMessagesByFolder(userIdToUse, folder, timestamp, categoryId, groupId, text, limit, offset);
   }

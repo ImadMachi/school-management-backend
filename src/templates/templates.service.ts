@@ -12,10 +12,15 @@ export class TemplatesService {
     private templateRepository: Repository<Template>,
   ) {}
 
-  create(createTemplateDto: CreateTemplateDto) {
+  async create(createTemplateDto: CreateTemplateDto) {
     const template = new Template();
     Object.assign(template, createTemplateDto);
-    return this.templateRepository.save(template);
+    await this.templateRepository.save(template);
+    return this.findOne(template.id);
+  }
+
+  findOne(id: number) {
+    return this.templateRepository.findOne({ where: { id }, relations: ['category'] });
   }
 
   findAll() {

@@ -25,6 +25,9 @@ export class Message {
   @Column()
   body: string;
 
+  @Column({ default: false })
+  isDeleted: boolean;
+
   @ManyToOne(() => MessageCategory, (messageCategory) => messageCategory.messages)
   category: MessageCategory;
 
@@ -47,10 +50,6 @@ export class Message {
   @ManyToMany(() => User, (user) => user.starredMessages)
   @JoinTable()
   starredBy: User[];
-
-  @ManyToMany(() => User, (user) => user.trashMessages)
-  @JoinTable()
-  trashedBy: User[];
 
   @ManyToOne(() => Message, (message) => message.replies)
   parentMessage: Message;

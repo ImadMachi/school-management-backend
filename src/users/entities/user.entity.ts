@@ -97,12 +97,9 @@ export class User {
   @ManyToMany(() => Message, (message) => message.starredBy)
   starredMessages: Message[];
 
-  @ManyToMany(() => Message, (message) => message.trashedBy)
-  trashMessages: Message[];
-
   @ManyToMany(() => Message, (message) => message.readBy)
   readMessages: Message[];
-  
+
   @OneToMany(() => Absent, (absent) => absent.absentUser)
   absents: Absent[];
 
@@ -111,10 +108,9 @@ export class User {
 
   @ManyToMany(() => Group, (group) => group.administratorUsers)
   administratorGroups: Group[];
+
   @ManyToMany(() => Absent, (absent) => absent.replaceUser)
   replacements: Absent[];
-
-
 
   @BeforeInsert()
   @BeforeUpdate()

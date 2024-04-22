@@ -1,4 +1,11 @@
-import { IsNotEmpty } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
+
+class Id {
+  @IsNumber()
+  @Transform(({ value }) => parseInt(value, 10))
+  id: number;
+}
 
 export class CreateTemplateDto {
   @IsNotEmpty()
@@ -13,6 +20,7 @@ export class CreateTemplateDto {
   @IsNotEmpty()
   body: string;
 
-  @IsNotEmpty()
-  category: number;
+  @ValidateNested({ each: true })
+  @Type(() => Id)
+  category: Id;
 }

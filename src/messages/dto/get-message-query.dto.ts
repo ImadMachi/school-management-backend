@@ -1,4 +1,4 @@
-import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 import { MailFolder } from '../enums/mail-folder.enum';
 import { Transform } from 'class-transformer';
 
@@ -38,4 +38,8 @@ export class GetMessageQueryDto {
   @IsString()
   @IsOptional()
   text: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isDeleted: boolean;
 }

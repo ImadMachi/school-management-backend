@@ -75,8 +75,8 @@ export class MessagesService {
       .leftJoinAndSelect('message.attachments', 'attachments')
       .leftJoinAndSelect('message.readBy', 'readBy')
       .leftJoinAndSelect('message.starredBy', 'starredBy')
-      .leftJoinAndSelect('message.trashedBy', 'trashedBy')
       .leftJoinAndSelect('message.parentMessage', 'parentMessage')
+      .leftJoinAndSelect('message.category', 'category')
       .innerJoinAndSelect('sender.role', 'role')
       .getOne();
 
@@ -86,11 +86,9 @@ export class MessagesService {
 
     const isRead = message.readBy.some((u) => u.id === userId);
     const isStarred = message.starredBy.some((u) => u.id === userId);
-    const isTrashed = message.trashedBy.some((u) => u.id === userId);
     delete message.readBy;
     delete message.starredBy;
-    delete message.trashedBy;
-    return { ...message, isRead, isStarred, isTrashed };
+    return { ...message, isRead, isStarred };
   }
 
   async getMessagesByFolder(
@@ -103,10 +101,7 @@ export class MessagesService {
     limit = 10,
     offset = 0,
   ) {
-    const queryBuilder = this.messageRepository
-      .createQueryBuilder('message')
-      .leftJoinAndSelect('message.starredBy', 'starredBy')
-      .leftJoinAndSelect('message.trashedBy', 'trashedBy');
+    const queryBuilder = this.messageRepository.createQueryBuilder('message').leftJoinAndSelect('message.starredBy', 'starredBy');
 
     if (timestamp) {
       queryBuilder.andWhere('message.createdAt > :timestamp', { timestamp: new Date(timestamp) });
@@ -132,8 +127,12 @@ export class MessagesService {
         .innerJoinAndSelect('message.sender', 'sender');
     } else if (folder === MailFolder.StarredBy) {
       queryBuilder.andWhere('starredBy.id = :userId', { userId }).innerJoinAndSelect('message.sender', 'sender');
-    } else if (folder === MailFolder.TrashedBy) {
-      queryBuilder.andWhere('trashedBy.id = :userId', { userId }).innerJoinAndSelect('message.sender', 'sender');
+    }
+
+    if (folder === MailFolder.TrashedBy) {
+      queryBuilder.andWhere('message.isDeleted = true').innerJoinAndSelect('message.sender', 'sender');
+    } else {
+      queryBuilder.andWhere('message.isDeleted = false');
     }
 
     if (groupId) {
@@ -169,11 +168,9 @@ export class MessagesService {
     return messages.map((message) => {
       const isRead = message.readBy.some((u) => u.id === userId);
       const isStarred = message.starredBy.some((u) => u.id === userId);
-      const isTrashed = message.trashedBy.some((u) => u.id === userId);
       delete message.readBy;
       delete message.starredBy;
-      delete message.trashedBy;
-      return { ...message, isRead, isStarred, isTrashed };
+      return { ...message, isRead, isStarred };
     });
   }
 
@@ -193,7 +190,6 @@ export class MessagesService {
       .leftJoinAndSelect('message.attachments', 'attachments')
       .leftJoinAndSelect('message.readBy', 'readBy')
       .leftJoinAndSelect('message.starredBy', 'starredBy')
-      .leftJoinAndSelect('message.trashedBy', 'trashedBy')
       .innerJoinAndSelect('sender.role', 'role')
       .innerJoinAndSelect('message.category', 'category')
       .leftJoinAndSelect('message.parentMessage', 'parentMessage')
@@ -203,11 +199,9 @@ export class MessagesService {
     return messages.map((message) => {
       const isRead = message.readBy.some((u) => u.id === userId);
       const isStarred = message.starredBy.some((u) => u.id === userId);
-      const isTrashed = message.trashedBy.some((u) => u.id === userId);
       delete message.readBy;
       delete message.starredBy;
-      delete message.trashedBy;
-      return { ...message, isRead, isStarred, isTrashed };
+      return { ...message, isRead, isStarred };
     });
   }
 
@@ -275,6 +269,18 @@ export class MessagesService {
     await this.messageRepository.save(message);
   }
 
+  async moveMessageToTrash(messageId: number, userId: number) {
+    const message = await this.messageRepository.findOne({ where: { id: messageId } });
+    message.isDeleted = true;
+    await this.messageRepository.save(message);
+  }
+
+  async moveMessageFromTrash(messageId: number, userId: number) {
+    const message = await this.messageRepository.findOne({ where: { id: messageId } });
+    message.isDeleted = false;
+    await this.messageRepository.save(message);
+  }
+
   async markMessageAsStarred(messageId: number, userId: number) {
     const message = await this.messageRepository.findOne({ where: { id: messageId }, relations: ['starredBy'] });
 
@@ -309,44 +315,6 @@ export class MessagesService {
     }
 
     message.starredBy = message.starredBy.filter((u) => u.id !== userId);
-
-    await this.messageRepository.save(message);
-  }
-
-  async moveMessageToTrash(messageId: number, userId: number) {
-    const message = await this.messageRepository.findOne({ where: { id: messageId }, relations: ['trashedBy'] });
-
-    if (!message) {
-      throw new NotFoundException('Message not found');
-    }
-
-    const user = await this.usersService.findOne(userId);
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    if (!message.trashedBy.some((u) => u.id === userId)) {
-      message.trashedBy.push(user);
-    }
-
-    await this.messageRepository.save(message);
-  }
-
-  async moveMessageFromTrash(messageId: number, userId: number) {
-    const message = await this.messageRepository.findOne({ where: { id: messageId }, relations: ['trashedBy'] });
-
-    if (!message) {
-      throw new NotFoundException('Message not found');
-    }
-
-    const user = await this.usersService.findOne(userId);
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    message.trashedBy = message.trashedBy.filter((u) => u.id !== userId);
 
     await this.messageRepository.save(message);
   }

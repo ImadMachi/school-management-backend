@@ -1,5 +1,5 @@
 import { Transform, Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, IsObject, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
 
 class Id {
   @IsNumber()
@@ -23,7 +23,6 @@ export class UpdateTemplateDto {
   @IsNotEmpty()
   body: string;
 
-  @IsObject()
   @ValidateNested()
   @Type(() => Id)
   category: Id;
