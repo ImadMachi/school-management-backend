@@ -48,36 +48,7 @@ export class AbsentService {
     }
     return id;
   }
-
-  // async getAbsent(absentId: number) {
-  //   const absent = await this.absentRepository
-  //     .createQueryBuilder('absent')
-  //     .where('absent.id = :id', { id: absentId })
-  //     .innerJoinAndSelect('absent.absentUser', 'absentUser')
-  //     .leftJoinAndSelect('absentUser.director', 'director')
-  //     .leftJoinAndSelect('absentUser.administrator', 'administrator')
-  //     .leftJoinAndSelect('absentUser.teacher', 'teacher')
-  //     .leftJoinAndSelect('absentUser.student', 'student')
-  //     .leftJoinAndSelect('absentUser.parent', 'parent')
-  //     .innerJoinAndSelect('absentUser.role', 'role')
-  //     .leftJoinAndSelect('absent.replaceUser', 'replaceUser')
-  //     .leftJoinAndSelect('replaceUser.director', 'replaceDirector')
-  //     .leftJoinAndSelect('replaceUser.administrator', 'replaceAdministrator')
-  //     .leftJoinAndSelect('replaceUser.teacher', 'replaceTeacher')
-  //     .leftJoinAndSelect('replaceUser.student', 'replaceStudent')
-  //     .leftJoinAndSelect('replaceUser.parent', 'replaceParent')
-  //     .innerJoinAndSelect('replaceUser.role', 'replaceRole')
-  //     .getOne();
-
-  //   if (!absent) {
-  //     throw new NotFoundException('Absent record not found');
-  //   }
-
-  //   return {
-  //     ...absent,
-  //   };
-  // }
-
+  
   async getAbsent(absentId?: number) {
     const absents = await this.absentRepository
       .createQueryBuilder('absent')

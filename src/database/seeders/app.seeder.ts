@@ -50,9 +50,11 @@ export default class AppSeeder implements Seeder {
     const students = await studentFactory.saveMany(5);
     const parents = await parentFactory.saveMany(5);
     const agents = await agentFactory.saveMany(5);
+
     const customParent1 = await parentFactory.save({
       firstName: 'Ali',
       lastName: 'Lahlou',
+      students: [students[0], students[1]],
     });
     const customAgent1 = await agentFactory.save({
       firstName: 'Ahmed',
@@ -156,6 +158,7 @@ export default class AppSeeder implements Seeder {
       body: 'Absent',
       absentUser: User[2],
       replaceUser: [User[2], User[3]],
+      seance: 'seance 3',
       status: 'Pending',
     });
 
@@ -168,6 +171,7 @@ export default class AppSeeder implements Seeder {
       body: 'Absent',
       absentUser: User[4],
       replaceUser: [User[5], User[6]],
+      seance: 'seance 1',
       status: 'Pending',
     });
 
@@ -180,6 +184,7 @@ export default class AppSeeder implements Seeder {
       body: 'Absent',
       absentUser: User[8],
       replaceUser: [User[4], User[6]],
+      seance: 'seance 2',
       status: 'Pending',
     });
 

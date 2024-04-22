@@ -37,15 +37,8 @@ export class UpdateAbsentDto {
   @Type(() => Id)
   replaceUser: Id[];
 
-  // @IsArray()
-  // @ValidateNested({ each: true })
-  // @Type(() => Id)
-  // classes: Id[];
-
-  // @IsArray()
-  // @ValidateNested({ each: true })
-  // @Type(() => Id)
-  // subjects: Id[];
+  @IsString()
+  seance: string;
 
   @IsString()
   title: string;

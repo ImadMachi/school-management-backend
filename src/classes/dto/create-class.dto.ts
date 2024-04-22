@@ -35,10 +35,10 @@ export class CreateClassDto {
   @Type(() => Id)
   level: Id;
 
-  @IsArray()
-  @ValidateNested()
-  @Type(() => Id)
-  subjects: Id[];
+  // @IsArray()
+  // @ValidateNested()
+  // @Type(() => Id)
+  // subjects: Id[];
 
   
 }

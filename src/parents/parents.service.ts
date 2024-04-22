@@ -40,7 +40,9 @@ export class ParentsService {
   }
 
   findAll() {
-    return this.parentRepository.find();
+    return this.parentRepository.find({
+      relations: ['students'],
+    });
   }
 
   findOne(id: number) {

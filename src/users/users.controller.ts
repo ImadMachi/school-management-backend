@@ -6,6 +6,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Put,
   Query,
   UploadedFile,
   UseGuards,
@@ -64,5 +65,9 @@ export class UsersController {
         throw error;
       }
     }
+  }
+  @Put(':id/status')
+  async updateUserStatus(@Param('id') userId: number, @Body('disabled') disabled: boolean) {
+    return this.usersService.updateUserStatus(userId, disabled);
   }
 }

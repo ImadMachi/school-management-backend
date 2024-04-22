@@ -20,8 +20,8 @@ export class CreateLevelDto {
   @Type(() => Id)
   classes: Id[];
 
-  @IsObject()
-  @ValidateNested()
-  @Type(() => Id)
-  cycle: Id;
+  // @IsObject()
+  // @ValidateNested()
+  // @Type(() => Id)
+  // cycle: Id;
 }
