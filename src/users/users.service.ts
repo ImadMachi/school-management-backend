@@ -26,10 +26,7 @@ export class UsersService {
     if (file) {
       const profileImage = await this.saveProfileImage(file, user);
       user.profileImage = profileImage;
-      console.log('profileImage', profileImage);
     }
-
-    console.log('user', user);
 
     return this.usersRepository.save(user);
   }
@@ -50,8 +47,6 @@ export class UsersService {
     const user = this.usersRepository.create(createUserDto);
     user.administrator = administrator;
     user.role = role;
-    console.log('user', user);
-    console.log('file', file);
 
     return this.create(user, file);
   }
@@ -176,8 +171,6 @@ export class UsersService {
 
     await this.usersRepository.save(user);
 
-    console.log('Profile image saved');
-
     return user.profileImage;
   }
 
@@ -186,9 +179,8 @@ export class UsersService {
   }
 
   async updateUserStatus(userId: number, disabled: boolean): Promise<User> {
-
     const user = await this.findOne(userId);
-    
+
     if (!user) {
       throw new NotFoundException('User not found');
     }

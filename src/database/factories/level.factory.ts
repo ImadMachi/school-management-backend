@@ -4,7 +4,6 @@ import { setSeederFactory } from 'typeorm-extension';
 const levelFactory = setSeederFactory(Level, (faker) => {
   const lvls = new Level();
   lvls.name = faker.lorem.word();
-  lvls.schoolYear = '2023-2024';
   return lvls;
 });
 

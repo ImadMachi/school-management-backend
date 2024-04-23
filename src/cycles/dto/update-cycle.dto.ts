@@ -14,12 +14,4 @@ export class UpdateCycleDto {
   @IsNotEmpty()
   @IsString()
   name: string;
-
-  @IsNotEmpty()
-  schoolYear: string;
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => Id)
-  levels: Id[];
 }

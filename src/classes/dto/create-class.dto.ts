@@ -34,11 +34,4 @@ export class CreateClassDto {
   @ValidateNested()
   @Type(() => Id)
   level: Id;
-
-  // @IsArray()
-  // @ValidateNested()
-  // @Type(() => Id)
-  // subjects: Id[];
-
-  
 }

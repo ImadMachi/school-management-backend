@@ -19,13 +19,13 @@ export class CreateAbsentDto {
   @IsNotEmpty()
   reason: string;
 
-  @IsNotEmpty()
-  justified: boolean;
-
   @IsObject()
   @ValidateNested({ each: true })
   @Type(() => Id)
   absentUser: Id;
+
+  @IsNotEmpty()
+  justified: boolean;
 
   @IsArray()
   @ValidateNested({ each: true })
@@ -34,7 +34,6 @@ export class CreateAbsentDto {
 
   @IsString()
   seance: string;
-
 
   @IsString()
   title: string;

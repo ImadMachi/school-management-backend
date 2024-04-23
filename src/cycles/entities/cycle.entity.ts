@@ -1,5 +1,5 @@
 import { Level } from 'src/levels/entities/level.entity';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Cycle {
@@ -9,10 +9,6 @@ export class Cycle {
   @Column()
   name: string;
 
-  @Column()
-  schoolYear: string;
-
   @OneToMany(() => Level, (level) => level.cycle)
-  @JoinTable()
   levels: Level[];
 }

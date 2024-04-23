@@ -8,7 +8,8 @@ export class CyclesController {
   constructor(private readonly cyclesService: CyclesService) {}
   @Post()
   create(@Body() createCycleDto: CreateCycleDto) {
-    console.log(createCycleDto)
+    console.log(createCycleDto);
+
     return this.cyclesService.create(createCycleDto);
   }
 

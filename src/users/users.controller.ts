@@ -47,7 +47,7 @@ export class UsersController {
   async uploadProfileImage(@Param('id') id: number, @UploadedFile() file: Express.Multer.File): Promise<User> {
     const user: User = await this.usersService.findOne(id);
     if (!user) {
-      console.log('User not found');
+      throw new NotFoundException(`User with id ${id} not found`);
     }
     await this.usersService.uploadProfileImage(file, user);
     return user;
@@ -57,7 +57,6 @@ export class UsersController {
   async changePassword(@Param('id') id: number, @Body('newPassword') newPassword: string): Promise<void> {
     try {
       await this.usersService.changePassword(id, newPassword);
-      console.log('Password changed successfully');
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new NotFoundException(error.message);

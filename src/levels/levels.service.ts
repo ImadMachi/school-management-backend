@@ -4,16 +4,14 @@ import { UpdateLevelDto } from './dto/update-level.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Level } from './entities/level.entity';
-import { ClassesService } from 'src/classes/classes.service';
 
 @Injectable()
 export class LevelsService {
   constructor(
     @InjectRepository(Level)
     private levelRepository: Repository<Level>,
-    private classesSerivce: ClassesService,
   ) {}
-  
+
   async create(createLevelDto: CreateLevelDto) {
     const existingLevel = await this.levelRepository
       .createQueryBuilder('level')
@@ -23,9 +21,10 @@ export class LevelsService {
       throw new BadRequestException('Cette niveau existe déjà');
     }
     const newLevel = await this.levelRepository.save(createLevelDto);
+
     return this.levelRepository.findOne({
       where: { id: newLevel.id },
-      relations: ['classes'],
+      relations: ['classes', 'cycle'],
     });
   }
 
@@ -39,7 +38,7 @@ export class LevelsService {
     const updatedLevel = await this.levelRepository.save(updateLevelDto);
     return this.levelRepository.findOne({
       where: { id: updatedLevel.id },
-      relations: ['classes'],
+      relations: ['classes', 'cycle'],
     });
   }
 
@@ -53,12 +52,7 @@ export class LevelsService {
 
   findAll() {
     return this.levelRepository.find({
-      relations: ['classes'],
+      relations: ['classes', 'cycle'],
     });
   }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} level`;
-  // }
-
 }

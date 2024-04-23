@@ -16,8 +16,4 @@ export class Subject {
   @ManyToMany(() => Class, (cls) => cls.subjects)
   @JoinTable()
   classes: Class[];
-
-  // @ManyToMany(() => Absent, (absent) => absent.subjects)
-  // @JoinTable()
-  // absents: Absent[];
 }

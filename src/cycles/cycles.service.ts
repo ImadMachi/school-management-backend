@@ -11,7 +11,7 @@ export class CyclesService {
     @InjectRepository(Cycle)
     private cycleRepository: Repository<Cycle>,
   ) {}
-  
+
   async create(createCycleDto: CreateCycleDto) {
     const existingCycle = await this.cycleRepository
       .createQueryBuilder('cycle')
@@ -41,7 +41,6 @@ export class CyclesService {
     });
   }
 
-
   async remove(id: number) {
     const { affected } = await this.cycleRepository.delete(id);
     if (affected === 0) {
@@ -55,9 +54,4 @@ export class CyclesService {
       relations: ['levels'],
     });
   }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} level`;
-  // }
-
 }

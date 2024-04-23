@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Put } from '@nestjs/common';
-import { SubjectsService} from './subjects.service';
+import { SubjectsService } from './subjects.service';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
 
@@ -9,7 +9,6 @@ export class SubjectsController {
 
   @Post()
   create(@Body() createSubjectDto: CreateSubjectDto) {
-    console.log(createSubjectDto)
     return this.subjectsService.create(createSubjectDto);
   }
 
@@ -27,5 +26,4 @@ export class SubjectsController {
   findAll() {
     return this.subjectsService.findAll();
   }
-
 }

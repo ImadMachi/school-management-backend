@@ -20,7 +20,7 @@ export class Absent {
 
   @ManyToOne(() => User, (user) => user.absents)
   absentUser: User;
-  
+
   @ManyToMany(() => User, (user) => user.replacements, {
     nullable: true,
     eager: true,

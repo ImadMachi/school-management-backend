@@ -101,36 +101,27 @@ export default class AppSeeder implements Seeder {
     // Levels
     const level1 = await levelFactory.save({
       name: 'Level 1',
-      schoolYear: '2023-2024',
-      classes: [classe1, classe2],
     });
 
     const level2 = await levelFactory.save({
       name: 'Level 2',
-      schoolYear: '2023-2024',
-      classes: [classe3],
     });
 
     const level3 = await levelFactory.save({
       name: 'Level 3',
-      schoolYear: '2022-2023',
-      classes: [classe1, classe2, classe3],
     });
 
     //Cycles
     const cycle1 = await cycleFactory.save({
       name: 'Cycle A',
-      schoolYear: '2022-2023',
       levels: [level1, level2, level3],
     });
     const cycle2 = await cycleFactory.save({
       name: 'Cycle B',
-      schoolYear: '2022-2023',
       levels: [level2, level3],
     });
     const cycle3 = await cycleFactory.save({
       name: 'Cycle C',
-      schoolYear: '2022-2023',
       levels: [level1, level3],
     });
 

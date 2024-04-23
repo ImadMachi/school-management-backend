@@ -8,7 +8,6 @@ export class LevelsController {
   constructor(private readonly levelsService: LevelsService) {}
   @Post()
   create(@Body() createLevelDto: CreateLevelDto) {
-    console.log(createLevelDto)
     return this.levelsService.create(createLevelDto);
   }
 

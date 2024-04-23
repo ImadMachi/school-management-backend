@@ -15,14 +15,6 @@ export class UpdateLevelDto {
   @IsString()
   name: string;
 
-  @IsNotEmpty()
-  schoolYear: string;
-
-  @IsArray()s
-  @ValidateNested({ each: true })
-  @Type(() => Id)
-  classes: Id[];
-
   @IsObject()
   @ValidateNested()
   @Type(() => Id)
