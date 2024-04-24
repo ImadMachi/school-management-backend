@@ -7,7 +7,7 @@ const absentFactory = setSeederFactory(Absent, (faker) => {
   const absent = new Absent();
   absent.datedebut = faker.date.anytime();
   absent.datefin = faker.date.anytime();
-  absent.seance = faker.lorem.sentence();
+  absent.seances = [faker.lorem.sentence()];
   absent.reason = faker.lorem.sentence();
   absent.justified = faker.datatype.boolean();
   absent.title = faker.lorem.sentence();

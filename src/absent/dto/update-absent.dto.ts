@@ -7,7 +7,6 @@ class Id {
   id: number;
 }
 export class UpdateAbsentDto {
-
   @IsNumber()
   id: number;
 
@@ -37,8 +36,9 @@ export class UpdateAbsentDto {
   @Type(() => Id)
   replaceUser: Id[];
 
-  @IsString()
-  seance: string;
+  @IsArray()
+  @IsString({ each: true })
+  seances: string[];
 
   @IsString()
   title: string;

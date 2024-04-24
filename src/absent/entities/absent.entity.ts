@@ -20,7 +20,7 @@ export class Absent {
 
   @ManyToOne(() => User, (user) => user.absents)
   absentUser: User;
-  
+
   @ManyToMany(() => User, (user) => user.replacements, {
     nullable: true,
     eager: true,
@@ -28,8 +28,8 @@ export class Absent {
   @JoinTable()
   replaceUser: User[];
 
-  @Column()
-  seance: string;
+  @Column('simple-array')
+  seances: string[];
 
   @Column()
   title: string;

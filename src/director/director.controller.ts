@@ -5,6 +5,7 @@ import { CheckPolicies } from 'src/casl/guards/policies.guard';
 import { ManageDirectorsPolicyHandler } from 'src/casl/policies/directors/manage-directors.policy';
 import { UpdateDirectorDto } from './dto/update-director.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Controller('directors')
 export class DirectorController {
@@ -15,6 +16,13 @@ export class DirectorController {
   @CheckPolicies(new ManageDirectorsPolicyHandler())
   create(@Body() createDirectorDto: CreateDirectorDto, @Query('create-account') createAccount: boolean, @UploadedFile() file: Express.Multer.File){
     return this.directorService.create(createDirectorDto, createAccount , file);
+  }
+
+  @Post(':id/create-account')
+  @UseInterceptors(FileInterceptor('profile-images'))
+  @CheckPolicies(new ManageDirectorsPolicyHandler())
+  createAccount(@Param('id') id: string, @Body() createUserDto: CreateUserDto, @UploadedFile() file: Express.Multer.File) {
+    return this.directorService.createAccountForDirector(+id, createUserDto, file);
   }
 
   @Get()

@@ -5,6 +5,7 @@ import { Director } from './entities/director.entity';
 import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class DirectorService {
@@ -15,7 +16,7 @@ export class DirectorService {
     private userService: UsersService,
   ) {}
 
-  async create(createDirectorDto: CreateDirectorDto, createAccount: boolean , file: Express.Multer.File) {
+  async create(createDirectorDto: CreateDirectorDto, createAccount: boolean, file: Express.Multer.File) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -36,6 +37,18 @@ export class DirectorService {
       throw new HttpException(error.message, error.status);
     }
     await queryRunner.release();
+    return director;
+  }
+
+  async createAccountForDirector(id: number, createUserDto: CreateUserDto, file: Express.Multer.File) {
+    const director = await this.directorRepository.findOne({ where: { id } });
+
+    if (!director) {
+      throw new NotFoundException();
+    }
+
+    const user = await this.userService.createForDirector(createUserDto, director, file);
+    director.user = user;
     return director;
   }
 
@@ -79,5 +92,4 @@ export class DirectorService {
     }
     return this.directorRepository.delete(id);
   }
-
 }

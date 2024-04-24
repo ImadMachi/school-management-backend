@@ -147,47 +147,6 @@ export default class AppSeeder implements Seeder {
     //   classes: [classe1, classe3],
     // });
 
-    // Absents
-
-    const absent1 = await absentFactory.save({
-      datedebut: new Date(),
-      datefin: new Date(),
-      reason: 'Sick',
-      justified: true,
-      title: 'Absent',
-      body: 'Absent',
-      absentUser: User[2],
-      replaceUser: [User[2], User[3]],
-      seance: 'seance 3',
-      status: 'Pending',
-    });
-
-    const absent2 = await absentFactory.save({
-      datedebut: new Date(),
-      datefin: new Date(),
-      reason: 'Sick',
-      justified: true,
-      title: 'Absent',
-      body: 'Absent',
-      absentUser: User[4],
-      replaceUser: [User[5], User[6]],
-      seance: 'seance 1',
-      status: 'Pending',
-    });
-
-    const absent3 = await absentFactory.save({
-      datedebut: new Date(),
-      datefin: new Date(),
-      reason: 'Sick',
-      justified: true,
-      title: 'Absent',
-      body: 'Absent',
-      absentUser: User[8],
-      replaceUser: [User[4], User[6]],
-      seance: 'seance 2',
-      status: 'Pending',
-    });
-
     // Roles
     const directorRole = await roleFactory.save({ name: RoleName.Director });
     const administratorRole = await roleFactory.save({
@@ -449,6 +408,47 @@ export default class AppSeeder implements Seeder {
       subject: 'Sortie scolaire',
       body: 'Sortie scolaire le 25 septembre 2021',
       category: messageCategory5,
+    });
+
+    // Absents
+
+    const absent1 = await absentFactory.save({
+      datedebut: new Date(),
+      datefin: new Date(),
+      reason: 'Sick',
+      justified: true,
+      title: 'Absent',
+      body: 'Absent',
+      absentUser: User[2],
+      replaceUser: [User[2], User[3]],
+      seances: ['seance 1', 'seance 2'],
+      status: 'Pending',
+    });
+
+    const absent2 = await absentFactory.save({
+      datedebut: new Date(),
+      datefin: new Date(),
+      reason: 'Sick',
+      justified: true,
+      title: 'Absent',
+      body: 'Absent',
+      absentUser: User[4],
+      replaceUser: [User[5], User[6]],
+      seances: ['seance 2', 'seance 3'],
+      status: 'Pending',
+    });
+
+    const absent3 = await absentFactory.save({
+      datedebut: new Date(),
+      datefin: new Date(),
+      reason: 'Sick',
+      justified: true,
+      title: 'Absent',
+      body: 'Absent',
+      absentUser: User[8],
+      replaceUser: [User[4], User[6]],
+      seances: ['seance 1', 'seance 3'],
+      status: 'Pending',
     });
   }
 }

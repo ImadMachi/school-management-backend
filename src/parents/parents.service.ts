@@ -5,6 +5,7 @@ import { DataSource, Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { CreateParentDto } from './dto/create-parent.dto';
 import { UpdateParentDto } from './dto/update-parent.dto';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class ParentsService {
@@ -36,6 +37,19 @@ export class ParentsService {
       throw new HttpException(error.message, error.status);
     }
     await queryRunner.release();
+    return parent;
+  }
+
+  async createAccoutForParent(id : number , createUserDto: CreateUserDto, file: Express.Multer.File) {
+
+    const parent = await this.parentRepository.findOne({ where: { id } });
+
+    if (!parent) {
+      throw new NotFoundException();
+    }
+
+    const user = await this.userService.createForParent(createUserDto, parent, file);
+    parent.user = user;
     return parent;
   }
 
@@ -73,6 +87,7 @@ export class ParentsService {
     await queryRunner.release();
     return parent;
   }
+
   async remove(id: number) {
     const parent = await this.parentRepository.findOne({
       where: { id },

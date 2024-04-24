@@ -6,6 +6,7 @@ import { Teacher } from './entities/teacher.entity';
 import { DataSource, Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class TeachersService {
@@ -39,6 +40,19 @@ export class TeachersService {
     await queryRunner.release();
     return teacher;
   }
+
+  async createAccountForTeacher(id: number, createUserDto: CreateUserDto, file: Express.Multer.File) {
+    const teacher = await this.teacherRepository.findOne({ where: { id } });
+
+    if (!teacher) {
+      throw new NotFoundException();
+    }
+
+    const user = await this.userService.createForTeacher(createUserDto, teacher , file);
+    teacher.user = user;
+    return teacher;
+  }
+  
 
   findAll() {
     return this.teacherRepository.find();

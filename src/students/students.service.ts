@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Student } from './entities/student.entity';
 import { DataSource, Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class StudentsService {
@@ -36,8 +37,20 @@ export class StudentsService {
       throw new HttpException(error.message, error.status);
     }
     await queryRunner.release();
-    return this.findOne(student.id)
+    return this.findOne(student.id);
     //return student;
+  }
+
+  async createAccountForStudent(id: number, createUserDto: CreateUserDto, file: Express.Multer.File) {
+    const student = await this.studentRepository.findOne({ where: { id } });
+
+    if (!student) {
+      throw new NotFoundException();
+    }
+
+    const user = await this.userService.createForStudent(createUserDto, student, file);
+    student.user = user;
+    return student;
   }
 
   findAll() {
@@ -59,7 +72,6 @@ export class StudentsService {
     return this.studentRepository.findOne({
       where: { id },
       relations: ['classe', 'parent'],
-
     });
   }
 
