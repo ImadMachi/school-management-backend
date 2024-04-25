@@ -55,7 +55,12 @@ export class StudentsService {
 
   findAll() {
     return this.studentRepository.find({
-      relations: ['classe', 'parent'],
+      relations: ['classe', 'parent','user'],
+      where: {
+        user: {
+          disabled: false,
+        },
+      },
     });
   }
 

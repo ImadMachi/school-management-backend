@@ -5,6 +5,7 @@ import { DataSource, Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { CreateAgentDto } from './dto/create-agent.dto';
 import { UpdateAgentDto } from './dto/update-agent.dto';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class AgentsService {
@@ -39,8 +40,27 @@ export class AgentsService {
     return agent;
   }
 
+  async createAccountForAgent(id: number, createUserDto: CreateUserDto, file: Express.Multer.File) {
+    const agent = await this.agentRepository.findOne({ where: { id } });
+
+    if (!agent) {
+      throw new NotFoundException();
+    }
+
+    const user = await this.userService.createForAgent(createUserDto, agent, file);
+    agent.user = user;
+    return agent;
+  }
+
   findAll() {
-    return this.agentRepository.find();
+    return this.agentRepository.find({
+      relations: ['user'],
+      where: {
+        user: {
+          disabled: false,
+        },
+      },
+    });
   }
 
   findOne(id: number) {

@@ -53,8 +53,17 @@ export class DirectorService {
   }
 
   findAll() {
-    return this.directorRepository.find();
+    return this.directorRepository.find({
+      relations: ['user'],
+      where: {
+        user: {
+          disabled: false,
+        },
+      },
+
+    });
   }
+
   findOne(id: number) {
     return this.directorRepository.findOne({
       where: { id },

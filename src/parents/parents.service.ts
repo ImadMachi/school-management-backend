@@ -37,7 +37,7 @@ export class ParentsService {
       throw new HttpException(error.message, error.status);
     }
     await queryRunner.release();
-    return parent;
+    return this.findOne(parent.id);
   }
 
   async createAccoutForParent(id : number , createUserDto: CreateUserDto, file: Express.Multer.File) {
@@ -53,12 +53,19 @@ export class ParentsService {
     return parent;
   }
 
+
   findAll() {
     return this.parentRepository.find({
-      relations: ['students'],
+      relations: ['students', 'user'],
+      where: {
+        user: {
+          disabled: false,
+        },
+      },
     });
   }
 
+  
   findOne(id: number) {
     return this.parentRepository.findOne({
       where: { id },

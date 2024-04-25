@@ -54,8 +54,17 @@ export class AdministratorsService {
   }
 
   findAll() {
-    return this.administratorRepository.find();
-  }
+    return this.administratorRepository.find({
+      relations: ['user'],
+      where: {
+        user: {
+          disabled: false,
+        },
+      },
+
+  });
+}
+
 
   findOne(id: number) {
     return this.administratorRepository.findOne({

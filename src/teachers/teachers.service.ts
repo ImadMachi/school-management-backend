@@ -55,8 +55,17 @@ export class TeachersService {
   
 
   findAll() {
-    return this.teacherRepository.find();
-  }
+    return this.teacherRepository.find({
+      relations: ['user'],
+      where: {
+        user: {
+          disabled: false,
+        },
+      },
+
+  });
+}
+
 
   findOne(id: number) {
     return this.teacherRepository.findOne({
