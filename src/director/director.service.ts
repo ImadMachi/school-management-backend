@@ -2,7 +2,7 @@ import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDirectorDto } from './dto/create-director.dto';
 import { UpdateDirectorDto } from './dto/update-director.dto';
 import { Director } from './entities/director.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
@@ -53,17 +53,15 @@ export class DirectorService {
   }
 
   findAll() {
-    return this.directorRepository.find({
-      relations: ['user'],
-      where: {
-        user: {
-          disabled: false,
-        },
-      },
-
-    });
+    return this.directorRepository
+      .createQueryBuilder('director')
+      .leftJoinAndSelect('director.user', 'user')
+      .where((qb: SelectQueryBuilder<Director>) => {
+        qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
+      })
+      .getMany();
   }
-
+  
   findOne(id: number) {
     return this.directorRepository.findOne({
       where: { id },

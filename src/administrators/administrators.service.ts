@@ -3,7 +3,7 @@ import { CreateAdministratorDto } from './dto/create-administrator.dto';
 import { UpdateAdministratorDto } from './dto/update-administrator.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Administrator } from './entities/administrator.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { profile } from 'console';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
@@ -52,19 +52,16 @@ export class AdministratorsService {
     administrator.user = user;
     return administrator;
   }
-
+  
   findAll() {
-    return this.administratorRepository.find({
-      relations: ['user'],
-      where: {
-        user: {
-          disabled: false,
-        },
-      },
-
-  });
-}
-
+    return this.administratorRepository
+      .createQueryBuilder('administrator')
+      .leftJoinAndSelect('administrator.user', 'user')
+      .where((qb: SelectQueryBuilder<Administrator>) => {
+        qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
+      })
+      .getMany();
+  }
 
   findOne(id: number) {
     return this.administratorRepository.findOne({

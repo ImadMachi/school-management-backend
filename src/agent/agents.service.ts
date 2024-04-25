@@ -1,7 +1,7 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Agent } from './entities/agent.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { CreateAgentDto } from './dto/create-agent.dto';
 import { UpdateAgentDto } from './dto/update-agent.dto';
@@ -53,14 +53,13 @@ export class AgentsService {
   }
 
   findAll() {
-    return this.agentRepository.find({
-      relations: ['user'],
-      where: {
-        user: {
-          disabled: false,
-        },
-      },
-    });
+    return this.agentRepository.createQueryBuilder('agent')
+      .leftJoinAndSelect('agent.user', 'user')
+      .where((qb: SelectQueryBuilder<Agent>) => {
+        qb.where('user.disabled = :disabled', { disabled: false })
+          .orWhere('user.id IS NULL');
+      })
+      .getMany();
   }
 
   findOne(id: number) {

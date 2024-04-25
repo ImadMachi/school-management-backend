@@ -1,7 +1,7 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Parent } from './entities/parent.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { CreateParentDto } from './dto/create-parent.dto';
 import { UpdateParentDto } from './dto/update-parent.dto';
@@ -40,8 +40,7 @@ export class ParentsService {
     return this.findOne(parent.id);
   }
 
-  async createAccoutForParent(id : number , createUserDto: CreateUserDto, file: Express.Multer.File) {
-
+  async createAccoutForParent(id: number, createUserDto: CreateUserDto, file: Express.Multer.File) {
     const parent = await this.parentRepository.findOne({ where: { id } });
 
     if (!parent) {
@@ -52,20 +51,21 @@ export class ParentsService {
     parent.user = user;
     return parent;
   }
-
+  
 
   findAll() {
-    return this.parentRepository.find({
-      relations: ['students', 'user'],
-      where: {
-        user: {
-          disabled: false,
-        },
-      },
-    });
+    return this.parentRepository.createQueryBuilder('parent')
+      .leftJoinAndSelect('parent.students', 'students')
+      .leftJoinAndSelect('parent.user', 'user')
+      .where((qb: SelectQueryBuilder<Parent>) => {
+        qb.where('user.disabled = :disabled', { disabled: false })
+          .orWhere('user.id IS NULL');
+      })
+      .getMany();
   }
-
   
+  
+
   findOne(id: number) {
     return this.parentRepository.findOne({
       where: { id },

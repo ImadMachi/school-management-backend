@@ -3,7 +3,7 @@ import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Student } from './entities/student.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
@@ -54,14 +54,15 @@ export class StudentsService {
   }
 
   findAll() {
-    return this.studentRepository.find({
-      relations: ['classe', 'parent','user'],
-      where: {
-        user: {
-          disabled: false,
-        },
-      },
-    });
+    return this.studentRepository
+      .createQueryBuilder('student')
+      .leftJoinAndSelect('student.classe', 'classe')
+      .leftJoinAndSelect('student.parent', 'parent')
+      .leftJoinAndSelect('student.user', 'user')
+      .where((qb: SelectQueryBuilder<Student>) => {
+        qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
+      })
+      .getMany();
   }
 
   findStudentsByParent(parentId: number) {
