@@ -46,7 +46,6 @@ export class TeachersController {
     return this.teachersService.update(+id, updateTeacherDto);
   }
 
-  
   @Delete(':id')
   @CheckPolicies(new ManageTeachersPolicyHandler())
   remove(@Param('id') id: string) {

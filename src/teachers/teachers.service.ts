@@ -93,10 +93,11 @@ export class TeachersService {
   }
 
   async remove(id: number) {
-    const teacher = await this.teacherRepository.findOne({
+    const parent = await this.teacherRepository.findOne({
       where: { id },
     });
-    if (!teacher) {
+
+    if (!parent) {
       throw new NotFoundException();
     }
     return this.teacherRepository.delete(id);

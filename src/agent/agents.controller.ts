@@ -5,6 +5,7 @@ import { CreateAgentDto } from './dto/create-agent.dto';
 import { UpdateAgentDto } from './dto/update-agent.dto';
 import { ManageAgentsPolicyHandler } from 'src/casl/policies/agents/manage-agents-policy';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 
 @Controller('agents')
@@ -18,6 +19,14 @@ export class AgentsController {
   create(@Body() createAgentDto: CreateAgentDto, @Query('create-account') createAccount: boolean, @UploadedFile() file: Express.Multer.File){
     return this.agentsService.create(createAgentDto, createAccount, file);
   }
+
+  @Post(':id/create-account')
+  @UseInterceptors(FileInterceptor('profile-images'))
+  @CheckPolicies(new ManageAgentsPolicyHandler())
+  createAccount(@Param('id') id: string, @Body() createUserDto: CreateUserDto, @UploadedFile() file: Express.Multer.File) {
+    return this.agentsService.createAccountForAgent(+id, createUserDto, file);
+  }
+
 
   @Get()
   @CheckPolicies(new ManageAgentsPolicyHandler())
