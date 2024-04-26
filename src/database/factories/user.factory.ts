@@ -8,7 +8,7 @@ const userFactory = setSeederFactory(User, (faker) => {
   user.password = faker.internet.password();
   user.disabled = faker.datatype.boolean();
   const isMale = Math.random() < 0.5;
-  if (user.isActive) {
+  if (user) {
     user.profileImage = isMale
       ? menProfileImages[Math.floor(Math.random() * menProfileImages.length)]
       : womenProfileImages[Math.floor(Math.random() * womenProfileImages.length)];

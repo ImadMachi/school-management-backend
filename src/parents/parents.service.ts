@@ -49,7 +49,7 @@ export class ParentsService {
 
     const user = await this.userService.createForParent(createUserDto, parent, file);
     parent.user = user;
-    return parent;
+    return this.findOne(parent.id);
   }
   
 

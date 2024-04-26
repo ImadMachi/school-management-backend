@@ -37,7 +37,8 @@ export class Teacher {
   @ManyToMany(() => Class, (cls) => cls.teachers)
   classes: Class[];
 
-
+  
+  @Exclude()
   @ManyToMany(() => Subject, (subject) => subject.teachers)
   subjects: Subject[];
 

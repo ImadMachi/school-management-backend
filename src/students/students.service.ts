@@ -50,7 +50,7 @@ export class StudentsService {
 
     const user = await this.userService.createForStudent(createUserDto, student, file);
     student.user = user;
-    return student;
+    return this.findOne(student.id);
   }
 
   findAll() {
