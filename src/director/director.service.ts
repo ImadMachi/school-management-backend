@@ -2,9 +2,10 @@ import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDirectorDto } from './dto/create-director.dto';
 import { UpdateDirectorDto } from './dto/update-director.dto';
 import { Director } from './entities/director.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class DirectorService {
@@ -15,7 +16,7 @@ export class DirectorService {
     private userService: UsersService,
   ) {}
 
-  async create(createDirectorDto: CreateDirectorDto, createAccount: boolean , file: Express.Multer.File) {
+  async create(createDirectorDto: CreateDirectorDto, createAccount: boolean, file: Express.Multer.File) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -39,9 +40,28 @@ export class DirectorService {
     return director;
   }
 
-  findAll() {
-    return this.directorRepository.find();
+  async createAccountForDirector(id: number, createUserDto: CreateUserDto, file: Express.Multer.File) {
+    const director = await this.directorRepository.findOne({ where: { id } });
+
+    if (!director) {
+      throw new NotFoundException();
+    }
+
+    const user = await this.userService.createForDirector(createUserDto, director, file);
+    director.user = user;
+    return director;
   }
+
+  findAll() {
+    return this.directorRepository
+      .createQueryBuilder('director')
+      .leftJoinAndSelect('director.user', 'user')
+      .where((qb: SelectQueryBuilder<Director>) => {
+        qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
+      })
+      .getMany();
+  }
+  
   findOne(id: number) {
     return this.directorRepository.findOne({
       where: { id },
@@ -79,5 +99,4 @@ export class DirectorService {
     }
     return this.directorRepository.delete(id);
   }
-
 }

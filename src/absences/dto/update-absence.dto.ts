@@ -36,8 +36,9 @@ export class UpdateAbsenceDto {
   @Type(() => Id)
   replaceUser: Id[];
 
-  @IsString()
-  seance: string;
+  @IsArray()
+  @IsString({ each: true })
+  seances: string[];
 
   @IsString()
   title: string;

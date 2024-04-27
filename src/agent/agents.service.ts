@@ -1,10 +1,11 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Agent } from './entities/agent.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { CreateAgentDto } from './dto/create-agent.dto';
 import { UpdateAgentDto } from './dto/update-agent.dto';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class AgentsService {
@@ -39,8 +40,26 @@ export class AgentsService {
     return agent;
   }
 
+  async createAccountForAgent(id: number, createUserDto: CreateUserDto, file: Express.Multer.File) {
+    const agent = await this.agentRepository.findOne({ where: { id } });
+
+    if (!agent) {
+      throw new NotFoundException();
+    }
+
+    const user = await this.userService.createForAgent(createUserDto, agent, file);
+    agent.user = user;
+    return agent;
+  }
+
   findAll() {
-    return this.agentRepository.find();
+    return this.agentRepository.createQueryBuilder('agent')
+      .leftJoinAndSelect('agent.user', 'user')
+      .where((qb: SelectQueryBuilder<Agent>) => {
+        qb.where('user.disabled = :disabled', { disabled: false })
+          .orWhere('user.id IS NULL');
+      })
+      .getMany();
   }
 
   findOne(id: number) {

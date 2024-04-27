@@ -5,6 +5,7 @@ import { UpdateStudentDto } from './dto/update-student.dto';
 import { CheckPolicies } from 'src/casl/guards/policies.guard';
 import { ManageStudentsPolicyHandler } from 'src/casl/policies/students/manage-students-policy';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Controller('students')
 export class StudentsController {
@@ -19,6 +20,13 @@ export class StudentsController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     return this.studentsService.create(createStudentDto, createAccount, file);
+  }
+
+  @Post(':id/create-account')
+  @UseInterceptors(FileInterceptor('profile-images'))
+  @CheckPolicies(new ManageStudentsPolicyHandler())
+  createAccount(@Param('id') id: string, @Body() createUserDto: CreateUserDto, @UploadedFile() file: Express.Multer.File) {
+    return this.studentsService.createAccountForStudent(+id, createUserDto, file);
   }
 
   @Get()

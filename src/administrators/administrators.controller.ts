@@ -5,6 +5,7 @@ import { UpdateAdministratorDto } from './dto/update-administrator.dto';
 import { CheckPolicies, PoliciesGuard } from 'src/casl/guards/policies.guard';
 import { ManageAdministratorsPolicyHandler } from 'src/casl/policies/administrators/manage-administrators.policy';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Controller('administrators')
 @UseGuards(PoliciesGuard)
@@ -14,8 +15,19 @@ export class AdministratorsController {
   @Post()
   @UseInterceptors(FileInterceptor('profile-images'))
   @CheckPolicies(new ManageAdministratorsPolicyHandler())
-  create(@Body() createAdministratorDto: CreateAdministratorDto, @Query('create-account') createAccount: boolean, @UploadedFile() file: Express.Multer.File) {
+  create(
+    @Body() createAdministratorDto: CreateAdministratorDto,
+    @Query('create-account') createAccount: boolean,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     return this.administratorsService.create(createAdministratorDto, createAccount, file);
+  }
+
+  @Post(':id/create-account')
+  @UseInterceptors(FileInterceptor('profile-images'))
+  @CheckPolicies(new ManageAdministratorsPolicyHandler())
+  createAccount(@Param('id') id: string, @Body() createUserDto: CreateUserDto, @UploadedFile() file: Express.Multer.File) {
+    return this.administratorsService.createAccoutForAdministrator(+id, createUserDto, file);
   }
 
   @Get()

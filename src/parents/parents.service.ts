@@ -1,10 +1,11 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Parent } from './entities/parent.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { CreateParentDto } from './dto/create-parent.dto';
 import { UpdateParentDto } from './dto/update-parent.dto';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class ParentsService {
@@ -36,14 +37,34 @@ export class ParentsService {
       throw new HttpException(error.message, error.status);
     }
     await queryRunner.release();
-    return parent;
+    return this.findOne(parent.id);
   }
 
-  findAll() {
-    return this.parentRepository.find({
-      relations: ['students'],
-    });
+  async createAccoutForParent(id: number, createUserDto: CreateUserDto, file: Express.Multer.File) {
+    const parent = await this.parentRepository.findOne({ where: { id } });
+
+    if (!parent) {
+      throw new NotFoundException();
+    }
+
+    const user = await this.userService.createForParent(createUserDto, parent, file);
+    parent.user = user;
+    return this.findOne(parent.id);
   }
+  
+
+  findAll() {
+    return this.parentRepository.createQueryBuilder('parent')
+      .leftJoinAndSelect('parent.students', 'students')
+      .leftJoinAndSelect('parent.user', 'user')
+      .where((qb: SelectQueryBuilder<Parent>) => {
+        qb.where('user.disabled = :disabled', { disabled: false })
+          .orWhere('user.id IS NULL');
+      })
+      .getMany();
+  }
+  
+  
 
   findOne(id: number) {
     return this.parentRepository.findOne({
@@ -73,6 +94,7 @@ export class ParentsService {
     await queryRunner.release();
     return parent;
   }
+
   async remove(id: number) {
     const parent = await this.parentRepository.findOne({
       where: { id },

@@ -77,7 +77,7 @@ export class UsersService {
     user.parent = parent;
     user.role = role;
 
-    return this.create(user, file); // Pass an empty array as the second argument
+    return this.create(user, file);
   }
 
   async createForAgent(createUserDto: CreateUserDto, agent, file: Express.Multer.File): Promise<User> {
@@ -101,6 +101,7 @@ export class UsersService {
     query.leftJoinAndSelect('user.parent', 'parent');
     query.leftJoinAndSelect('user.director', 'director');
     query.leftJoinAndSelect('user.agent', 'agent');
+    query.andWhere('user.disabled = :disabled', { disabled: false });
 
     return query.getMany();
   }

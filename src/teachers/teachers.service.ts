@@ -3,9 +3,10 @@ import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Teacher } from './entities/teacher.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class TeachersService {
@@ -16,7 +17,7 @@ export class TeachersService {
     private userService: UsersService,
   ) {}
 
-  async create(createTeacherDto: CreateTeacherDto, createAccount: boolean , file: Express.Multer.File) {
+  async create(createTeacherDto: CreateTeacherDto, createAccount: boolean, file: Express.Multer.File) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -28,7 +29,7 @@ export class TeachersService {
       await this.teacherRepository.save(teacher);
 
       if (createAccount && createUserDto) {
-        const user = await this.userService.createForTeacher(createUserDto, teacher , file);
+        const user = await this.userService.createForTeacher(createUserDto, teacher, file);
         teacher.user = user;
       }
     } catch (error) {
@@ -40,8 +41,26 @@ export class TeachersService {
     return teacher;
   }
 
+  async createAccountForTeacher(id: number, createUserDto: CreateUserDto, file: Express.Multer.File) {
+    const teacher = await this.teacherRepository.findOne({ where: { id } });
+
+    if (!teacher) {
+      throw new NotFoundException();
+    }
+
+    const user = await this.userService.createForTeacher(createUserDto, teacher, file);
+    teacher.user = user;
+    return teacher;
+  }
+
   findAll() {
-    return this.teacherRepository.find();
+    return this.teacherRepository
+      .createQueryBuilder('teacher')
+      .leftJoinAndSelect('teacher.user', 'user')
+      .where((qb: SelectQueryBuilder<Teacher>) => {
+        qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
+      })
+      .getMany();
   }
 
   findOne(id: number) {
@@ -74,10 +93,11 @@ export class TeachersService {
   }
 
   async remove(id: number) {
-    const teacher = await this.teacherRepository.findOne({
+    const parent = await this.teacherRepository.findOne({
       where: { id },
     });
-    if (!teacher) {
+
+    if (!parent) {
       throw new NotFoundException();
     }
     return this.teacherRepository.delete(id);
