@@ -24,7 +24,7 @@ import { CyclesModule } from './cycles/cycles.module';
 import { GroupsModule } from './groups/groups.module';
 import { AgentsModule } from './agent/agents.module';
 import { SubjectModule } from './subjects/subjects.module';
-import { AbsentModule } from './absent/absent.module';
+import { AbsencesModule } from './absences/absences.module';
 
 @Module({
   imports: [
@@ -55,7 +55,7 @@ import { AbsentModule } from './absent/absent.module';
     GroupsModule,
     AgentsModule,
     SubjectModule,
-    AbsentModule,
+    AbsencesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

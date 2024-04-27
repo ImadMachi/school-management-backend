@@ -6,8 +6,10 @@ class Id {
   @Transform(({ value }) => parseInt(value, 10))
   id: number;
 }
+export class UpdateAbsenceDto {
+  @IsNumber()
+  id: number;
 
-export class CreateAbsentDto {
   @IsNotEmpty()
   @Type(() => Date)
   datedebut: Date;
@@ -17,15 +19,17 @@ export class CreateAbsentDto {
   datefin: Date;
 
   @IsNotEmpty()
+  @IsString()
   reason: string;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  justified: boolean;
 
   @IsObject()
   @ValidateNested({ each: true })
   @Type(() => Id)
   absentUser: Id;
-
-  @IsNotEmpty()
-  justified: boolean;
 
   @IsArray()
   @ValidateNested({ each: true })

@@ -19,7 +19,7 @@ import { Cycle } from 'src/cycles/entities/cycle.entity';
 import { Group } from 'src/groups/entities/group.entity';
 import { Subject } from 'src/subjects/entities/subject.entity';
 import { Agent } from 'src/agent/entities/agent.entity';
-import { Absent } from 'src/absent/entities/absent.entity';
+import { Absence } from 'src/absences/entities/absence.entity';
 
 export default class AppSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
@@ -40,8 +40,8 @@ export default class AppSeeder implements Seeder {
     const levelFactory = await factoryManager.get(Level);
     const cycleFactory = await factoryManager.get(Cycle);
     const subjectFactory = await factoryManager.get(Subject);
-    const absentFactory = await factoryManager.get(Absent);
     const attachmentFactory = await factoryManager.get(Attachment);
+    const absenceFactory = await factoryManager.get(Absence);
 
     // Persons
     const directors = await directorFactory.saveMany(5);
@@ -137,47 +137,6 @@ export default class AppSeeder implements Seeder {
     //   teachers: [teachers[0], teachers[1]],
     //   classes: [classe1, classe3],
     // });
-
-    // Absents
-
-    const absent1 = await absentFactory.save({
-      datedebut: new Date(),
-      datefin: new Date(),
-      reason: 'Sick',
-      justified: true,
-      title: 'Absent',
-      body: 'Absent',
-      absentUser: User[2],
-      replaceUser: [User[2], User[3]],
-      seance: 'seance 3',
-      status: 'Pending',
-    });
-
-    const absent2 = await absentFactory.save({
-      datedebut: new Date(),
-      datefin: new Date(),
-      reason: 'Sick',
-      justified: true,
-      title: 'Absent',
-      body: 'Absent',
-      absentUser: User[4],
-      replaceUser: [User[5], User[6]],
-      seance: 'seance 1',
-      status: 'Pending',
-    });
-
-    const absent3 = await absentFactory.save({
-      datedebut: new Date(),
-      datefin: new Date(),
-      reason: 'Sick',
-      justified: true,
-      title: 'Absent',
-      body: 'Absent',
-      absentUser: User[8],
-      replaceUser: [User[4], User[6]],
-      seance: 'seance 2',
-      status: 'Pending',
-    });
 
     // Roles
     const directorRole = await roleFactory.save({ name: RoleName.Director });
@@ -440,6 +399,13 @@ export default class AppSeeder implements Seeder {
       subject: 'Sortie scolaire',
       body: 'Sortie scolaire le 25 septembre 2021',
       category: messageCategory5,
+    });
+
+    // Absences
+    const absence1 = await absenceFactory.save({
+      absentUser: userTeacher1,
+      replacingUsers: [userTeacher2],
+      startDate: new Date(),
     });
   }
 }

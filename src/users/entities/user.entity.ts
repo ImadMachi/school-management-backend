@@ -22,7 +22,8 @@ import { Parent } from 'src/parents/entities/parent.entity';
 import { Director } from 'src/director/entities/director.entity';
 import { Group } from 'src/groups/entities/group.entity';
 import { Agent } from 'src/agent/entities/agent.entity';
-import { Absent } from 'src/absent/entities/absent.entity';
+import { AbsenceSession } from 'src/absences/entities/absence-session.entity';
+import { Absence } from 'src/absences/entities/absence.entity';
 
 @Entity()
 export class User {
@@ -103,8 +104,8 @@ export class User {
   @ManyToMany(() => Message, (message) => message.readBy)
   readMessages: Message[];
 
-  @OneToMany(() => Absent, (absent) => absent.absentUser)
-  absents: Absent[];
+  @OneToMany(() => Absence, (absent) => absent.absentUser)
+  absents: Absence[];
 
   @ManyToMany(() => Group, (group) => group.users)
   groups: Group[];
@@ -112,8 +113,11 @@ export class User {
   @ManyToMany(() => Group, (group) => group.administratorUsers)
   administratorGroups: Group[];
 
-  @ManyToMany(() => Absent, (absent) => absent.replaceUser)
-  replacements: Absent[];
+  @ManyToMany(() => Absence, (absent) => absent.replacingUsers)
+  replacements: Absence[];
+
+  @OneToMany(() => AbsenceSession, (session) => session.user)
+  absentSessions: AbsenceSession[];
 
   @BeforeInsert()
   @BeforeUpdate()

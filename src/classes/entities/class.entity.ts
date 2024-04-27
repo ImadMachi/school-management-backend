@@ -1,6 +1,4 @@
-import { Absent } from 'src/absent/entities/absent.entity';
 import { Administrator } from 'src/administrators/entities/administrator.entity';
-import { Agent } from 'src/agent/entities/agent.entity';
 import { Level } from 'src/levels/entities/level.entity';
 import { Student } from 'src/students/entities/student.entity';
 import { Subject } from 'src/subjects/entities/subject.entity';
