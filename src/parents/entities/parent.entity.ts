@@ -17,6 +17,9 @@ export class Parent {
   @Column()
   phoneNumber: string;
 
+  @Column({ default: false })
+  disabled: boolean;
+
   @OneToOne(() => User, (user) => user.parent, {
     nullable: true,
     eager: true,

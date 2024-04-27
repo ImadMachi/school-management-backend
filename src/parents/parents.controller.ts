@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CheckPolicies, PoliciesGuard } from 'src/casl/guards/policies.guard';
 import { ParentsService } from './parents.service';
 import { CreateParentDto } from './dto/create-parent.dto';
@@ -51,5 +51,10 @@ export class ParentsController {
   @CheckPolicies(new ManageParentsPolicyHandler())
   remove(@Param('id') id: string) {
     return this.parentsService.remove(+id);
+  }
+
+  @Put(':id/status')
+  async updateParentStatus(@Param('id') id: number, @Body('disabled') disabled: boolean) {
+    return this.parentsService.updateParentStatus(id, disabled);
   }
 }

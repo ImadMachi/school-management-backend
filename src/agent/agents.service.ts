@@ -53,12 +53,13 @@ export class AgentsService {
   }
 
   findAll() {
-    return this.agentRepository.createQueryBuilder('agent')
+    return this.agentRepository
+      .createQueryBuilder('agent')
       .leftJoinAndSelect('agent.user', 'user')
       .where((qb: SelectQueryBuilder<Agent>) => {
-        qb.where('user.disabled = :disabled', { disabled: false })
-          .orWhere('user.id IS NULL');
+        qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
       })
+      .andWhere('agent.disabled = :disabled', { disabled: false })
       .getMany();
   }
 
@@ -89,6 +90,19 @@ export class AgentsService {
     await queryRunner.release();
     return agent;
   }
+
+  async updateAgentStatus(id: number, disabled: boolean): Promise<Agent> {
+    const agent = await this.findOne(id);
+
+    if (!agent) {
+      throw new NotFoundException('User not found');
+    }
+
+    agent.disabled = disabled;
+
+    return await this.agentRepository.save(agent);
+  }
+
   async remove(id: number) {
     const agent = await this.agentRepository.findOne({
       where: { id },

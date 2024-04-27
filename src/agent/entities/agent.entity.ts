@@ -16,6 +16,9 @@ export class Agent {
   @Column()
   phoneNumber: string;
 
+  @Column({ default: false })
+  disabled: boolean;
+
   @OneToOne(() => User, (user) => user.agent, {
     nullable: true,
     eager: true,

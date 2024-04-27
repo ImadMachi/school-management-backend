@@ -60,6 +60,7 @@ export class TeachersService {
       .where((qb: SelectQueryBuilder<Teacher>) => {
         qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
       })
+      .andWhere('teacher.disabled = :disabled', { disabled: false })
       .getMany();
   }
 
@@ -92,12 +93,24 @@ export class TeachersService {
     return teacher;
   }
 
+  async updateTeacherStatus(id: number, disabled: boolean): Promise<Teacher> {
+    const teacher = await this.findOne(id);
+
+    if (!teacher) {
+      throw new NotFoundException('User not found');
+    }
+
+    teacher.disabled = disabled;
+
+    return await this.teacherRepository.save(teacher);
+  }
+
   async remove(id: number) {
-    const parent = await this.teacherRepository.findOne({
+    const teacher = await this.teacherRepository.findOne({
       where: { id },
     });
 
-    if (!parent) {
+    if (!teacher) {
       throw new NotFoundException();
     }
     return this.teacherRepository.delete(id);

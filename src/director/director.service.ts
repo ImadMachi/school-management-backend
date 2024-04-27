@@ -59,9 +59,10 @@ export class DirectorService {
       .where((qb: SelectQueryBuilder<Director>) => {
         qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
       })
+      .andWhere('director.disabled = :disabled', { disabled: false })
       .getMany();
   }
-  
+
   findOne(id: number) {
     return this.directorRepository.findOne({
       where: { id },
@@ -89,6 +90,19 @@ export class DirectorService {
     await queryRunner.release();
     return director;
   }
+
+  async updateDirectorStatus(id: number, disabled: boolean): Promise<Director> {
+    const director = await this.findOne(id);
+
+    if (!director) {
+      throw new NotFoundException('User not found');
+    }
+
+    director.disabled = disabled;
+
+    return await this.directorRepository.save(director);
+  }
+
   async remove(id: number) {
     const director = await this.directorRepository.findOne({
       where: { id },

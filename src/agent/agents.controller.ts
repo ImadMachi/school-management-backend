@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CheckPolicies, PoliciesGuard } from 'src/casl/guards/policies.guard';
 import { AgentsService } from './agents.service';
 import { CreateAgentDto } from './dto/create-agent.dto';
@@ -7,16 +7,19 @@ import { ManageAgentsPolicyHandler } from 'src/casl/policies/agents/manage-agent
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
-
 @Controller('agents')
 @UseGuards(PoliciesGuard)
 export class AgentsController {
-  constructor(private readonly agentsService: AgentsService) { }
+  constructor(private readonly agentsService: AgentsService) {}
 
   @Post()
   @UseInterceptors(FileInterceptor('profile-images'))
   @CheckPolicies(new ManageAgentsPolicyHandler())
-  create(@Body() createAgentDto: CreateAgentDto, @Query('create-account') createAccount: boolean, @UploadedFile() file: Express.Multer.File){
+  create(
+    @Body() createAgentDto: CreateAgentDto,
+    @Query('create-account') createAccount: boolean,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     return this.agentsService.create(createAgentDto, createAccount, file);
   }
 
@@ -26,7 +29,6 @@ export class AgentsController {
   createAccount(@Param('id') id: string, @Body() createUserDto: CreateUserDto, @UploadedFile() file: Express.Multer.File) {
     return this.agentsService.createAccountForAgent(+id, createUserDto, file);
   }
-
 
   @Get()
   @CheckPolicies(new ManageAgentsPolicyHandler())
@@ -41,17 +43,18 @@ export class AgentsController {
 
   @Patch(':id')
   @CheckPolicies(new ManageAgentsPolicyHandler())
-  update(
-    @Param('id') id: string,
-    @Body() updateAgentDto: UpdateAgentDto
-  ) {
+  update(@Param('id') id: string, @Body() updateAgentDto: UpdateAgentDto) {
     return this.agentsService.update(+id, updateAgentDto);
   }
-
 
   @Delete(':id')
   @CheckPolicies(new ManageAgentsPolicyHandler())
   remove(@Param('id') id: string) {
     return this.agentsService.remove(+id);
+  }
+
+  @Put(':id/status')
+  async updateAgentStatus(@Param('id') id: number, @Body('disabled') disabled: boolean) {
+    return this.agentsService.updateAgentStatus(id, disabled);
   }
 }

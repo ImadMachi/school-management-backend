@@ -16,6 +16,9 @@ export class Director {
   @Column()
   phoneNumber: string;
 
+  @Column({ default: false })
+  disabled: boolean;
+
   @OneToOne(() => User, (user) => user.director, {
     nullable: true,
     eager: true,

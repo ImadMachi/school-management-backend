@@ -62,6 +62,7 @@ export class StudentsService {
       .where((qb: SelectQueryBuilder<Student>) => {
         qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
       })
+      .andWhere('student.disabled = :disabled', { disabled: false })
       .getMany();
   }
 
@@ -101,6 +102,18 @@ export class StudentsService {
     }
     await queryRunner.release();
     return student;
+  }
+
+  async updateStudentStatus(id: number, disabled: boolean): Promise<Student> {
+    const student = await this.findOne(id);
+
+    if (!student) {
+      throw new NotFoundException('User not found');
+    }
+
+    student.disabled = disabled;
+
+    return await this.studentRepository.save(student);
   }
 
   async remove(id: number) {

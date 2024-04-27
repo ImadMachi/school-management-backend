@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Query, Delete, Patch, Param, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Delete, Patch, Param, UseInterceptors, UploadedFile, Put } from '@nestjs/common';
 import { DirectorService } from './director.service';
 import { CreateDirectorDto } from './dto/create-director.dto';
 import { CheckPolicies } from 'src/casl/guards/policies.guard';
@@ -46,5 +46,12 @@ export class DirectorController {
   @CheckPolicies(new ManageDirectorsPolicyHandler())
   remove(@Param('id') id: string) {
     return this.directorService.remove(+id);
+  } 
+  
+  @Put(':id/status')
+  async updateDirectorStatus(@Param('id') id: number, @Body('disabled') disabled: boolean) {
+    return this.directorService.updateDirectorStatus(id, disabled);
   }
+
+
 }
