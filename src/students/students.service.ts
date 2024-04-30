@@ -101,7 +101,7 @@ export class StudentsService {
       throw new HttpException(error.message, error.status);
     }
     await queryRunner.release();
-    return student;
+    return this.findOne(student.id);
   }
 
   async updateStudentStatus(id: number, disabled: boolean): Promise<Student> {

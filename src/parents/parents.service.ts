@@ -93,7 +93,7 @@ export class ParentsService {
       throw new HttpException(error.message, error.status);
     }
     await queryRunner.release();
-    return parent;
+    return this.findOne(parent.id);
   }
 
   async updateParentStatus(id: number, disabled: boolean): Promise<Parent> {
