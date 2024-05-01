@@ -10,9 +10,9 @@ export class AbsenceDay {
   @Column()
   date: Date;
 
-  @ManyToOne(() => Absence, (absence) => absence.absenceDays)
-  absence: Absence;
-
   @OneToMany(() => AbsenceSession, (session) => session.absenceDay)
   sessions: AbsenceSession[];
+
+  @ManyToOne(() => Absence, (absence) => absence.absenceDays)
+  absence: Absence;
 }

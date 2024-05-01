@@ -104,8 +104,8 @@ export class User {
   @ManyToMany(() => Message, (message) => message.readBy)
   readMessages: Message[];
 
-  @OneToMany(() => Absence, (absent) => absent.absentUser)
-  absents: Absence[];
+  @OneToMany(() => Absence, (absence) => absence.absentUser)
+  absences: Absence[];
 
   @ManyToMany(() => Group, (group) => group.users)
   groups: Group[];
@@ -113,11 +113,8 @@ export class User {
   @ManyToMany(() => Group, (group) => group.administratorUsers)
   administratorGroups: Group[];
 
-  @ManyToMany(() => Absence, (absent) => absent.replacingUsers)
-  replacements: Absence[];
-
   @OneToMany(() => AbsenceSession, (session) => session.user)
-  absentSessions: AbsenceSession[];
+  absenceSessions: AbsenceSession[];
 
   @BeforeInsert()
   @BeforeUpdate()

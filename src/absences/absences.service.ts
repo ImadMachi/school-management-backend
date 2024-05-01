@@ -1,100 +1,132 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { CreateAbsenceDto } from './dto/create-absence.dto';
 import { UpdateAbsenceDto } from './dto/update-absence.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Absence } from '../absences/entities/absence.entity';
+import { AbsenceDay } from './entities/absence-day.entity';
+import { AbsenceSession } from './entities/absence-session.entity';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AbsencesService {
   constructor(
     @InjectRepository(Absence)
-    private absentRepository: Repository<Absence>,
+    private absenceRepository: Repository<Absence>,
+    @InjectRepository(AbsenceDay)
+    private absenceDayRepository: Repository<AbsenceDay>,
+    @InjectRepository(AbsenceSession)
+    private absenceSessionRepository: Repository<AbsenceSession>,
+    private dataSource: DataSource,
+    private userService: UsersService,
   ) {}
 
   async create(createAbsenceDto: CreateAbsenceDto) {
-    const existingAbsence = await this.absentRepository
-      .createQueryBuilder('absent')
-      .where('absent.absentUser.id = :id', { id: createAbsenceDto.absentUser.id })
-      .getOne();
-    if (existingAbsence) {
-      throw new BadRequestException('Ce Absence existe déjà');
-    }
-    const newAbsence = await this.absentRepository.save(createAbsenceDto);
-    return this.absentRepository.findOne({
-      where: { id: newAbsence.id },
-      relations: ['absentUser', 'replaceUser'],
-    });
+    const newAbsence = await this.absenceRepository.insert(createAbsenceDto);
+
+    return this.getAbsence(newAbsence.identifiers[0].id);
   }
 
   async update(updateAbsenceDto: UpdateAbsenceDto) {
-    const absentToUpdate = await this.absentRepository.findOne({
-      where: { id: updateAbsenceDto.id },
-    });
-    if (!absentToUpdate) {
-      throw new BadRequestException("Ce Absence n'existe pas");
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    let absence: Absence;
+
+    try {
+      const absenceToUpdate = await this.absenceRepository.findOne({
+        where: { id: updateAbsenceDto.id },
+      });
+      if (!absenceToUpdate) {
+        throw new BadRequestException("Cet Absence n'existe pas");
+      }
+
+      const absenceDays = [];
+
+      for (const absenceDay of updateAbsenceDto.absenceDays) {
+        const newAbsenceDay = await this.absenceDayRepository.save({
+          ...absenceDay,
+          absence: absenceToUpdate,
+        });
+
+        const newSessions = [];
+
+        for (const session of absenceDay.sessions) {
+          let user = null;
+          if (session.user) {
+            user = await this.userService.findOne(session.user.id);
+          }
+          const result = await this.absenceSessionRepository.insert({
+            user,
+            absenceDay: newAbsenceDay,
+          });
+
+          const newSession = await this.absenceSessionRepository.findOne({
+            where: { id: result.identifiers[0].id },
+          });
+
+          newSessions.push(newSession);
+        }
+
+        newAbsenceDay.sessions = newSessions;
+
+        absenceDays.push(newAbsenceDay);
+      }
+
+      absenceToUpdate.absenceDays = absenceDays;
+
+      await this.absenceRepository.save(absenceToUpdate);
+
+      absence = await this.getAbsence(updateAbsenceDto.id);
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
+      throw new HttpException(error.message, error.status);
     }
-    const updatedAbsence = await this.absentRepository.save(updateAbsenceDto);
-    return this.absentRepository.findOne({
-      where: { id: updatedAbsence.id },
-      relations: ['absentUser', 'replaceUser'],
-    });
+    await queryRunner.release();
+
+    return absence;
   }
 
   async remove(id: number) {
-    const { affected } = await this.absentRepository.delete(id);
+    const { affected } = await this.absenceRepository.delete(id);
     if (affected === 0) {
-      throw new BadRequestException("Ce Absence n'existe pas");
+      throw new BadRequestException("Cet Absence n'existe pas");
     }
     return id;
   }
 
-  async getAbsence(absentId?: number) {
-    const absents = await this.absentRepository
-      .createQueryBuilder('absent')
-      .innerJoinAndSelect('absent.absentUser', 'absentUser')
+  getAbsence(absenceId: number) {
+    return this.absenceRepository
+      .createQueryBuilder('absence')
+      .where('absence.id = :absenceId', { absenceId })
+      .leftJoinAndSelect('absence.absentUser', 'absentUser')
       .leftJoinAndSelect('absentUser.director', 'director')
       .leftJoinAndSelect('absentUser.administrator', 'administrator')
       .leftJoinAndSelect('absentUser.teacher', 'teacher')
       .leftJoinAndSelect('absentUser.student', 'student')
       .leftJoinAndSelect('absentUser.parent', 'parent')
       .leftJoinAndSelect('absentUser.agent', 'agent')
-      .innerJoinAndSelect('absentUser.role', 'role')
-      .leftJoinAndSelect('absent.replaceUser', 'replaceUser')
-      .getMany();
-
-    let absentsWithReplaceUser = absents;
-
-    const absents2 = await this.absentRepository
-      .createQueryBuilder('absent')
-      .leftJoinAndSelect('absent.replaceUser', 'replaceUser')
-      .leftJoinAndSelect('replaceUser.director', 'replaceDirector')
-      .leftJoinAndSelect('replaceUser.administrator', 'replaceAdministrator')
-      .leftJoinAndSelect('replaceUser.teacher', 'replaceTeacher')
-      .leftJoinAndSelect('replaceUser.student', 'replaceStudent')
-      .leftJoinAndSelect('replaceUser.parent', 'replaceParent')
-      .leftJoinAndSelect('replaceUser.agent', 'replaceAgent')
-      .innerJoinAndSelect('replaceUser.role', 'replaceRole')
-      .getMany();
-
-    if (absents2.length > 0) {
-      // Perform the join if absents2 contains data
-      absentsWithReplaceUser = absents.map((absent) => {
-        const found = absents2.find((a) => a.id === absent.id);
-        return found ? { ...absent, replaceUser: found.replacingUsers } : absent;
-      });
-    }
-
-    // If absentId is provided, filter absents to return only the absent with the matching ID
-    if (absentId) {
-      const foundAbsence = absentsWithReplaceUser.find((absent) => absent.id === absentId);
-      return foundAbsence ? [foundAbsence] : [];
-    }
-
-    return absentsWithReplaceUser;
+      .leftJoinAndSelect('absence.absenceDays', 'absenceDays')
+      .leftJoinAndSelect('absenceDays.sessions', 'session')
+      .leftJoinAndSelect('session.user', 'user')
+      .getOne();
   }
 
-  async getAllAbsences() {
-    return this.absentRepository.find();
+  getAllAbsences() {
+    return this.absenceRepository
+      .createQueryBuilder('absence')
+      .leftJoinAndSelect('absence.absentUser', 'absentUser')
+      .leftJoinAndSelect('absentUser.director', 'director')
+      .leftJoinAndSelect('absentUser.administrator', 'administrator')
+      .leftJoinAndSelect('absentUser.teacher', 'teacher')
+      .leftJoinAndSelect('absentUser.student', 'student')
+      .leftJoinAndSelect('absentUser.parent', 'parent')
+      .leftJoinAndSelect('absentUser.agent', 'agent')
+      .leftJoinAndSelect('absence.absenceDays', 'absenceDays')
+      .leftJoinAndSelect('absenceDays.sessions', 'session')
+      .leftJoinAndSelect('session.user', 'user')
+      .orderBy('absence.id', 'DESC')
+      .getMany();
   }
 }

@@ -1,51 +1,55 @@
 import { Transform, Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsObject, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 class Id {
   @IsNumber()
   @Transform(({ value }) => parseInt(value, 10))
   id: number;
 }
+
+class SessionDto {
+  @IsOptional()
+  @IsObject()
+  user: Id;
+}
+
+class AbsennceDayDto {
+  @IsString()
+  date: string;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SessionDto)
+  sessions: SessionDto[];
+}
+
 export class UpdateAbsenceDto {
   @IsNumber()
   id: number;
 
   @IsNotEmpty()
   @Type(() => Date)
-  datedebut: Date;
+  startDate: Date;
 
   @IsNotEmpty()
   @Type(() => Date)
-  datefin: Date;
+  endDate: Date;
 
-  @IsNotEmpty()
   @IsString()
   reason: string;
 
-  @IsNotEmpty()
   @IsBoolean()
+  @IsOptional()
   justified: boolean;
 
   @IsObject()
-  @ValidateNested({ each: true })
-  @Type(() => Id)
   absentUser: Id;
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => Id)
-  replaceUser: Id[];
-
-  @IsArray()
-  @IsString({ each: true })
-  seances: string[];
-
-  @IsString()
-  title: string;
-
-  @IsString()
-  body: string;
 
   @IsString()
   status: string;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => AbsennceDayDto)
+  absenceDays: AbsennceDayDto[];
 }

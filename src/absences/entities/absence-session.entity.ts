@@ -7,7 +7,7 @@ export class AbsenceSession {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.absentSessions)
+  @ManyToOne(() => User, (user) => user.absenceSessions)
   user: User;
 
   @ManyToOne(() => AbsenceDay, (absenceDay) => absenceDay.sessions)

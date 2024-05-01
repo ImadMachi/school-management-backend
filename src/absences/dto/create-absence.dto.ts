@@ -1,5 +1,5 @@
 import { Transform, Type } from 'class-transformer';
-import { IsArray, IsNotEmpty, IsNumber, IsObject, IsString, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsObject, IsString } from 'class-validator';
 
 class Id {
   @IsNumber()
@@ -20,11 +20,5 @@ export class CreateAbsenceDto {
   reason: string;
 
   @IsObject()
-  @ValidateNested()
   absentUser: Id;
-
-  // @IsArray()
-  // @IsObject({ each: true })
-  // @ValidateNested({ each: true })
-  // replacingUsers: Id[];
 }

@@ -25,12 +25,6 @@ export class MessagesController {
     return this.messagesService.getMessagesByFolder(userId, folder, timestamp, categoryId, groupId, text, limit, offset);
   }
 
-  // @Get('children')
-  // getMessagesByParent(@Request() req, @Query() query: GetMessageQueryDto) {
-  //   const { folder, timestamp, limit, offset, categoryId, text } = query;
-  //   return this.messagesService.getStudentMessagesByParent(req.user.id, folder, timestamp, categoryId, text, limit, offset);
-  // }
-
   @Get('auth')
   getAuthenticatedUserMessages(@Request() req, @Query() query: GetMessageQueryDto) {
     const { folder, timestamp, limit, offset, categoryId, userId, text, groupId } = query;

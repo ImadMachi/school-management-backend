@@ -19,14 +19,8 @@ export class Absence {
   @Column({ nullable: true })
   justified: boolean;
 
-  @ManyToOne(() => User, (user) => user.absents)
+  @ManyToOne(() => User, (user) => user.absences)
   absentUser: User;
-
-  @ManyToMany(() => User, (user) => user.replacements, {
-    nullable: true,
-  })
-  @JoinTable()
-  replacingUsers: User[];
 
   @Column({ type: 'enum', enum: ['not treated', 'treating', 'treated'], default: 'not treated' })
   status: string;
