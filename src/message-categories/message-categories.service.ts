@@ -82,7 +82,14 @@ export class MessageCategoriesService {
     const filename = file.originalname;
     const fileHash = this.generateRandomHash() + filename;
 
-    const execpath = path.join(__dirname, '..', '..', 'uploads', 'categories-images', fileHash);
+    let execpath = '';
+
+    if (process.env.NODE_ENV === 'development') {
+      execpath = path.join(__dirname, '..', '..', 'uploads', 'categories-images', fileHash);
+    } else {
+      execpath = path.join(__dirname, '..', 'uploads', 'categories-images', fileHash);
+    }
+
     const filepath = path.join(fileHash);
 
     messageCategory.imagepath = filepath;
@@ -94,7 +101,12 @@ export class MessageCategoriesService {
 
   deleteOldImage(oldImagePath) {
     if (oldImagePath) {
-      const oldImageFullPath = path.join(__dirname, '..', '..', 'uploads', 'categories-images', oldImagePath);
+      let oldImageFullPath = '';
+      if (process.env.NODE_ENV === 'development') {
+        oldImageFullPath = path.join(__dirname, '..', '..', 'uploads', 'categories-images', oldImagePath);
+      } else {
+        oldImageFullPath = path.join(__dirname, '..', 'uploads', 'categories-images', oldImagePath);
+      }
 
       if (fs.existsSync(oldImageFullPath)) {
         fs.unlinkSync(oldImageFullPath);
