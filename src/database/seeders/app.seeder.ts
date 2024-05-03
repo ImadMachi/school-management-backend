@@ -65,6 +65,19 @@ export default class AppSeeder implements Seeder {
       lastName: 'Rahim',
     });
 
+    // Levels
+    const level1 = await levelFactory.save({
+      name: 'Level 1',
+    });
+
+    const level2 = await levelFactory.save({
+      name: 'Level 2',
+    });
+
+    const level3 = await levelFactory.save({
+      name: 'Level 3',
+    });
+
     // Classes
     const classe1 = await classFactory.save({
       name: 'Classe 1',
@@ -72,6 +85,7 @@ export default class AppSeeder implements Seeder {
       teachers: [teachers[0], teachers[1]],
       students: [students[0], students[1], students[2], students[3], students[4]],
       administrator: administrators[0],
+      level: level1,
     });
 
     const customStudent1 = await studentFactory.save({
@@ -88,6 +102,7 @@ export default class AppSeeder implements Seeder {
       teachers: [teachers[2], teachers[3]],
       students: [students[0], students[1], students[2], students[3], students[4]],
       administrator: administrators[1],
+      level: level2,
     });
 
     const classe3 = await classFactory.save({
@@ -96,19 +111,7 @@ export default class AppSeeder implements Seeder {
       teachers: [teachers[4]],
       students: [students[0], students[1], students[2], students[3], students[4]],
       administrator: administrators[2],
-    });
-
-    // Levels
-    const level1 = await levelFactory.save({
-      name: 'Level 1',
-    });
-
-    const level2 = await levelFactory.save({
-      name: 'Level 2',
-    });
-
-    const level3 = await levelFactory.save({
-      name: 'Level 3',
+      level: level3,
     });
 
     //Cycles
@@ -202,6 +205,12 @@ export default class AppSeeder implements Seeder {
       password: '123456',
       role: studentRole,
       student: students[1],
+    });
+    const userStudent3 = await userFactory.save({
+      email: `${students[0].lastName.toLowerCase()}@gmail.com`,
+      password: '123456',
+      role: studentRole,
+      student: students[0],
     });
 
     const userParent1 = await userFactory.save({

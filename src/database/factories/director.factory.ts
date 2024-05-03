@@ -1,6 +1,6 @@
 import { Director } from 'src/director/entities/director.entity';
 import { setSeederFactory } from 'typeorm-extension';
-import { arabicFirstNames,arabicLastNames } from '../dummyNames';
+import { arabicFirstNames, arabicLastNames } from '../dummyNames';
 
 function getRandomElement(array) {
   const randomIndex = Math.floor(Math.random() * array.length);

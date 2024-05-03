@@ -9,6 +9,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Group } from './entities/group.entity';
 import { MessagesService } from 'src/messages/messages.service';
+import { User } from 'src/users/entities/user.entity';
+import { RoleName } from 'src/auth/enums/RoleName';
 
 @Injectable()
 export class GroupsService {
@@ -48,11 +50,16 @@ export class GroupsService {
     return groups.sort((a, b) => b.unReadMessagesCount - a.unReadMessagesCount);
   }
 
-  findAll() {
-    return this.groupRepository
+  findAll(user: User) {
+    const query = this.groupRepository
       .createQueryBuilder('group')
       .where('group.isActive = :isActive', { isActive: true })
-      .leftJoinAndSelect('group.administratorUsers', 'administratorUsers')
+      .leftJoinAndSelect('group.administratorUsers', 'administratorUsers');
+
+    if (user.role.name !== RoleName.Director) {
+      query.andWhere('administratorUsers.id = :userId', { userId: user.id });
+    }
+    return query
       .leftJoinAndSelect('administratorUsers.administrator', 'administrator')
       .leftJoinAndSelect('administratorUsers.role', 'role')
       .leftJoinAndSelect('group.users', 'users')

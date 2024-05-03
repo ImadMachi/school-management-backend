@@ -6,6 +6,8 @@ import { Student } from './entities/student.entity';
 import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { User } from 'src/users/entities/user.entity';
+import { RoleName } from 'src/auth/enums/RoleName';
 
 @Injectable()
 export class StudentsService {
@@ -53,16 +55,24 @@ export class StudentsService {
     return this.findOne(student.id);
   }
 
-  findAll() {
-    return this.studentRepository
+  findAll(user: User) {
+    const query = this.studentRepository
       .createQueryBuilder('student')
       .leftJoinAndSelect('student.classe', 'classe')
       .leftJoinAndSelect('student.parent', 'parent')
       .leftJoinAndSelect('student.user', 'user')
       .where((qb: SelectQueryBuilder<Student>) => {
         qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
-      })
-      .getMany();
+      });
+
+    if (user.role.name == RoleName.Administrator) {
+      query.leftJoinAndSelect('classe.administrator', 'administrator');
+      // .andWhere('administrator.userId = :userId', { userId: user.id });
+    } else if (user.role.name == RoleName.Teacher) {
+      query.andWhere('teacher.id = :userId', { userId: user.id });
+    }
+
+    return query.getMany();
   }
 
   findStudentsByParent(parentId: number) {

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, Query, Request } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -31,8 +31,8 @@ export class StudentsController {
 
   @Get()
   @CheckPolicies(new ManageStudentsPolicyHandler())
-  findAll() {
-    return this.studentsService.findAll();
+  findAll(@Request() req) {
+    return this.studentsService.findAll(req.user);
   }
 
   @Get('parent/:parentId')

@@ -87,21 +87,59 @@ export class UsersService {
     user.agent = agent;
     user.role = role;
 
-    return this.create(user, file); // Pass an empty array as the second argument
+    return this.create(user, file);
   }
 
-  async findAll(role: RoleName): Promise<User[]> {
+  async findAll(role: RoleName, user: User): Promise<User[]> {
     const query = this.usersRepository.createQueryBuilder('user').leftJoinAndSelect('user.role', 'role');
     if (Object.values(RoleName).includes(role)) {
       query.where('role.name = :role', { role });
     }
-    query.leftJoinAndSelect('user.student', 'student');
-    query.leftJoinAndSelect('user.administrator', 'administrator');
-    query.leftJoinAndSelect('user.teacher', 'teacher');
-    query.leftJoinAndSelect('user.parent', 'parent');
-    query.leftJoinAndSelect('user.director', 'director');
-    query.leftJoinAndSelect('user.agent', 'agent');
-    query.andWhere('user.disabled = :disabled', { disabled: false });
+    query
+      .leftJoinAndSelect('user.student', 'student')
+      .leftJoinAndSelect('student.classe', 'classe')
+      .leftJoinAndSelect('user.administrator', 'administrator')
+      .leftJoinAndSelect('user.teacher', 'teacher')
+      .leftJoinAndSelect('user.parent', 'parent')
+      .leftJoinAndSelect('user.director', 'director')
+      .leftJoinAndSelect('user.agent', 'agent')
+      .andWhere('user.disabled = :disabled', { disabled: false });
+
+    if (user.role.name === RoleName.Administrator) {
+      query
+        .leftJoinAndSelect('classe.administrator', 'administratorx')
+        .leftJoinAndSelect('administratorx.user', 'userx')
+        .leftJoinAndSelect('parent.students', 'studenty')
+        .leftJoinAndSelect('studenty.classe', 'classey')
+        .leftJoinAndSelect('classey.administrator', 'administratory')
+        .leftJoinAndSelect('administratory.user', 'usery')
+        .andWhere((qb) => {
+          qb.where((qb) => {
+            qb.where('userx.id = :userId', { userId: user.id }).andWhere('role.name = :student', { student: RoleName.Student });
+          })
+            // .orWhere((qb) => {
+            //   qb.where('usery.id = :userId', { userId: user.id }).andWhere('role.name = :parent', { parent: RoleName.Parent });
+            // })
+            .orWhere('role.name NOT IN (:...roles)', { roles: [RoleName.Student /*RoleName.Parent*/] });
+        });
+    } else if (user.role.name === RoleName.Teacher) {
+      query
+        .leftJoinAndSelect('classe.administrator', 'administratorx')
+        .leftJoinAndSelect('administratorx.user', 'userx')
+        .leftJoinAndSelect('parent.students', 'studenty')
+        .leftJoinAndSelect('studenty.classe', 'classey')
+        .leftJoinAndSelect('classey.teachers', 'teachersy')
+        .leftJoinAndSelect('teachersy.user', 'usery')
+        .andWhere((qb) => {
+          qb.where((qb) => {
+            qb.where('userx.id = :userId', { userId: user.id }).andWhere('role.name = :student', { student: RoleName.Student });
+          })
+            // .orWhere((qb) => {
+            //   qb.where('usery.id = :userId', { userId: user.id }).andWhere('role.name = :parent', { parent: RoleName.Parent });
+            // })
+            .orWhere('role.name NOT IN (:...roles)', { roles: [RoleName.Student /*RoleName.Parent*/] });
+        });
+    }
 
     return query.getMany();
   }

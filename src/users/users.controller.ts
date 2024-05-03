@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  Request,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -26,8 +27,8 @@ export class UsersController {
 
   @Get()
   // @CheckPolicies(new ReadUsersPolicyHandler())
-  findAll(@Query('role') role: string = '') {
-    return this.usersService.findAll(role as RoleName);
+  findAll(@Query('role') role: string = '', @Request() req) {
+    return this.usersService.findAll(role as RoleName, req.user);
   }
 
   @Get(':id')

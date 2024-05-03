@@ -4,7 +4,8 @@ import { UpdateClassDto } from './dto/update-class.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Class } from './entities/class.entity';
 import { Repository } from 'typeorm';
-import { UsersService } from 'src/users/users.service';
+import { User } from 'src/users/entities/user.entity';
+import { RoleName } from 'src/auth/enums/RoleName';
 
 @Injectable()
 export class ClassesService {
@@ -50,9 +51,21 @@ export class ClassesService {
     return id;
   }
 
-  findAll() {
-    return this.classRepository.find({
-      relations: ['administrator', 'teachers', 'students', 'level', 'subjects'],
-    });
+  findAll(user: User) {
+    const query = this.classRepository
+      .createQueryBuilder('class')
+      .leftJoinAndSelect('class.administrator', 'administrator')
+      .leftJoinAndSelect('class.teachers', 'teacher')
+      .leftJoinAndSelect('class.students', 'student')
+      .leftJoinAndSelect('class.level', 'level')
+      .leftJoinAndSelect('class.subjects', 'subject');
+
+    if (user.role.name == RoleName.Administrator) {
+      query.leftJoinAndSelect('administrator.user', 'user').andWhere('user.id = :userId', { userId: user.id });
+    } else if (user.role.name == RoleName.Teacher) {
+      query.leftJoinAndSelect('teacher.user', 'user').andWhere('user.id = :userId', { userId: user.id });
+    }
+
+    return query.getMany();
   }
 }
