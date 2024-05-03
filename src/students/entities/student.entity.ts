@@ -24,6 +24,9 @@ export class Student {
   @Column()
   sex: string;
 
+  @Column({ default: false })
+  disabled: boolean;
+
   @OneToOne(() => User, (user) => user.student, {
     nullable: true,
     eager: true,

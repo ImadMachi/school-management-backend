@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, Query, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, Query, Request, Put } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -49,6 +49,11 @@ export class StudentsController {
   @CheckPolicies(new ManageStudentsPolicyHandler())
   update(@Param('id') id: string, @Body() updateStudentDto: UpdateStudentDto) {
     return this.studentsService.update(+id, updateStudentDto);
+  }
+
+  @Put(':id/status')
+  async updateStudentStatus(@Param('id') id: number, @Body('disabled') disabled: boolean) {
+    return this.studentsService.updateStudentStatus(id, disabled);
   }
 
   @Delete(':id')

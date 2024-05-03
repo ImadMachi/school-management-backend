@@ -61,6 +61,7 @@ export class ParentsService {
         qb.where('user.disabled = :disabled', { disabled: false })
           .orWhere('user.id IS NULL');
       })
+      .andWhere('parent.disabled = :disabled', { disabled: false })
       .getMany();
   }
   
@@ -92,7 +93,19 @@ export class ParentsService {
       throw new HttpException(error.message, error.status);
     }
     await queryRunner.release();
-    return parent;
+    return this.findOne(parent.id);
+  }
+
+  async updateParentStatus(id: number, disabled: boolean): Promise<Parent> {
+    const parent = await this.findOne(id);
+
+    if (!parent) {
+      throw new NotFoundException('User not found');
+    }
+
+    parent.disabled = disabled;
+
+    return await this.parentRepository.save(parent);
   }
 
   async remove(id: number) {

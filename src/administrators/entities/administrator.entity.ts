@@ -17,6 +17,9 @@ export class Administrator {
   @Column()
   phoneNumber: string;
 
+  @Column({ default: false })
+  disabled: boolean;
+
   @Exclude()
   @OneToOne(() => User, (user) => user.administrator, {
     nullable: true,

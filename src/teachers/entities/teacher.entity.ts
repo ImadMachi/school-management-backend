@@ -27,6 +27,9 @@ export class Teacher {
   @Column()
   sex: string;
 
+  @Column({ default: false })
+  disabled: boolean;
+
   @Exclude()
   @OneToOne(() => User, (user) => user.teacher, {
     nullable: true,

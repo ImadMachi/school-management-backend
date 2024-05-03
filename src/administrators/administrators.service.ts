@@ -52,7 +52,7 @@ export class AdministratorsService {
     administrator.user = user;
     return administrator;
   }
-  
+
   findAll() {
     return this.administratorRepository
       .createQueryBuilder('administrator')
@@ -60,6 +60,7 @@ export class AdministratorsService {
       .where((qb: SelectQueryBuilder<Administrator>) => {
         qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
       })
+      .andWhere('administrator.disabled = :disabled', { disabled: false })
       .getMany();
   }
 
@@ -90,6 +91,19 @@ export class AdministratorsService {
     await queryRunner.release();
     return administrator;
   }
+
+  async updateAdministratorStatus(id: number, disabled: boolean): Promise<Administrator> {
+    const administrator = await this.findOne(id);
+
+    if (!administrator) {
+      throw new NotFoundException('User not found');
+    }
+
+    administrator.disabled = disabled;
+
+    return await this.administratorRepository.save(administrator);
+  }
+
   async remove(id: number) {
     const administrator = await this.administratorRepository.findOne({
       where: { id },

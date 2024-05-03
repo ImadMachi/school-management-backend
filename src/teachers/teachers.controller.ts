@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, Query, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, Query, UploadedFile, Put } from '@nestjs/common';
 import { TeachersService } from './teachers.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
@@ -15,8 +15,8 @@ export class TeachersController {
   @Post()
   @UseInterceptors(FileInterceptor('profile-images'))
   @CheckPolicies(new ManageTeachersPolicyHandler())
-  create(@Body() createTeacherDto: CreateTeacherDto, @Query('create-account') createAccount: boolean, file : Express.Multer.File) {
-    return this.teachersService.create(createTeacherDto, createAccount, file)
+  create(@Body() createTeacherDto: CreateTeacherDto, @Query('create-account') createAccount: boolean, file: Express.Multer.File) {
+    return this.teachersService.create(createTeacherDto, createAccount, file);
   }
 
   @Post(':id/create-account')
@@ -39,10 +39,7 @@ export class TeachersController {
 
   @Patch(':id')
   @CheckPolicies(new ManageTeachersPolicyHandler())
-  update(
-    @Param('id') id: string,
-    @Body() updateTeacherDto: UpdateTeacherDto
-  ) {
+  update(@Param('id') id: string, @Body() updateTeacherDto: UpdateTeacherDto) {
     return this.teachersService.update(+id, updateTeacherDto);
   }
 
@@ -50,5 +47,9 @@ export class TeachersController {
   @CheckPolicies(new ManageTeachersPolicyHandler())
   remove(@Param('id') id: string) {
     return this.teachersService.remove(+id);
+  }
+  @Put(':id/status')
+  async updateTeacherStatus(@Param('id') id: number, @Body('disabled') disabled: boolean) {
+    return this.teachersService.updateTeacherStatus(id, disabled);
   }
 }

@@ -63,16 +63,9 @@ export class StudentsService {
       .leftJoinAndSelect('student.user', 'user')
       .where((qb: SelectQueryBuilder<Student>) => {
         qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
-      });
-
-    if (user.role.name == RoleName.Administrator) {
-      query.leftJoinAndSelect('classe.administrator', 'administrator');
-      // .andWhere('administrator.userId = :userId', { userId: user.id });
-    } else if (user.role.name == RoleName.Teacher) {
-      query.andWhere('teacher.id = :userId', { userId: user.id });
-    }
-
-    return query.getMany();
+      })
+      .andWhere('student.disabled = :disabled', { disabled: false })
+      .getMany();
   }
 
   findStudentsByParent(parentId: number) {
@@ -110,7 +103,19 @@ export class StudentsService {
       throw new HttpException(error.message, error.status);
     }
     await queryRunner.release();
-    return student;
+    return this.findOne(student.id);
+  }
+
+  async updateStudentStatus(id: number, disabled: boolean): Promise<Student> {
+    const student = await this.findOne(id);
+
+    if (!student) {
+      throw new NotFoundException('User not found');
+    }
+
+    student.disabled = disabled;
+
+    return await this.studentRepository.save(student);
   }
 
   async remove(id: number) {
