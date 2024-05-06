@@ -130,12 +130,7 @@ export class GroupsService {
     const filename = file.originalname;
     const fileHash = this.generateRandomHash() + filename;
 
-    let execpath = '';
-    if (process.env.NODE_ENV === 'development') {
-      execpath = path.join(__dirname, '..', '..', 'uploads', 'groups', fileHash);
-    } else {
-      execpath = path.join(__dirname, '..', 'uploads', 'groups', fileHash);
-    }
+    const execpath = path.join(__dirname, '..', '..', 'uploads', 'groups', fileHash);
 
     const filepath = path.join(fileHash);
 

@@ -325,12 +325,8 @@ export class MessagesService {
         const filename = file.originalname;
         const fileHash = this.generateRandomHash() + filename;
 
-        let execpath = '';
-        if (process.env.NODE_ENV === 'development') {
-          execpath = path.join(__dirname, '..', '..', 'uploads', 'attachments', fileHash);
-        } else {
-          execpath = path.join(__dirname, '..', 'uploads', 'attachments', fileHash);
-        }
+        const execpath = path.join(__dirname, '..', '..', 'uploads', 'attachments', fileHash);
+
         const filepath = path.join(fileHash);
 
         const attachment = this.attachmentRepository.create({

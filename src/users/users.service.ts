@@ -201,13 +201,7 @@ export class UsersService {
     const filename = file.originalname;
     const fileHash = this.generateRandomHash() + filename;
 
-    let execpath = '';
-
-    if (process.env.NODE_ENV === 'development') {
-      execpath = path.join(__dirname, '..', '..', 'uploads', 'profile-images', fileHash);
-    } else {
-      execpath = path.join(__dirname, '..', 'uploads', 'profile-images', fileHash);
-    }
+    const execpath = path.join(__dirname, '..', '..', 'uploads', 'profile-images', fileHash);
 
     const filepath = path.join('profile-images', fileHash);
 

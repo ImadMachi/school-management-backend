@@ -77,15 +77,15 @@ export const dataSourceOptions: DataSourceOptions = {
   // @ts-ignore
   autoLoadEntities: true,
   // logging: true,
-  // extra:
-  //   process.env.NODE_ENV == 'development'
-  //     ? {}
-  //     : {
-  //         ssl: {
-  //           rejectUnauthorized: false,
-  //         },
-  //       },
-  // sslmode: process.env.NODE_ENV == 'development' ? 'disable' : 'require',
+  extra:
+    process.env.NODE_ENV == 'development'
+      ? {}
+      : {
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        },
+  sslmode: process.env.NODE_ENV == 'development' ? 'disable' : 'require',
 };
 
 export default new DataSource(dataSourceOptions);
