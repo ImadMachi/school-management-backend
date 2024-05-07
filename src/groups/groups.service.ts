@@ -101,9 +101,9 @@ export class GroupsService {
 
     if (file) {
       const oldImagePath = this.uploadImage(file, groupToUpdate);
-      if (oldImagePath) {
-        this.deleteOldImage(oldImagePath);
-      }
+      // if (oldImagePath) {
+      //   this.deleteOldImage(oldImagePath);
+      // }
     }
 
     const updatedGroup = await this.groupRepository.save(groupToUpdate);

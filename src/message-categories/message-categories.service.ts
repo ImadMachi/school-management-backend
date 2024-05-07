@@ -54,9 +54,9 @@ export class MessageCategoriesService {
 
     if (file) {
       const oldeImagePath = this.uploadImage(file, messageCategoryToUpdate);
-      if (oldeImagePath) {
-        this.deleteOldImage(oldeImagePath);
-      }
+      // if (oldeImagePath) {
+      //   this.deleteOldImage(oldeImagePath);
+      // }
     }
 
     return this.messageCategoryRepository.save(messageCategoryToUpdate);

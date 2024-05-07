@@ -262,7 +262,7 @@ export default class AppSeeder implements Seeder {
     const group1 = await groupFactory.save({
       name: 'Transport',
       description: 'Gestion des transports scolaires',
-      imagePath: 'school-trips-managers.jpg',
+      imagePath: 'Children-getting-on-schoolbus.jpg',
       administratorUsers: [userAdministrator1],
       users: [userStudent1, userStudent2, userTeacher1, userTeacher2, userAgent1],
     });
@@ -270,7 +270,7 @@ export default class AppSeeder implements Seeder {
     const group2 = await groupFactory.save({
       name: 'Surveillance',
       description: 'Gestion de la surveillance',
-      imagePath: 'academic.jpg',
+      imagePath: 'school-guardian.jpg',
       administratorUsers: [userAdministrator2],
       users: [userTeacher1, userTeacher2, userAdministrator3],
     });
