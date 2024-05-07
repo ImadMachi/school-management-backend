@@ -89,17 +89,23 @@ export class AbsencesService {
   }
 
   async remove(id: number) {
-    const { affected } = await this.absenceRepository.delete(id);
-    if (affected === 0) {
+    const absence = await this.absenceRepository.findOne({ where: { id } });
+    if (!absence) {
       throw new BadRequestException("Cet Absence n'existe pas");
     }
-    return id;
+
+    absence.active = false;
+
+    await this.absenceRepository.save(absence);
+
+    return absence;
   }
 
   getAbsence(absenceId: number) {
     return this.absenceRepository
       .createQueryBuilder('absence')
       .where('absence.id = :absenceId', { absenceId })
+      .andWhere('absence.active = true')
       .leftJoinAndSelect('absence.absentUser', 'absentUser')
       .leftJoinAndSelect('absentUser.director', 'director')
       .leftJoinAndSelect('absentUser.administrator', 'administrator')
@@ -116,6 +122,7 @@ export class AbsencesService {
   getAllAbsences() {
     return this.absenceRepository
       .createQueryBuilder('absence')
+      .where('absence.active = true')
       .leftJoinAndSelect('absence.absentUser', 'absentUser')
       .leftJoinAndSelect('absentUser.director', 'director')
       .leftJoinAndSelect('absentUser.administrator', 'administrator')

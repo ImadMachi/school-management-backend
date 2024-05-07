@@ -413,6 +413,8 @@ export default class AppSeeder implements Seeder {
     // Absences
     const absence1 = await absenceFactory.save({
       absentUser: userTeacher1,
+      startDate: new Date('2024-05-01'),
+      endDate: new Date('2024-05-03'),
     });
   }
 }

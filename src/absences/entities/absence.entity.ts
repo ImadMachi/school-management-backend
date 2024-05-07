@@ -16,6 +16,9 @@ export class Absence {
   @Column()
   reason: string;
 
+  @Column({ default: true })
+  active: boolean;
+
   @Column({ nullable: true })
   justified: boolean;
 
