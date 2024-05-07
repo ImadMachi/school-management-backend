@@ -41,6 +41,9 @@ export class AbsencesService {
         throw new BadRequestException("Cet Absence n'existe pas");
       }
 
+      absenceToUpdate.justified = updateAbsenceDto.justified;
+      absenceToUpdate.status = updateAbsenceDto.status;
+
       const absenceDays = [];
 
       for (const absenceDay of updateAbsenceDto.absenceDays) {
