@@ -31,8 +31,8 @@ export class StudentsController {
 
   @Get()
   @CheckPolicies(new ManageStudentsPolicyHandler())
-  findAll(@Request() req) {
-    return this.studentsService.findAll(req.user);
+  findAll() {
+    return this.studentsService.findAll();
   }
 
   @Get('parent/:parentId')
