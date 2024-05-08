@@ -55,8 +55,8 @@ export class StudentsService {
     return this.findOne(student.id);
   }
 
-  findAll(user: User) {
-    const query = this.studentRepository
+  findAll() {
+    return this.studentRepository
       .createQueryBuilder('student')
       .leftJoinAndSelect('student.classe', 'classe')
       .leftJoinAndSelect('student.parent', 'parent')
