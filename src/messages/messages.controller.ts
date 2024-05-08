@@ -68,6 +68,12 @@ export class MessagesController {
     return this.messagesService.moveMessageFromTrash(id, req.user.id);
   }
 
+  // forward a message
+  @Get(':id/forward/:userId')
+  forwardMessage(@Param('id') id: number, @Param('id') recipientId: number) {
+    return this.messagesService.forwardMessage(id, recipientId);
+  }
+
   @Get(':id')
   getMessage(@Param('id') id: number, @Request() req) {
     return this.messagesService.getMessage(id, req.user.id);

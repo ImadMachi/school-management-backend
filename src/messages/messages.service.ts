@@ -319,6 +319,22 @@ export class MessagesService {
     await this.messageRepository.save(message);
   }
 
+  async forwardMessage(messageId: number, recipientId: number) {
+    const message = await this.messageRepository.findOne({ where: { id: messageId }, relations: ['recipients'] });
+
+    if (!message) {
+      throw new NotFoundException('Message not found');
+    }
+
+    const recipient = await this.usersService.findOne(recipientId);
+
+    if (!recipient) {
+      throw new NotFoundException('Recipient not found');
+    }
+
+    return message;
+  }
+
   private async saveAttachments(files: Array<Express.Multer.File>) {
     return Promise.all(
       files.map(async (file) => {
