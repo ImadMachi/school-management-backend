@@ -332,6 +332,8 @@ export class MessagesService {
       throw new NotFoundException('Recipient not found');
     }
 
+    // console.log('message', message);
+
     return message;
   }
 
