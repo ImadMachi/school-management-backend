@@ -43,6 +43,5 @@ pnpm-lock.yaml
 # environment
 .env
 
-# uploads/attachments/*
-# uploads/categories-images/*
-# uploads/profileImage/*
+
+/uploads
