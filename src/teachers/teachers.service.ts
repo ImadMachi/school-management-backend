@@ -38,7 +38,7 @@ export class TeachersService {
       throw new HttpException(error.message, error.status);
     }
     await queryRunner.release();
-    return teacher;
+    return this.findOne(teacher.id);
   }
 
   async createAccountForTeacher(id: number, createUserDto: CreateUserDto, file: Express.Multer.File) {
@@ -57,6 +57,7 @@ export class TeachersService {
     return this.teacherRepository
       .createQueryBuilder('teacher')
       .leftJoinAndSelect('teacher.user', 'user')
+      .leftJoinAndSelect('teacher.subjects', 'subjects')
       .where((qb: SelectQueryBuilder<Teacher>) => {
         qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
       })

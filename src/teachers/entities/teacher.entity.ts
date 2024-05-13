@@ -1,6 +1,6 @@
 import { Exclude, Expose } from 'class-transformer';
 import { User } from '../../users/entities/user.entity';
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Class } from 'src/classes/entities/class.entity';
 import { Subject } from 'src/subjects/entities/subject.entity';
 
@@ -40,7 +40,6 @@ export class Teacher {
   @ManyToMany(() => Class, (cls) => cls.teachers)
   classes: Class[];
 
-  @Exclude()
   @ManyToMany(() => Subject, (subject) => subject.teachers)
   subjects: Subject[];
 
