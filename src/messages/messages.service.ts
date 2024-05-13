@@ -331,9 +331,13 @@ export class MessagesService {
     if (!recipient) {
       throw new NotFoundException('Recipient not found');
     }
+    if (!message.recipients.some((u) => u.id === recipientId)) {
+      message.recipients.push(recipient);
+    }
 
-    // test
-    return message;
+    await this.messageRepository.save(message);
+
+    return this.messageRepository.findOne({ where: { id: message.id }, relations: ['recipients'] });
   }
 
   private async saveAttachments(files: Array<Express.Multer.File>) {
