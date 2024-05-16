@@ -6,6 +6,7 @@ import { CheckPolicies, PoliciesGuard } from 'src/casl/guards/policies.guard';
 import { ManageMessagesPolicyHandler } from 'src/casl/policies/messages/manage-messages.policy';
 import { GetMessageQueryDto } from './dto/get-message-query.dto';
 import { ContactAdministrationDto } from './dto/contact-administration.dto';
+import { ForwardMessageDto } from './dto/forward-message.dto';
 
 @Controller('messages')
 @UseGuards(PoliciesGuard)
@@ -69,9 +70,9 @@ export class MessagesController {
   }
 
   // forward a message
-  @Get(':id/forward/:userId')
-  forwardMessage(@Param('id') id: number, @Param('id') recipientId: number) {
-    return this.messagesService.forwardMessage(id, recipientId);
+  @Post(':id/forward')
+  forwardMessage(@Param('id') id: number, @Body() forwardMessageDto: ForwardMessageDto) {
+    return this.messagesService.forwardMessage(id, forwardMessageDto);
   }
 
   @Get(':id')

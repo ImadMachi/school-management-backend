@@ -13,6 +13,10 @@ export class AuthService {
   async signIn(email, pass) {
     const user = await this.usersService.findByEmail(email, {
       relations: ['role'],
+      where: {
+        email,
+        disabled: false,
+      },
     });
 
     if (!user) {

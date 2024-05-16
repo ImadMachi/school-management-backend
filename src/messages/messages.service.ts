@@ -13,6 +13,7 @@ import { MessageCategoriesService } from 'src/message-categories/message-categor
 import { UsersService } from 'src/users/users.service';
 import { ParentsService } from 'src/parents/parents.service';
 import { ContactAdministrationDto } from './dto/contact-administration.dto';
+import { ForwardMessageDto } from './dto/forward-message.dto';
 
 @Injectable()
 export class MessagesService {
@@ -319,21 +320,24 @@ export class MessagesService {
     await this.messageRepository.save(message);
   }
 
-  async forwardMessage(messageId: number, recipientId: number) {
+  async forwardMessage(messageId: number, forwardMessageDto: ForwardMessageDto) {
     const message = await this.messageRepository.findOne({ where: { id: messageId }, relations: ['recipients'] });
 
     if (!message) {
       throw new NotFoundException('Message not found');
     }
 
-    const recipient = await this.usersService.findOne(recipientId);
+    const recipients = await Promise.all(
+      forwardMessageDto.recipients.map(async (recipient) => {
+        return this.usersService.findOne(recipient.id);
+      }),
+    );
 
-    if (!recipient) {
-      throw new NotFoundException('Recipient not found');
-    }
-    if (!message.recipients.some((u) => u.id === recipientId)) {
-      message.recipients.push(recipient);
-    }
+    recipients.forEach((recipient) => {
+      if (!message.recipients.some((u) => u.id === recipient.id)) {
+        message.recipients.push(recipient);
+      }
+    });
 
     await this.messageRepository.save(message);
 

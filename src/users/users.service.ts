@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RolesService } from 'src/roles/roles.service';
 import { RoleName } from 'src/auth/enums/RoleName';
@@ -18,7 +18,7 @@ export class UsersService {
     private roleService: RolesService,
   ) {}
 
-  async create(user: User, file: Express.Multer.File): Promise<User> {
+  async create(user: User, file: Express.Multer.File, entityManager: EntityManager): Promise<User> {
     const existingUser = await this.findByEmail(user.email);
     if (existingUser) {
       throw new HttpException('User already exists', HttpStatus.CONFLICT);
@@ -28,7 +28,10 @@ export class UsersService {
       user.profileImage = profileImage;
     }
 
-    return this.usersRepository.save(user);
+    await this.usersRepository.save(user);
+    // await entityManager.insert(User, user);
+
+    return this.findOne(user.id);
   }
 
   async createForDirector(createUserDto: CreateUserDto, director: Director, file: Express.Multer.File) {
@@ -38,17 +41,28 @@ export class UsersService {
     user.director = director;
     user.role = role;
 
-    return this.create(user, file); // Pass null as the second argument
+    return this.create(user, file, null);
   }
 
-  async createForAdministrator(createUserDto: CreateUserDto, administrator, file: Express.Multer.File): Promise<User> {
+  async createForAdministrator(
+    createUserDto: CreateUserDto,
+    administrator,
+    file: Express.Multer.File,
+    entityManager: EntityManager,
+  ): Promise<User> {
     const role = await this.roleService.findByName(RoleName.Administrator);
+
+    const existingUser = await this.findByEmail(createUserDto.email);
+
+    if (existingUser) {
+      throw new HttpException('User already exists', HttpStatus.CONFLICT);
+    }
 
     const user = this.usersRepository.create(createUserDto);
     user.administrator = administrator;
     user.role = role;
 
-    return this.create(user, file);
+    return this.create(user, file, entityManager);
   }
 
   async createForTeacher(createUserDto: CreateUserDto, teacher, file: Express.Multer.File): Promise<User> {
@@ -58,7 +72,7 @@ export class UsersService {
     user.teacher = teacher;
     user.role = role;
 
-    return this.create(user, file);
+    return this.create(user, file, null);
   }
 
   async createForStudent(createUserDto: CreateUserDto, student, file: Express.Multer.File): Promise<User> {
@@ -68,7 +82,7 @@ export class UsersService {
     user.student = student;
     user.role = role;
 
-    return this.create(user, file);
+    return this.create(user, file, null);
   }
   async createForParent(createUserDto: CreateUserDto, parent, file: Express.Multer.File): Promise<User> {
     const role = await this.roleService.findByName(RoleName.Parent);
@@ -77,7 +91,7 @@ export class UsersService {
     user.parent = parent;
     user.role = role;
 
-    return this.create(user, file);
+    return this.create(user, file, null);
   }
 
   async createForAgent(createUserDto: CreateUserDto, agent, file: Express.Multer.File): Promise<User> {
@@ -87,7 +101,7 @@ export class UsersService {
     user.agent = agent;
     user.role = role;
 
-    return this.create(user, file);
+    return this.create(user, file, null);
   }
 
   async findAll(role: RoleName, user: User): Promise<User[]> {

@@ -26,32 +26,38 @@ export class AdministratorsService {
       const { createUserDto, ...administratorDto } = createAdministratorDto;
 
       administrator = this.administratorRepository.create(administratorDto);
+
       await this.administratorRepository.save(administrator);
+      // await queryRunner.manager.save(Administrator, administrator);
 
       if (createAccount && createUserDto) {
-        const user = await this.userService.createForAdministrator(createUserDto, administrator, file);
+        const user = await this.userService.createForAdministrator(createUserDto, administrator, file, queryRunner.manager);
         administrator.user = user;
       }
+
+      await queryRunner.manager.save(Administrator, administrator);
+
+      await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
       await queryRunner.release();
       throw new HttpException(error.message, error.status);
     }
     await queryRunner.release();
-    return administrator;
+    return this.findOne(administrator.id);
   }
 
-  async createAccoutForAdministrator(id: number, createUserDto: CreateUserDto, file: Express.Multer.File) {
-    const administrator = await this.administratorRepository.findOne({ where: { id } });
+  // async createAccoutForAdministrator(id: number, createUserDto: CreateUserDto, file: Express.Multer.File) {
+  //   const administrator = await this.administratorRepository.findOne({ where: { id } });
 
-    if (!administrator) {
-      throw new NotFoundException();
-    }
+  //   if (!administrator) {
+  //     throw new NotFoundException();
+  //   }
 
-    const user = await this.userService.createForAdministrator(createUserDto, administrator, file);
-    administrator.user = user;
-    return administrator;
-  }
+  //   const user = await this.userService.createForAdministrator(createUserDto, administrator, file);
+  //   administrator.user = user;
+  //   return administrator;
+  // }
 
   findAll() {
     return this.administratorRepository

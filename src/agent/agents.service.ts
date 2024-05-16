@@ -31,12 +31,13 @@ export class AgentsService {
         const user = await this.userService.createForAgent(createUserDto, agent, file);
         agent.user = user;
       }
+      await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      await queryRunner.release();
       throw new HttpException(error.message, error.status);
+    } finally {
+      await queryRunner.release();
     }
-    await queryRunner.release();
     return agent;
   }
 
