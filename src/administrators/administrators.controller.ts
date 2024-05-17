@@ -23,12 +23,12 @@ export class AdministratorsController {
     return this.administratorsService.create(createAdministratorDto, createAccount, file);
   }
 
-  // @Post(':id/create-account')
-  // @UseInterceptors(FileInterceptor('profile-images'))
-  // @CheckPolicies(new ManageAdministratorsPolicyHandler())
-  // createAccount(@Param('id') id: string, @Body() createUserDto: CreateUserDto, @UploadedFile() file: Express.Multer.File) {
-  //   return this.administratorsService.createAccoutForAdministrator(+id, createUserDto, file);
-  // }
+  @Post(':id/create-account')
+  @UseInterceptors(FileInterceptor('profile-images'))
+  @CheckPolicies(new ManageAdministratorsPolicyHandler())
+  createAccount(@Param('id') id: string, @Body() createUserDto: CreateUserDto, @UploadedFile() file: Express.Multer.File) {
+    return this.administratorsService.createAccoutForAdministrator(+id, createUserDto, file);
+  }
 
   @Get()
   @CheckPolicies(new ManageAdministratorsPolicyHandler())

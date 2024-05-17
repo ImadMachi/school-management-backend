@@ -47,17 +47,17 @@ export class AdministratorsService {
     return this.findOne(administrator.id);
   }
 
-  // async createAccoutForAdministrator(id: number, createUserDto: CreateUserDto, file: Express.Multer.File) {
-  //   const administrator = await this.administratorRepository.findOne({ where: { id } });
+  async createAccoutForAdministrator(id: number, createUserDto: CreateUserDto, file: Express.Multer.File) {
+    const administrator = await this.administratorRepository.findOne({ where: { id } });
 
-  //   if (!administrator) {
-  //     throw new NotFoundException();
-  //   }
+    if (!administrator) {
+      throw new NotFoundException();
+    }
 
-  //   const user = await this.userService.createForAdministrator(createUserDto, administrator, file);
-  //   administrator.user = user;
-  //   return administrator;
-  // }
+    const user = await this.userService.createForAdministrator(createUserDto, administrator, file, null);
+    administrator.user = user;
+    return administrator;
+  }
 
   findAll() {
     return this.administratorRepository
