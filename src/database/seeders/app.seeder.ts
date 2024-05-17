@@ -167,7 +167,7 @@ export default class AppSeeder implements Seeder {
     });
 
     const userAdministrator2 = await userFactory.save({
-      email: `${administrators[1].lastName.toLowerCase()}@gmail.com`,
+      email: `${administrators[1].lastName.toLowerCase()}@.com`,
       password: '123456',
       role: administratorRole,
       administrator: administrators[1],
