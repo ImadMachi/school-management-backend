@@ -6,6 +6,8 @@ import { UsersService } from 'src/users/users.service';
 import { CreateParentDto } from './dto/create-parent.dto';
 import { UpdateParentDto } from './dto/update-parent.dto';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { StudentsService } from 'src/students/students.service';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class ParentsService {
@@ -14,6 +16,7 @@ export class ParentsService {
     private parentRepository: Repository<Parent>,
     private dataSource: DataSource,
     private userService: UsersService,
+    private studentsService: StudentsService,
   ) {}
 
   async create(createParentDto: CreateParentDto, createAccount: boolean, file: Express.Multer.File) {
@@ -51,21 +54,15 @@ export class ParentsService {
     parent.user = user;
     return this.findOne(parent.id);
   }
-  
 
   findAll() {
-    return this.parentRepository.createQueryBuilder('parent')
+    return this.parentRepository
+      .createQueryBuilder('parent')
       .leftJoinAndSelect('parent.students', 'students')
       .leftJoinAndSelect('parent.user', 'user')
-      .where((qb: SelectQueryBuilder<Parent>) => {
-        qb.where('user.disabled = :disabled', { disabled: false })
-          .orWhere('user.id IS NULL');
-      })
       .andWhere('parent.disabled = :disabled', { disabled: false })
       .getMany();
   }
-  
-  
 
   findOne(id: number) {
     return this.parentRepository.findOne({
@@ -96,14 +93,25 @@ export class ParentsService {
     return this.findOne(parent.id);
   }
 
-  async updateParentStatus(id: number, disabled: boolean): Promise<Parent> {
+  async updateParentStatus(id: number, disabled: boolean, authUser: User): Promise<Parent> {
     const parent = await this.findOne(id);
 
     if (!parent) {
       throw new NotFoundException('User not found');
     }
 
+    if (parent.user) {
+      const user = await this.userService.findOne(parent.user.id);
+      await this.userService.updateUserStatus(user.id, true, authUser);
+    }
+
+    // parent students
+    for (const student of parent.students) {
+      await this.studentsService.nullifyParent(student.id);
+    }
+
     parent.disabled = disabled;
+    parent.students = [];
 
     return await this.parentRepository.save(parent);
   }

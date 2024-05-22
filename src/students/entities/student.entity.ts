@@ -27,11 +27,11 @@ export class Student {
   @Column({ default: false })
   disabled: boolean;
 
+  // @Exclude()
   @OneToOne(() => User, (user) => user.student, {
     nullable: true,
     eager: true,
   })
-  @Exclude()
   user: User;
 
   @ManyToOne(() => Class, (cls) => cls.students)

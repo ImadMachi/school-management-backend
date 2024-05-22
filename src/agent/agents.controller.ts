@@ -1,4 +1,18 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+  Query,
+  Request,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { CheckPolicies, PoliciesGuard } from 'src/casl/guards/policies.guard';
 import { AgentsService } from './agents.service';
 import { CreateAgentDto } from './dto/create-agent.dto';
@@ -54,7 +68,7 @@ export class AgentsController {
   }
 
   @Put(':id/status')
-  async updateAgentStatus(@Param('id') id: number, @Body('disabled') disabled: boolean) {
-    return this.agentsService.updateAgentStatus(id, disabled);
+  async updateAgentStatus(@Param('id') id: number, @Body('disabled') disabled: boolean, @Request() req) {
+    return this.agentsService.updateAgentStatus(id, disabled, req.user);
   }
 }

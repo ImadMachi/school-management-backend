@@ -7,6 +7,7 @@ import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { profile } from 'console';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AdministratorsService {
@@ -63,9 +64,6 @@ export class AdministratorsService {
     return this.administratorRepository
       .createQueryBuilder('administrator')
       .leftJoinAndSelect('administrator.user', 'user')
-      .where((qb: SelectQueryBuilder<Administrator>) => {
-        qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
-      })
       .andWhere('administrator.disabled = :disabled', { disabled: false })
       .getMany();
   }
@@ -98,11 +96,16 @@ export class AdministratorsService {
     return administrator;
   }
 
-  async updateAdministratorStatus(id: number, disabled: boolean): Promise<Administrator> {
+  async updateAdministratorStatus(id: number, disabled: boolean, authUser: User): Promise<Administrator> {
     const administrator = await this.findOne(id);
 
     if (!administrator) {
       throw new NotFoundException('User not found');
+    }
+
+    if (administrator.user) {
+      const user = await this.userService.findOne(administrator.user.id);
+      await this.userService.updateUserStatus(user.id, true, authUser);
     }
 
     administrator.disabled = disabled;

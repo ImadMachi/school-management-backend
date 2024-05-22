@@ -30,7 +30,7 @@ export class Teacher {
   @Column({ default: false })
   disabled: boolean;
 
-  @Exclude()
+  // @Exclude()
   @OneToOne(() => User, (user) => user.teacher, {
     nullable: true,
     eager: true,

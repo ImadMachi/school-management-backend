@@ -67,7 +67,12 @@ export class UsersController {
     }
   }
   @Put(':id/status')
-  async updateUserStatus(@Param('id') userId: number, @Body('disabled') disabled: boolean) {
-    return this.usersService.updateUserStatus(userId, disabled);
+  async updateUserStatus(@Param('id') userId: number, @Body('disabled') disabled: boolean, @Request() req) {
+    return this.usersService.updateUserStatus(userId, disabled, req.user);
+  }
+
+  @Get(':id/reactivate-account')
+  async activateAccount(@Param('id') userId: number, @Request() req) {
+    return this.usersService.activateAccount(userId, req.user);
   }
 }

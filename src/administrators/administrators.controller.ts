@@ -1,4 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, UseInterceptors, UploadedFile, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+  UseInterceptors,
+  UploadedFile,
+  Put,
+  Request,
+} from '@nestjs/common';
 import { AdministratorsService } from './administrators.service';
 import { CreateAdministratorDto } from './dto/create-administrator.dto';
 import { UpdateAdministratorDto } from './dto/update-administrator.dto';
@@ -54,7 +68,7 @@ export class AdministratorsController {
   }
 
   @Put(':id/status')
-  async updateAdministratorStatus(@Param('id') id: number, @Body('disabled') disabled: boolean) {
-    return this.administratorsService.updateAdministratorStatus(id, disabled);
+  async updateAdministratorStatus(@Param('id') id: number, @Body('disabled') disabled: boolean, @Request() req) {
+    return this.administratorsService.updateAdministratorStatus(id, disabled, req.user);
   }
 }

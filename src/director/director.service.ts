@@ -6,6 +6,7 @@ import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class DirectorService {
@@ -56,9 +57,6 @@ export class DirectorService {
     return this.directorRepository
       .createQueryBuilder('director')
       .leftJoinAndSelect('director.user', 'user')
-      .where((qb: SelectQueryBuilder<Director>) => {
-        qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
-      })
       .andWhere('director.disabled = :disabled', { disabled: false })
       .getMany();
   }
@@ -91,11 +89,16 @@ export class DirectorService {
     return director;
   }
 
-  async updateDirectorStatus(id: number, disabled: boolean): Promise<Director> {
+  async updateDirectorStatus(id: number, disabled: boolean, authUser: User): Promise<Director> {
     const director = await this.findOne(id);
 
     if (!director) {
       throw new NotFoundException('User not found');
+    }
+
+    if (director.user) {
+      const user = await this.userService.findOne(director.user.id);
+      await this.userService.updateUserStatus(user.id, true, authUser);
     }
 
     director.disabled = disabled;

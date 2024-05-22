@@ -1,4 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, Query, UploadedFile, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  UseInterceptors,
+  Query,
+  UploadedFile,
+  Put,
+  Request,
+} from '@nestjs/common';
 import { TeachersService } from './teachers.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
@@ -53,7 +67,7 @@ export class TeachersController {
     return this.teachersService.remove(+id);
   }
   @Put(':id/status')
-  async updateTeacherStatus(@Param('id') id: number, @Body('disabled') disabled: boolean) {
-    return this.teachersService.updateTeacherStatus(id, disabled);
+  async updateTeacherStatus(@Param('id') id: number, @Body('disabled') disabled: boolean, @Request() req) {
+    return this.teachersService.updateTeacherStatus(id, disabled, req.user);
   }
 }

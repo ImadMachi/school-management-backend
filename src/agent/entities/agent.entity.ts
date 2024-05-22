@@ -19,11 +19,11 @@ export class Agent {
   @Column({ default: false })
   disabled: boolean;
 
+  // @Exclude()
   @OneToOne(() => User, (user) => user.agent, {
     nullable: true,
     eager: true,
   })
-  @Exclude()
   user: User;
 
   @Expose()

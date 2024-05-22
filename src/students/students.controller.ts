@@ -52,8 +52,8 @@ export class StudentsController {
   }
 
   @Put(':id/status')
-  async updateStudentStatus(@Param('id') id: number, @Body('disabled') disabled: boolean) {
-    return this.studentsService.updateStudentStatus(id, disabled);
+  async updateStudentStatus(@Param('id') id: number, @Body('disabled') disabled: boolean, @Request() req) {
+    return this.studentsService.updateStudentStatus(id, disabled, req.user);
   }
 
   @Delete(':id')

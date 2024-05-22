@@ -7,6 +7,7 @@ import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class TeachersService {
@@ -58,9 +59,6 @@ export class TeachersService {
       .createQueryBuilder('teacher')
       .leftJoinAndSelect('teacher.user', 'user')
       .leftJoinAndSelect('teacher.subjects', 'subjects')
-      .where((qb: SelectQueryBuilder<Teacher>) => {
-        qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
-      })
       .andWhere('teacher.disabled = :disabled', { disabled: false })
       .getMany();
   }
@@ -94,11 +92,16 @@ export class TeachersService {
     return teacher;
   }
 
-  async updateTeacherStatus(id: number, disabled: boolean): Promise<Teacher> {
+  async updateTeacherStatus(id: number, disabled: boolean, authUser: User): Promise<Teacher> {
     const teacher = await this.findOne(id);
 
     if (!teacher) {
       throw new NotFoundException('User not found');
+    }
+
+    if (teacher.user) {
+      const user = await this.userService.findOne(teacher.user.id);
+      await this.userService.updateUserStatus(user.id, true, authUser);
     }
 
     teacher.disabled = disabled;

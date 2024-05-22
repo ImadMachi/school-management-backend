@@ -6,6 +6,7 @@ import { UsersService } from 'src/users/users.service';
 import { CreateAgentDto } from './dto/create-agent.dto';
 import { UpdateAgentDto } from './dto/update-agent.dto';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AgentsService {
@@ -57,9 +58,6 @@ export class AgentsService {
     return this.agentRepository
       .createQueryBuilder('agent')
       .leftJoinAndSelect('agent.user', 'user')
-      .where((qb: SelectQueryBuilder<Agent>) => {
-        qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
-      })
       .andWhere('agent.disabled = :disabled', { disabled: false })
       .getMany();
   }
@@ -92,11 +90,16 @@ export class AgentsService {
     return agent;
   }
 
-  async updateAgentStatus(id: number, disabled: boolean): Promise<Agent> {
+  async updateAgentStatus(id: number, disabled: boolean, authUser: User): Promise<Agent> {
     const agent = await this.findOne(id);
 
     if (!agent) {
       throw new NotFoundException('User not found');
+    }
+
+    if (agent.user) {
+      const user = await this.userService.findOne(agent.user.id);
+      await this.userService.updateUserStatus(user.id, true, authUser);
     }
 
     agent.disabled = disabled;

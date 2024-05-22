@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Query, Delete, Patch, Param, UseInterceptors, UploadedFile, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Delete, Patch, Param, UseInterceptors, UploadedFile, Put, Request } from '@nestjs/common';
 import { DirectorService } from './director.service';
 import { CreateDirectorDto } from './dto/create-director.dto';
 import { CheckPolicies } from 'src/casl/guards/policies.guard';
@@ -14,8 +14,12 @@ export class DirectorController {
   @Post()
   @UseInterceptors(FileInterceptor('profile-images'))
   @CheckPolicies(new ManageDirectorsPolicyHandler())
-  create(@Body() createDirectorDto: CreateDirectorDto, @Query('create-account') createAccount: boolean, @UploadedFile() file: Express.Multer.File){
-    return this.directorService.create(createDirectorDto, createAccount , file);
+  create(
+    @Body() createDirectorDto: CreateDirectorDto,
+    @Query('create-account') createAccount: boolean,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.directorService.create(createDirectorDto, createAccount, file);
   }
 
   @Post(':id/create-account')
@@ -46,12 +50,10 @@ export class DirectorController {
   @CheckPolicies(new ManageDirectorsPolicyHandler())
   remove(@Param('id') id: string) {
     return this.directorService.remove(+id);
-  } 
-  
-  @Put(':id/status')
-  async updateDirectorStatus(@Param('id') id: number, @Body('disabled') disabled: boolean) {
-    return this.directorService.updateDirectorStatus(id, disabled);
   }
 
-
+  @Put(':id/status')
+  async updateDirectorStatus(@Param('id') id: number, @Body('disabled') disabled: boolean, @Request() req) {
+    return this.directorService.updateDirectorStatus(id, disabled, req.user);
+  }
 }

@@ -19,11 +19,11 @@ export class Director {
   @Column({ default: false })
   disabled: boolean;
 
+  // @Exclude()
   @OneToOne(() => User, (user) => user.director, {
     nullable: true,
     eager: true,
   })
-  @Exclude()
   user: User;
 
   @Expose()

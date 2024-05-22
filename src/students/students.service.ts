@@ -61,9 +61,6 @@ export class StudentsService {
       .leftJoinAndSelect('student.classe', 'classe')
       .leftJoinAndSelect('student.parent', 'parent')
       .leftJoinAndSelect('student.user', 'user')
-      .where((qb: SelectQueryBuilder<Student>) => {
-        qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
-      })
       .andWhere('student.disabled = :disabled', { disabled: false })
       .getMany();
   }
@@ -106,16 +103,33 @@ export class StudentsService {
     return this.findOne(student.id);
   }
 
-  async updateStudentStatus(id: number, disabled: boolean): Promise<Student> {
+  async updateStudentStatus(id: number, disabled: boolean, authUser: User): Promise<Student> {
     const student = await this.findOne(id);
-
     if (!student) {
       throw new NotFoundException('User not found');
     }
 
+    if (student.user) {
+      const user = await this.userService.findOne(student.user.id);
+      await this.userService.updateUserStatus(user.id, true, authUser);
+    }
+
+    student.parent = null;
+
     student.disabled = disabled;
 
-    return await this.studentRepository.save(student);
+    return this.studentRepository.save(student);
+  }
+
+  async nullifyParent(id: number): Promise<Student> {
+    const student = await this.findOne(id);
+    if (!student) {
+      throw new NotFoundException('User not found');
+    }
+
+    student.parent = null;
+
+    return this.studentRepository.save(student);
   }
 
   async remove(id: number) {

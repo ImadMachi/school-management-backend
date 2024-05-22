@@ -20,11 +20,11 @@ export class Parent {
   @Column({ default: false })
   disabled: boolean;
 
+  // @Exclude()
   @OneToOne(() => User, (user) => user.parent, {
     nullable: true,
     eager: true,
   })
-  @Exclude()
   user: User;
 
   @OneToMany(() => Student, (student) => student.parent)

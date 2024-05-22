@@ -205,7 +205,7 @@ export class UsersService {
     if (!userToDelete) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-    // Manually delete related messages
+
     this.usersRepository.delete(id);
 
     return userToDelete;
@@ -232,16 +232,32 @@ export class UsersService {
     return this.saveProfileImage(file, user);
   }
 
-  async updateUserStatus(userId: number, disabled: boolean): Promise<User> {
+  async updateUserStatus(userId: number, disabled: boolean, authUser: User): Promise<User> {
     const user = await this.findOne(userId);
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
+    if (user.id == authUser.id) {
+      throw new HttpException('You cannot delete yourself', HttpStatus.FORBIDDEN);
+    }
+
     user.disabled = disabled;
 
     return await this.usersRepository.save(user);
+  }
+
+  async activateAccount(userId: number, authUser: User) {
+    const user = await this.findOne(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.disabled = false;
+
+    return this.usersRepository.save(user);
   }
 
   public async changePassword(id: number, newPassword: string): Promise<void> {
