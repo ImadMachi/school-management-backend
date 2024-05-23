@@ -59,7 +59,8 @@ export class StudentsService {
     return this.studentRepository
       .createQueryBuilder('student')
       .leftJoinAndSelect('student.classe', 'classe')
-      .leftJoinAndSelect('student.parent', 'parent')
+      .leftJoinAndSelect('student.father', 'father')
+      .leftJoinAndSelect('student.mother', 'mother')
       .leftJoinAndSelect('student.user', 'user')
       .where((qb: SelectQueryBuilder<Student>) => {
         qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
@@ -71,8 +72,10 @@ export class StudentsService {
   findStudentsByParent(parentId: number) {
     return this.studentRepository
       .createQueryBuilder('student')
-      .leftJoin('student.parent', 'parent')
-      .where('parent.id = :parentId', { parentId })
+      .leftJoin('student.father', 'father')
+      .where('father.id = :parentId', { parentId })
+      .leftJoin('student.mother', 'mother')
+      .where('mother.id = :parentId', { parentId })
       .leftJoinAndSelect('student.user', 'user')
       .getMany();
   }
@@ -80,7 +83,7 @@ export class StudentsService {
   findOne(id: number) {
     return this.studentRepository.findOne({
       where: { id },
-      relations: ['classe', 'parent'],
+      relations: ['classe', 'father', 'mother'],
     });
   }
 

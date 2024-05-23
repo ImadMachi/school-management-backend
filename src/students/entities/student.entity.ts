@@ -37,8 +37,11 @@ export class Student {
   @ManyToOne(() => Class, (cls) => cls.students)
   classe: Class;
 
-  @ManyToOne(() => Parent, (parent) => parent.students, { nullable: true })
-  parent: Parent;
+  @ManyToOne(() => Parent, (father) => father.students, { nullable: true })
+  father: Parent;
+
+  @ManyToOne(() => Parent, (mother) => mother.students, { nullable: true })
+  mother: Parent;
 
   @Expose()
   get userId() {

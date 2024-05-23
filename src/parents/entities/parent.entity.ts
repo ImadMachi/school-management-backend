@@ -27,7 +27,7 @@ export class Parent {
   @Exclude()
   user: User;
 
-  @OneToMany(() => Student, (student) => student.parent)
+  @OneToMany(() => Student, (student) => student.father || student.mother)
   students: Student[];
 
   @Expose()

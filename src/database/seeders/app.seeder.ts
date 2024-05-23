@@ -56,6 +56,13 @@ export default class AppSeeder implements Seeder {
       lastName: 'Lahlou',
       students: [students[0], students[1]],
     });
+
+    const customMother1 = await parentFactory.save({
+      firstName: 'Halima',
+      lastName: 'Karima',
+      students: [students[2], students[4]],
+    });
+    
     const customAgent1 = await agentFactory.save({
       firstName: 'Ahmed',
       lastName: 'Mohsin',
@@ -92,7 +99,8 @@ export default class AppSeeder implements Seeder {
       firstName: 'Ahmed',
       lastName: 'Lahlou',
       sex: 'mâle',
-      parent: customParent1,
+      father: customParent1,
+      mother: customMother1,
       classe: classe1,
     });
 
@@ -343,6 +351,7 @@ export default class AppSeeder implements Seeder {
       subject: 'Demande de rendez-vous',
       body: 'Je souhaiterais avoir un rendez-vous avec vous',
     });
+
 
     const message7 = await messageFactory.save({
       sender: userStudent1,

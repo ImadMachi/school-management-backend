@@ -34,5 +34,10 @@ export class UpdateStudentDto extends PartialType(CreateStudentDto) {
     @IsObject()
     @ValidateNested()
     @Type(() => Id)
-    parent: Id;
+    father: Id;
+
+    @IsObject()
+    @ValidateNested()
+    @Type(() => Id)
+    mother: Id;
 }
