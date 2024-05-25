@@ -9,13 +9,25 @@ export class Parent {
   id: number;
 
   @Column()
-  firstName: string;
+  fatherFirstName: string;
 
   @Column()
-  lastName: string;
+  fatherLastName: string;
 
   @Column()
-  phoneNumber: string;
+  fatherPhoneNumber: string;
+
+  @Column()
+  motherFirstName: string;
+
+  @Column()
+  motherLastName: string;
+
+  @Column()
+  motherPhoneNumber: string;
+
+  @Column()
+  address: string;
 
   @Column({ default: false })
   disabled: boolean;
@@ -27,7 +39,7 @@ export class Parent {
   @Exclude()
   user: User;
 
-  @OneToMany(() => Student, (student) => student.father || student.mother)
+  @OneToMany(() => Student, (student) => student.parent)
   students: Student[];
 
   @Expose()

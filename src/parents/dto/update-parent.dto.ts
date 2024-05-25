@@ -8,13 +8,29 @@ import { CreateUserDto } from "src/users/dto/create-user.dto";
 export class UpdateParentDto extends PartialType(CreateParentDto) {
   @IsOptional()
   @IsNotEmpty()
-  firstName: string;
+  fatherFirstName: string;
 
   @IsOptional()
   @IsNotEmpty()
-  lastName: string;
+  fatherLastName: string;
 
   @IsOptional()
   @IsNotEmpty()
-  phoneNumber: string;
+  fatherPhoneNumber: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  motherFirstName: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  motherLastName: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  motherPhoneNumber: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  address: string;
 }
