@@ -25,10 +25,10 @@ export class CreateClassDto {
   @Type(() => Id)
   students: Id[];
 
-  @IsObject()
-  @ValidateNested()
+  @IsArray()
+  @ValidateNested({ each: true })
   @Type(() => Id)
-  administrator: Id;
+  administrators: Id[];
 
   @IsObject()
   @ValidateNested()

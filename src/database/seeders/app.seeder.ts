@@ -92,7 +92,7 @@ export default class AppSeeder implements Seeder {
       schoolYear: '2023-2024',
       teachers: [teachers[0], teachers[1]],
       students: [students[0], students[1], students[2], students[3], students[4]],
-      administrator: administrators[0],
+      administrators: [administrators[0], administrators[1] , administrators[2]],
       level: level1,
     });
 
@@ -109,7 +109,7 @@ export default class AppSeeder implements Seeder {
       schoolYear: '2023-2024',
       teachers: [teachers[2], teachers[3]],
       students: [students[0], students[1], students[2], students[3], students[4]],
-      administrator: administrators[1],
+      administrators: [administrators[1],administrators[2]],
       level: level2,
     });
 
@@ -118,7 +118,7 @@ export default class AppSeeder implements Seeder {
       schoolYear: '2022-2023',
       teachers: [teachers[4]],
       students: [students[0], students[1], students[2], students[3], students[4]],
-      administrator: administrators[2],
+      administrators: [administrators[0],administrators[2]],
       level: level3,
     });
 

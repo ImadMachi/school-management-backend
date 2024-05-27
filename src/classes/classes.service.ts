@@ -25,7 +25,7 @@ export class ClassesService {
     const newClass = await this.classRepository.save(createClassDto);
     return this.classRepository.findOne({
       where: { id: newClass.id },
-      relations: ['administrator', 'teachers', 'students', 'level', 'subjects'],
+      relations: ['administrators', 'teachers', 'students', 'level', 'subjects'],
     });
   }
 
@@ -39,7 +39,7 @@ export class ClassesService {
     const updatedClass = await this.classRepository.save(updateClassDto);
     return this.classRepository.findOne({
       where: { id: updatedClass.id },
-      relations: ['administrator', 'teachers', 'students', 'level', 'subjects'],
+      relations: ['administrators', 'teachers', 'students', 'level', 'subjects'],
     });
   }
 
@@ -54,14 +54,14 @@ export class ClassesService {
   findAll(user: User) {
     const query = this.classRepository
       .createQueryBuilder('class')
-      .leftJoinAndSelect('class.administrator', 'administrator')
+      .leftJoinAndSelect('class.administrators', 'administrators')
       .leftJoinAndSelect('class.teachers', 'teacher')
       .leftJoinAndSelect('class.students', 'student')
       .leftJoinAndSelect('class.level', 'level')
       .leftJoinAndSelect('class.subjects', 'subject');
 
     if (user.role.name == RoleName.Administrator) {
-      query.leftJoinAndSelect('administrator.user', 'user').andWhere('user.id = :userId', { userId: user.id });
+      query.leftJoinAndSelect('administrators.user', 'user').andWhere('user.id = :userId', { userId: user.id });
     } else if (user.role.name == RoleName.Teacher) {
       query.leftJoinAndSelect('teacher.user', 'user').andWhere('user.id = :userId', { userId: user.id });
     }
