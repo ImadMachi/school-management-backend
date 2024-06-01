@@ -223,6 +223,19 @@ export class MessagesService {
       .getCount();
   }
 
+
+  async getNumberOfUnreadMessagesByUser(userId: number): Promise<number> {
+    const count = await this.messageRepository
+      .createQueryBuilder('message')
+      .leftJoin('message.readBy', 'readBy')
+      .where('readBy.id IS NULL OR readBy.id != :userId', { userId })
+      .andWhere('message.isDeleted = false') // Ensure we only count non-deleted messages
+      .innerJoin('message.recipients', 'recipient', 'recipient.id = :userId', { userId }) // Ensure the user is a recipient
+      .getCount();
+
+    return count;
+  }
+
   // async getStudentMessagesByParent(
   //   parentId: number,
   //   folder: string,

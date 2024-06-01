@@ -78,4 +78,11 @@ export class MessagesController {
   getMessage(@Param('id') id: number, @Request() req) {
     return this.messagesService.getMessage(id, req.user.id);
   }
+
+  @Get('unread-count/:userId')
+  async getNumberOfUnreadMessagesByUser(@Param('userId') userId: number): Promise<number> {
+    return this.messagesService.getNumberOfUnreadMessagesByUser(userId);
+  }
+
+
 }
