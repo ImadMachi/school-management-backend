@@ -1,17 +1,29 @@
 import { Type } from "class-transformer";
-import { IsNotEmpty, ValidateNested } from "class-validator";
+import { IsNotEmpty, IsOptional, ValidateNested } from "class-validator";
 import { CreateUserDto } from "src/users/dto/create-user.dto";
 
 export class CreateParentDto {
     
     @IsNotEmpty()
-    firstName: string;
+    fatherFirstName: string;
 
     @IsNotEmpty()
-    lastName: string;
-  
+    fatherLastName: string;
+
     @IsNotEmpty()
-    phoneNumber: string;
+    fatherPhoneNumber: string;
+
+    @IsNotEmpty()
+    motherFirstName: string;
+
+    @IsNotEmpty()
+    motherLastName: string;
+
+    @IsNotEmpty()
+    motherPhoneNumber: string;
+
+    @IsNotEmpty()
+    address: string;
   
     // @IsOptional()
     @ValidateNested({ each: true })

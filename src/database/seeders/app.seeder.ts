@@ -52,10 +52,18 @@ export default class AppSeeder implements Seeder {
     const agents = await agentFactory.saveMany(5);
 
     const customParent1 = await parentFactory.save({
-      firstName: 'Ali',
-      lastName: 'Lahlou',
+      fatherFirstName: 'Ali',
+      fatherLastName: 'Lahlou',
+      fatherPhoneNumber: '0612345678',
+      motherFirstName: 'Fatima',
+      motherLastName: 'Lahlou',
+      motherPhoneNumber: '061234567',
+      address: 'Rue 1, Ville 1',
       students: [students[0], students[1]],
     });
+
+
+    
     const customAgent1 = await agentFactory.save({
       firstName: 'Ahmed',
       lastName: 'Mohsin',
@@ -84,7 +92,7 @@ export default class AppSeeder implements Seeder {
       schoolYear: '2023-2024',
       teachers: [teachers[0], teachers[1]],
       students: [students[0], students[1], students[2], students[3], students[4]],
-      administrator: administrators[0],
+      administrators: [administrators[0], administrators[1] , administrators[2]],
       level: level1,
     });
 
@@ -101,7 +109,7 @@ export default class AppSeeder implements Seeder {
       schoolYear: '2023-2024',
       teachers: [teachers[2], teachers[3]],
       students: [students[0], students[1], students[2], students[3], students[4]],
-      administrator: administrators[1],
+      administrators: [administrators[1],administrators[2]],
       level: level2,
     });
 
@@ -110,7 +118,7 @@ export default class AppSeeder implements Seeder {
       schoolYear: '2022-2023',
       teachers: [teachers[4]],
       students: [students[0], students[1], students[2], students[3], students[4]],
-      administrator: administrators[2],
+      administrators: [administrators[0],administrators[2]],
       level: level3,
     });
 
@@ -214,7 +222,7 @@ export default class AppSeeder implements Seeder {
     });
 
     const userParent1 = await userFactory.save({
-      email: `${customParent1.lastName.toLowerCase()}.parent@gmail.com`,
+      email: `${customParent1.fatherLastName.toLowerCase()}.parent@gmail.com`,
       password: '123456',
       role: parentRole,
       parent: customParent1,
@@ -343,6 +351,7 @@ export default class AppSeeder implements Seeder {
       subject: 'Demande de rendez-vous',
       body: 'Je souhaiterais avoir un rendez-vous avec vous',
     });
+
 
     const message7 = await messageFactory.save({
       sender: userStudent1,

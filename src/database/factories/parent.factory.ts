@@ -9,9 +9,13 @@ function getRandomElement(array) {
 
 const parentFactory = setSeederFactory(Parent, (faker) => {
   const parent = new Parent();
-  parent.firstName = getRandomElement(arabicFirstNames);
-  parent.lastName = getRandomElement(arabicLastNames);  
-  parent.phoneNumber = faker.phone.number();
+  parent.fatherFirstName = getRandomElement(arabicFirstNames);
+  parent.fatherLastName = getRandomElement(arabicLastNames);  
+  parent.fatherPhoneNumber = faker.phone.number();
+  parent.motherFirstName = getRandomElement(arabicFirstNames);
+  parent.motherLastName = getRandomElement(arabicLastNames);
+  parent.motherPhoneNumber = faker.phone.number();
+  parent.address = faker.address.streetAddress();
   return parent;
 });
 

@@ -1,6 +1,6 @@
 import { Exclude, Expose } from 'class-transformer';
 import { User } from '../../users/entities/user.entity';
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Class } from 'src/classes/entities/class.entity';
 
 @Entity()
@@ -27,7 +27,7 @@ export class Administrator {
   })
   user: User;
 
-  @OneToMany(() => Class, (cls) => cls.administrator)
+  @ManyToMany(() => Class, (cls) => cls.administrators)
   classes: Class[];
 
   @Expose()

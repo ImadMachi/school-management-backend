@@ -16,8 +16,9 @@ export class Class {
   @Column()
   schoolYear: string;
 
-  @ManyToOne(() => Administrator, (administrator) => administrator.classes)
-  administrator: Administrator;
+  @ManyToMany(() => Administrator, (administrators) => administrators.classes)
+  @JoinTable()
+  administrators: Administrator[];
 
   @ManyToMany(() => Teacher, (teacher) => teacher.classes)
   @JoinTable()
