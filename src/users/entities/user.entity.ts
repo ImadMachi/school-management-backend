@@ -43,6 +43,9 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
+  @Column({ nullable: true, type: 'timestamptz' })
+  lastConnection: Date;
+
   @ManyToOne(() => Role)
   @Transform(({ value }) => value.name)
   role: Role;

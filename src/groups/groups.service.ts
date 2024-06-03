@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
@@ -8,16 +8,17 @@ import { UpdateGroupDto } from './dto/update-group.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Group } from './entities/group.entity';
-import { MessagesService } from 'src/messages/messages.service';
 import { User } from 'src/users/entities/user.entity';
 import { RoleName } from 'src/auth/enums/RoleName';
+import { Message } from 'src/messages/entities/message.entity';
 
 @Injectable()
 export class GroupsService {
   constructor(
     @InjectRepository(Group)
     private groupRepository: Repository<Group>,
-    private messageService: MessagesService,
+    @InjectRepository(Message)
+    private messageRepository: Repository<Message>,
   ) {}
 
   async create(createGroupDto: CreateGroupDto, file: Express.Multer.File) {
@@ -39,10 +40,26 @@ export class GroupsService {
       .where('group.isActive = :isActive', { isActive: true })
       .leftJoin('group.users', 'users')
       .where('users.id = :userId', { userId })
+      .leftJoinAndSelect('group.administratorUsers', 'administratorUsers')
+      .leftJoinAndSelect('administratorUsers.administrator', 'administrator')
       .getMany();
 
     for (const group of groups) {
-      const unReadMessagesCount = await this.messageService.getNumberOfUnreadMessagesByGroup(group.id, userId);
+      const unReadMessagesCount = await this.messageRepository
+        .createQueryBuilder('message')
+        .innerJoin('message.recipients', 'recipient')
+        .where('recipient.id = :userId', { userId })
+        .andWhere('message.groupId = :groupId', { groupId: group.id })
+        .andWhere((qb) => {
+          const subQuery = qb
+            .subQuery()
+            .select('message_users_read_by.messageId')
+            .from('message_users_read_by', 'message_users_read_by')
+            .where('message_users_read_by.userId = :userId', { userId })
+            .getQuery();
+          return 'message.id NOT IN ' + subQuery;
+        })
+        .getCount();
       // @ts-ignore
       group.unReadMessagesCount = unReadMessagesCount;
     }

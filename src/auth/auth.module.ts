@@ -7,10 +7,13 @@ import { jwtConstants } from './constants';
 import * as dotenv from 'dotenv';
 import { AuthGuard } from './guards/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from 'src/users/entities/user.entity';
 dotenv.config();
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([User]),
     UsersModule,
     JwtModule.register({
       global: true,

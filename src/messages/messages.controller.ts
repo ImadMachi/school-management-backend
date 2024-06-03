@@ -7,6 +7,7 @@ import { ManageMessagesPolicyHandler } from 'src/casl/policies/messages/manage-m
 import { GetMessageQueryDto } from './dto/get-message-query.dto';
 import { ContactAdministrationDto } from './dto/contact-administration.dto';
 import { ForwardMessageDto } from './dto/forward-message.dto';
+import { ContactGroupAdministratorDto } from './dto/contact-group-administrator.dto';
 
 @Controller('messages')
 @UseGuards(PoliciesGuard)
@@ -42,6 +43,11 @@ export class MessagesController {
   @Post('contact-administration')
   contactAdministration(@Request() req, @Body() contactAdministrationDto: ContactAdministrationDto) {
     return this.messagesService.contactAdministration(req.user, contactAdministrationDto);
+  }
+
+  @Post('contact-group-administrator')
+  contactGroupAdministrator(@Request() req, @Body() contactAdministrationDto: ContactGroupAdministratorDto) {
+    return this.messagesService.contactGroupAdministrator(req.user, contactAdministrationDto);
   }
 
   @Post(':id/read')

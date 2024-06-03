@@ -21,4 +21,9 @@ export class AuthController {
   getProfile(@Request() req) {
     return this.usersService.findOne(req.user.id);
   }
+
+  @Post('change-password')
+  changePassword(@Request() req, @Body('oldPassword') oldPassword: string, @Body('newPassword') newPassword: string) {
+    return this.authService.changePassword(req.user.id, oldPassword, newPassword);
+  }
 }

@@ -56,7 +56,7 @@ export class ClassesService {
       .createQueryBuilder('class')
       .leftJoinAndSelect('class.administrator', 'administrator')
       .leftJoinAndSelect('class.teachers', 'teacher')
-      .leftJoinAndSelect('class.students', 'student')
+      // .leftJoinAndSelect('class.students', 'student')
       .leftJoinAndSelect('class.level', 'level')
       .leftJoinAndSelect('class.subjects', 'subject');
 

@@ -112,6 +112,8 @@ export class UsersService {
     query
       .leftJoinAndSelect('user.student', 'student')
       .leftJoinAndSelect('student.classe', 'classe')
+      .leftJoinAndSelect('classe.level', 'level')
+      .leftJoinAndSelect('level.cycle', 'cycle')
       .leftJoinAndSelect('user.administrator', 'administrator')
       .leftJoinAndSelect('user.teacher', 'teacher')
       .leftJoinAndSelect('user.parent', 'parent')
@@ -158,8 +160,11 @@ export class UsersService {
     return query.getMany();
   }
 
-  findByEmail(email: string, options = {}): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { email }, ...options });
+  findByEmail(email: string): Promise<User | null> {
+    return this.usersRepository.findOne({
+      where: { email, disabled: false },
+      relations: ['role', 'administrator', 'teacher', 'student', 'parent', 'director', 'agent'],
+    });
   }
 
   findOne(id: number): Promise<User | null> {
@@ -268,6 +273,18 @@ export class UsersService {
     }
 
     user.password = newPassword;
+    await this.usersRepository.save(user);
+  }
+
+  public async updateLastConnection(id: number): Promise<void> {
+    const user = await this.findOne(id);
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    user.lastConnection = new Date();
+
     await this.usersRepository.save(user);
   }
 

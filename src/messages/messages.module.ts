@@ -8,9 +8,10 @@ import { CaslModule } from 'src/casl/casl.module';
 import { MessageCategoriesModule } from 'src/message-categories/message-categories.module';
 import { UsersModule } from 'src/users/users.module';
 import { ParentsModule } from 'src/parents/parents.module';
+import { GroupsModule } from 'src/groups/groups.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Message, Attachment]), CaslModule, MessageCategoriesModule, UsersModule, ParentsModule],
+  imports: [TypeOrmModule.forFeature([Message, Attachment]), CaslModule, MessageCategoriesModule, UsersModule, ParentsModule, GroupsModule],
   controllers: [MessagesController],
   providers: [MessagesService],
   exports: [MessagesService],

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { Message } from './entities/message.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
@@ -14,6 +14,8 @@ import { UsersService } from 'src/users/users.service';
 import { ParentsService } from 'src/parents/parents.service';
 import { ContactAdministrationDto } from './dto/contact-administration.dto';
 import { ForwardMessageDto } from './dto/forward-message.dto';
+import { ContactGroupAdministratorDto } from './dto/contact-group-administrator.dto';
+import { GroupsService } from 'src/groups/groups.service';
 
 @Injectable()
 export class MessagesService {
@@ -24,7 +26,7 @@ export class MessagesService {
     private attachmentRepository: Repository<Attachment>,
     private messageCategoryService: MessageCategoriesService,
     private usersService: UsersService,
-    private parentService: ParentsService,
+    private groupsService: GroupsService,
   ) {}
 
   async createMessage(createMessageDto: CreateMessageDto, user: User, files: Array<Express.Multer.File>) {
@@ -54,6 +56,25 @@ export class MessagesService {
         subject: contactAdministrationDto.subject,
         body: contactAdministrationDto.body,
         recipients: [{ id: directorUser.id }],
+        categoryId: 1,
+        parentMessage: { id: null },
+      },
+      user,
+      [],
+    );
+  }
+
+  async contactGroupAdministrator(user: User, contactGroupAdministratorDto: ContactGroupAdministratorDto) {
+    const group = await this.groupsService.findOne(contactGroupAdministratorDto.groupId);
+    if (!group) {
+      throw new NotFoundException('Group not found');
+    }
+
+    return this.createMessage(
+      {
+        subject: contactGroupAdministratorDto.subject,
+        body: contactGroupAdministratorDto.body,
+        recipients: group.administratorUsers.map((au) => ({ id: au.id })),
         categoryId: 1,
         parentMessage: { id: null },
       },
