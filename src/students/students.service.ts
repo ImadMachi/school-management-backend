@@ -16,7 +16,7 @@ export class StudentsService {
     private studentRepository: Repository<Student>,
     private dataSource: DataSource,
     private userService: UsersService,
-  ) {}
+  ) { }
 
   async create(createStudentDto: CreateStudentDto, createAccount: boolean, file: Express.Multer.File) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -59,7 +59,7 @@ export class StudentsService {
     return this.studentRepository
       .createQueryBuilder('student')
       .leftJoinAndSelect('student.classe', 'classe')
-      .leftJoinAndSelect('student.parent', 'parent')
+      .leftJoinAndSelect('student.parent', 'parent', 'parent.disabled = :disabled', { disabled: false })
       .leftJoinAndSelect('student.user', 'user')
       .where((qb: SelectQueryBuilder<Student>) => {
         qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
@@ -67,6 +67,7 @@ export class StudentsService {
       .andWhere('student.disabled = :disabled', { disabled: false })
       .getMany();
   }
+
 
   findStudentsByParent(parentId: number) {
     return this.studentRepository
@@ -77,12 +78,28 @@ export class StudentsService {
       .getMany();
   }
 
+  // findOne(id: number) {
+  //   return this.studentRepository.findOne({
+  //     where: { id },
+  //     relations: ['classe', 'parent'],
+  //   });
+  // }
+
   findOne(id: number) {
-    return this.studentRepository.findOne({
-      where: { id },
-      relations: ['classe', 'parent'],
-    });
+    return this.studentRepository
+      .createQueryBuilder('student')
+      .where('student.id = :id', { id })
+      .leftJoinAndSelect('student.classe', 'classe')
+      .leftJoinAndSelect('student.parent', 'parent', 'parent.disabled = :disabled', { disabled: false })
+      // .leftJoinAndSelect('student.user', 'user')
+      // .andWhere((qb: SelectQueryBuilder<Student>) => {
+      //   qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
+      // })
+      .andWhere('student.disabled = :disabled', { disabled: false })
+      .getOne();
   }
+
+
 
   async update(id: number, updateStudentDto: UpdateStudentDto) {
     const queryRunner = this.dataSource.createQueryRunner();
