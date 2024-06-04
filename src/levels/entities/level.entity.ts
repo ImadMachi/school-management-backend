@@ -10,6 +10,9 @@ export class Level {
   @Column()
   name: string;
 
+  @Column({ default: false })
+  disabled: boolean;
+
   @ManyToOne(() => Cycle, (cycle) => cycle.levels)
   cycle: Cycle;
 

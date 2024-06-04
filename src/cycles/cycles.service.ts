@@ -1,16 +1,17 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCycleDto } from './dto/create-cycle.dto';
 import { UpdateCycleDto } from './dto/update-cycle.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Cycle } from './entities/cycle.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class CyclesService {
   constructor(
     @InjectRepository(Cycle)
     private cycleRepository: Repository<Cycle>,
-  ) {}
+  ) { }
 
   async create(createCycleDto: CreateCycleDto) {
     const existingCycle = await this.cycleRepository
@@ -49,9 +50,40 @@ export class CyclesService {
     return id;
   }
 
+  // findAll() {
+  //   return this.cycleRepository.find({
+  //     relations: ['levels'],
+  //   });
+  // }
+
   findAll() {
-    return this.cycleRepository.find({
+    const query = this.cycleRepository
+      .createQueryBuilder('cycle')
+      .leftJoinAndSelect('cycle.levels', 'levels')
+      .where((qb: SelectQueryBuilder<Cycle>) => {
+        qb.where('cycle.disabled = :disabled', { disabled: false })
+      })
+
+    return query.getMany();
+  }
+
+
+  findOne(id: number) {
+    return this.cycleRepository.findOne({
+      where: { id },
       relations: ['levels'],
     });
+  }
+
+  async updateCycleStatus(id: number, disabled: boolean): Promise<Cycle> {
+    const cycles = await this.findOne(id);
+
+    if (!cycles) {
+      throw new NotFoundException('User not found');
+    }
+
+    cycles.disabled = disabled;
+
+    return await this.cycleRepository.save(cycles);
   }
 }

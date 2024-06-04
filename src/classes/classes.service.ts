@@ -1,9 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateClassDto } from './dto/create-class.dto';
 import { UpdateClassDto } from './dto/update-class.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Class } from './entities/class.entity';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { RoleName } from 'src/auth/enums/RoleName';
 
@@ -12,7 +12,7 @@ export class ClassesService {
   constructor(
     @InjectRepository(Class)
     private classRepository: Repository<Class>,
-  ) {}
+  ) { }
 
   async create(createClassDto: CreateClassDto) {
     const existingClass = await this.classRepository
@@ -58,8 +58,10 @@ export class ClassesService {
       .leftJoinAndSelect('class.teachers', 'teacher')
       .leftJoinAndSelect('class.students', 'student')
       .leftJoinAndSelect('class.level', 'level')
-      .leftJoinAndSelect('class.subjects', 'subject');
-
+      .leftJoinAndSelect('class.subjects', 'subject')
+      .where((qb: SelectQueryBuilder<Class>) => {
+        qb.where('class.disabled = :disabled', { disabled: false })
+      })
     if (user.role.name == RoleName.Administrator) {
       query.leftJoinAndSelect('administrators.user', 'user').andWhere('user.id = :userId', { userId: user.id });
     } else if (user.role.name == RoleName.Teacher) {
@@ -68,4 +70,25 @@ export class ClassesService {
 
     return query.getMany();
   }
+
+  findOne(id: number) {
+    return this.classRepository.findOne({
+      where: { id },
+      relations: ['administrators', 'teachers', 'students', 'level', 'subjects'],
+    });
+  }
+
+  async updateClasseStatus(id: number, disabled: boolean): Promise<Class> {
+    const classes = await this.findOne(id);
+
+    if (!classes) {
+      throw new NotFoundException('User not found');
+    }
+
+    classes.disabled = disabled;
+
+    return await this.classRepository.save(classes);
+  }
+
+
 }

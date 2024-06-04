@@ -1,16 +1,17 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateLevelDto } from './dto/create-level.dto';
 import { UpdateLevelDto } from './dto/update-level.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Level } from './entities/level.entity';
+import { Cycle } from 'src/cycles/entities/cycle.entity';
 
 @Injectable()
 export class LevelsService {
   constructor(
     @InjectRepository(Level)
     private levelRepository: Repository<Level>,
-  ) {}
+  ) { }
 
   async create(createLevelDto: CreateLevelDto) {
     const existingLevel = await this.levelRepository
@@ -50,9 +51,41 @@ export class LevelsService {
     return id;
   }
 
+  // findAll() {
+  //   return this.levelRepository.find({
+  //     relations: ['classes', 'cycle'],
+  //   });
+  // }
+
   findAll() {
-    return this.levelRepository.find({
+    const query = this.levelRepository
+      .createQueryBuilder('level')
+      .leftJoinAndSelect('level.classes', 'classes')
+      .leftJoinAndSelect('level.cycle', 'cycle')
+      .where((qb: SelectQueryBuilder<Level>) => {
+        qb.where('level.disabled = :disabled', { disabled: false })
+      })
+
+    return query.getMany();
+  }
+
+  findOne(id: number) {
+    return this.levelRepository.findOne({
+      where: { id },
       relations: ['classes', 'cycle'],
     });
   }
+
+  async updatelevelSatus(id: number, disabled: boolean): Promise<Level> {
+    const levels = await this.findOne(id);
+
+    if (!levels) {
+      throw new NotFoundException('User not found');
+    }
+
+    levels.disabled = disabled;
+
+    return await this.levelRepository.save(levels);
+  }
+
 }

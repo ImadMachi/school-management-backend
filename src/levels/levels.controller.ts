@@ -25,4 +25,9 @@ export class LevelsController {
   findAll() {
     return this.levelsService.findAll();
   }
+
+  @Put(':id/status')
+  async updateLevelStatus(@Param('id') id: number, @Body('disabled') disabled: boolean) {
+    return this.levelsService.updatelevelSatus(id, disabled);
+  }
 }

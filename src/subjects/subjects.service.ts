@@ -1,9 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Subject  } from './entities/subject.entity';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -50,11 +50,44 @@ export class SubjectsService {
     return id;
   }
 
+  // findAll() {
+  //   return this.subjectRepository.find({
+  //     relations: [ 'teachers','classes'],
+  //   });
+  // }
+
   findAll() {
-    return this.subjectRepository.find({
-      relations: [ 'teachers','classes'],
+    const query = this.subjectRepository
+      .createQueryBuilder('subject')
+      .leftJoinAndSelect('subject.teachers', 'teacher')
+      .leftJoinAndSelect('subject.classes', 'class')
+      .where((qb: SelectQueryBuilder<Subject>) => {
+        qb.where('subject.disabled = :disabled', { disabled: false })
+      })     
+      .getMany();
+
+    return query;
+  }
+
+  findOne(id: number) {
+    return this.subjectRepository.findOne({
+      where: { id },
+      relations: ['teachers','classes'],
     });
   }
+
+  async updateSubjectStatus(id: number, disabled: boolean): Promise<Subject> {
+    const subjects = await this.findOne(id);
+
+    if (!subjects) {
+      throw new NotFoundException('User not found');
+    }
+
+    subjects.disabled = disabled;
+
+    return await this.subjectRepository.save(subjects);
+  }
+
 
   // findOne(id: number) {
   //   return `This action returns a #${id} class`;

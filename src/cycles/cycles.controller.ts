@@ -27,4 +27,9 @@ export class CyclesController {
   findAll() {
     return this.cyclesService.findAll();
   }
+
+  @Put(':id/status')
+  async updateCycleStatus(@Param('id') id: number, @Body('disabled') disabled: boolean) {
+    return this.cyclesService.updateCycleStatus(id, disabled);
+  }
 }

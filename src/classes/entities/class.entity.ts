@@ -16,6 +16,9 @@ export class Class {
   @Column()
   schoolYear: string;
 
+  @Column({ default: false })
+  disabled: boolean;
+
   @ManyToMany(() => Administrator, (administrators) => administrators.classes)
   @JoinTable()
   administrators: Administrator[];
@@ -25,6 +28,7 @@ export class Class {
   teachers: Teacher[];
 
   @OneToMany(() => Student, (student) => student.classe)
+  @JoinTable()
   students: Student[];
 
   @ManyToOne(() => Level, (level) => level.classes)

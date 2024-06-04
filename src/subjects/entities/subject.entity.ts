@@ -9,6 +9,9 @@ export class Subject {
   @Column()
   name: string;
 
+  @Column({ default: false })
+  disabled: boolean;
+
   @ManyToMany(() => Teacher, (teacher) => teacher.subjects)
   @JoinTable()
   teachers: Teacher[];

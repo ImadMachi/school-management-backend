@@ -26,4 +26,9 @@ export class ClassesController {
   findAll(@Request() req) {
     return this.classesService.findAll(req.user);
   }
+
+  @Put(':id/status')
+  async updateAdministratorStatus(@Param('id') id: number, @Body('disabled') disabled: boolean) {
+    return this.classesService.updateClasseStatus(id, disabled);
+  }
 }

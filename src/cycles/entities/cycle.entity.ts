@@ -9,6 +9,9 @@ export class Cycle {
   @Column()
   name: string;
 
+  @Column({ default: false })
+  disabled: boolean;
+
   @OneToMany(() => Level, (level) => level.cycle)
   levels: Level[];
 }
