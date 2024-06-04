@@ -19,13 +19,13 @@ export class ClassesService {
       .createQueryBuilder('class')
       .where('LOWER(class.name) = LOWER(:name)', { name: createClassDto.name })
       .getOne();
-    if (existingClass) {
-      throw new BadRequestException('Cette classe existe déjà');
-    }
+    // if (existingClass) {
+    //   throw new BadRequestException('Cette classe existe déjà');
+    // }
     const newClass = await this.classRepository.save(createClassDto);
     return this.classRepository.findOne({
       where: { id: newClass.id },
-      relations: ['administrators', 'teachers', 'students', 'level', 'subjects'],
+      relations: ['administrators', 'teachers', 'students', 'level'],
     });
   }
 
@@ -39,7 +39,7 @@ export class ClassesService {
     const updatedClass = await this.classRepository.save(updateClassDto);
     return this.classRepository.findOne({
       where: { id: updatedClass.id },
-      relations: ['administrators', 'teachers', 'students', 'level', 'subjects'],
+      relations: ['administrators', 'teachers', 'students', 'level'],
     });
   }
 
@@ -54,11 +54,10 @@ export class ClassesService {
   findAll(user: User) {
     const query = this.classRepository
       .createQueryBuilder('class')
-      .leftJoinAndSelect('class.administrators', 'administrators')
-      .leftJoinAndSelect('class.teachers', 'teacher')
-      .leftJoinAndSelect('class.students', 'student')
-      .leftJoinAndSelect('class.level', 'level')
-      .leftJoinAndSelect('class.subjects', 'subject')
+      .leftJoinAndSelect('class.administrators', 'administrators' , 'administrators.disabled = :disabled', { disabled: false })
+      .leftJoinAndSelect('class.teachers', 'teacher' , 'teacher.disabled = :disabled', { disabled: false })
+      .leftJoinAndSelect('class.students', 'student' , 'student.disabled = :disabled', { disabled: false })
+      .leftJoinAndSelect('class.level', 'level', 'level.disabled = :disabled', { disabled: false })
       .where((qb: SelectQueryBuilder<Class>) => {
         qb.where('class.disabled = :disabled', { disabled: false })
       })
@@ -74,7 +73,7 @@ export class ClassesService {
   findOne(id: number) {
     return this.classRepository.findOne({
       where: { id },
-      relations: ['administrators', 'teachers', 'students', 'level', 'subjects'],
+      relations: ['administrators', 'teachers', 'students', 'level'],
     });
   }
 

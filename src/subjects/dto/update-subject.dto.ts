@@ -20,8 +20,8 @@ export class UpdateSubjectDto {
   @Type(() => Id)
   teachers: Id[];
 
-  @IsObject()
-  @ValidateNested()
-  @Type(() => Id)
-  classes: Id[];
+  // @IsObject()
+  // @ValidateNested()
+  // @Type(() => Id)
+  // classes: Id[];
 }

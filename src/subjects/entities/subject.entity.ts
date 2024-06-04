@@ -16,7 +16,7 @@ export class Subject {
   @JoinTable()
   teachers: Teacher[];
 
-  @ManyToMany(() => Class, (cls) => cls.subjects)
-  @JoinTable()
-  classes: Class[];
+  // @ManyToMany(() => Class, (cls) => cls.subjects)
+  // @JoinTable()
+  // classes: Class[];
 }

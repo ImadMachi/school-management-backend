@@ -18,13 +18,13 @@ export class SubjectsService {
       .createQueryBuilder('subject')
       .where('LOWER(subject.name) = LOWER(:name)', { name: createSubjectDto.name })
       .getOne();
-    if (existingSubject) {
-      throw new BadRequestException('Cette matière existe déjà');
-    }
+    // if (existingSubject) {
+    //   throw new BadRequestException('Cette matière existe déjà');
+    // }
     const newSubject = await this.subjectRepository.save(createSubjectDto);
     return this.subjectRepository.findOne({
       where: { id: newSubject.id },
-      relations: ['teachers','classes'],
+      relations: ['teachers',],
     });
   }
 
@@ -38,7 +38,7 @@ export class SubjectsService {
     const updatedSubject = await this.subjectRepository.save(updateSubjectDto);
     return this.subjectRepository.findOne({
       where: { id: updatedSubject.id },
-      relations: [ 'teachers','classes'],
+      relations: [ 'teachers',],
     });
   }
 
@@ -59,8 +59,7 @@ export class SubjectsService {
   findAll() {
     const query = this.subjectRepository
       .createQueryBuilder('subject')
-      .leftJoinAndSelect('subject.teachers', 'teacher')
-      .leftJoinAndSelect('subject.classes', 'class')
+      .leftJoinAndSelect('subject.teachers', 'teacher', 'teacher.disabled = :disabled', { disabled: false })
       .where((qb: SelectQueryBuilder<Subject>) => {
         qb.where('subject.disabled = :disabled', { disabled: false })
       })     
@@ -72,7 +71,7 @@ export class SubjectsService {
   findOne(id: number) {
     return this.subjectRepository.findOne({
       where: { id },
-      relations: ['teachers','classes'],
+      relations: ['teachers',],
     });
   }
 

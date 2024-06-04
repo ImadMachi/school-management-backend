@@ -17,8 +17,8 @@ export class CreateSubjectDto {
   @Type(() => Id)
   teachers: Id[];
 
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => Id)
-  classes: Id[];
+  // @IsArray()
+  // @ValidateNested({ each: true })
+  // @Type(() => Id)
+  // classes: Id[];
 }

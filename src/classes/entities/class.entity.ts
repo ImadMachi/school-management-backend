@@ -34,7 +34,7 @@ export class Class {
   @ManyToOne(() => Level, (level) => level.classes)
   level: Level;
 
-  @ManyToMany(() => Subject, (sub) => sub.classes)
-  @JoinTable()
-  subjects: Subject[];
+  // @ManyToMany(() => Subject, (sub) => sub.classes)
+  // @JoinTable()
+  // subjects: Subject[];
 }

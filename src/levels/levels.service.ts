@@ -4,7 +4,6 @@ import { UpdateLevelDto } from './dto/update-level.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Level } from './entities/level.entity';
-import { Cycle } from 'src/cycles/entities/cycle.entity';
 
 @Injectable()
 export class LevelsService {
@@ -18,9 +17,9 @@ export class LevelsService {
       .createQueryBuilder('level')
       .where('LOWER(level.name) = LOWER(:name)', { name: createLevelDto.name })
       .getOne();
-    if (existingLevel) {
-      throw new BadRequestException('Cette niveau existe déjà');
-    }
+    // if (existingLevel) {
+    //   throw new BadRequestException('Cette niveau existe déjà');
+    // }
     const newLevel = await this.levelRepository.save(createLevelDto);
 
     return this.levelRepository.findOne({
@@ -59,8 +58,8 @@ export class LevelsService {
 
   findAll() {
     const query = this.levelRepository
-      .createQueryBuilder('level')
-      .leftJoinAndSelect('level.classes', 'classes')
+      .createQueryBuilder('level')     
+      .leftJoinAndSelect('level.classes', 'classes', 'classes.disabled = :disabled', { disabled: false })
       .leftJoinAndSelect('level.cycle', 'cycle')
       .where((qb: SelectQueryBuilder<Level>) => {
         qb.where('level.disabled = :disabled', { disabled: false })

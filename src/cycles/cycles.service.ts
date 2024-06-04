@@ -18,9 +18,9 @@ export class CyclesService {
       .createQueryBuilder('cycle')
       .where('LOWER(cycle.name) = LOWER(:name)', { name: createCycleDto.name })
       .getOne();
-    if (existingCycle) {
-      throw new BadRequestException('Ce cycle existe déjà');
-    }
+    // if (existingCycle) {
+    //   throw new BadRequestException('Ce cycle existe déjà');
+    // }
     const newCycle = await this.cycleRepository.save(createCycleDto);
     return this.cycleRepository.findOne({
       where: { id: newCycle.id },
@@ -59,7 +59,7 @@ export class CyclesService {
   findAll() {
     const query = this.cycleRepository
       .createQueryBuilder('cycle')
-      .leftJoinAndSelect('cycle.levels', 'levels')
+      .leftJoinAndSelect('cycle.levels', 'levels', 'levels.disabled = :disabled', { disabled: false })
       .where((qb: SelectQueryBuilder<Cycle>) => {
         qb.where('cycle.disabled = :disabled', { disabled: false })
       })
