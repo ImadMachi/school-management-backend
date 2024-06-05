@@ -57,7 +57,7 @@ export class TeachersService {
     return this.teacherRepository
       .createQueryBuilder('teacher')
       .leftJoinAndSelect('teacher.user', 'user')
-      .leftJoinAndSelect('teacher.subjects', 'subjects')
+      .leftJoinAndSelect('teacher.subjects', 'subjects', 'subjects.disabled = :disabled', { disabled: false })
       .where((qb: SelectQueryBuilder<Teacher>) => {
         qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
       })
