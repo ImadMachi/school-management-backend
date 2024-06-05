@@ -58,17 +58,35 @@ export class ParentsService {
   findAll() {
     return this.parentRepository
       .createQueryBuilder('parent')
-      .leftJoinAndSelect('parent.students', 'students')
+      .leftJoinAndSelect('parent.students', 'students', 'students.disabled = :disabled', { disabled: false })
       .leftJoinAndSelect('parent.user', 'user')
+      .where((qb: SelectQueryBuilder<Parent>) => {
+        qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
+      })
       .andWhere('parent.disabled = :disabled', { disabled: false })
       .getMany();
   }
 
+  // findOne(id: number) {
+  //   return this.parentRepository.findOne({
+  //     where: { id },
+  //     relations: ['students'],
+  //   });
+  // }
+
   findOne(id: number) {
-    return this.parentRepository.findOne({
-      where: { id },
-      relations: ['students'],
-    });
+    return (
+      this.parentRepository
+        .createQueryBuilder('parent')
+        .where('parent.id = :id', { id })
+        .leftJoinAndSelect('parent.students', 'students', 'students.disabled = :disabled', { disabled: false })
+        .leftJoinAndSelect('parent.user', 'user')
+        // .andWhere((qb: SelectQueryBuilder<Student>) => {
+        //   qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
+        // })
+        .andWhere('parent.disabled = :disabled', { disabled: false })
+        .getOne()
+    );
   }
 
   async update(id: number, updateParentDto: UpdateParentDto) {

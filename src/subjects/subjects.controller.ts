@@ -26,4 +26,9 @@ export class SubjectsController {
   findAll() {
     return this.subjectsService.findAll();
   }
+
+  @Put(':id/status')
+  async updateSubjectStatus(@Param('id') id: number, @Body('disabled') disabled: boolean) {
+    return this.subjectsService.updateSubjectStatus(id, disabled);
+  }
 }
