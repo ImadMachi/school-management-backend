@@ -40,7 +40,6 @@ export class Student {
   @ManyToOne(() => Parent, (parent) => parent.students, { nullable: true })
   parent: Parent;
 
- 
   @Expose()
   get userId() {
     return this.user ? this.user.id : null;

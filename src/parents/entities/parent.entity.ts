@@ -8,25 +8,25 @@ export class Parent {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   fatherFirstName: string;
 
-  @Column()
+  @Column({ nullable: true })
   fatherLastName: string;
 
-  @Column()
+  @Column({ nullable: true })
   fatherPhoneNumber: string;
 
-  @Column()
+  @Column({ nullable: true })
   motherFirstName: string;
 
-  @Column()
+  @Column({ nullable: true })
   motherLastName: string;
 
-  @Column()
+  @Column({ nullable: true })
   motherPhoneNumber: string;
 
-  @Column()
+  @Column({ nullable: true })
   address: string;
 
   @Column({ default: false })

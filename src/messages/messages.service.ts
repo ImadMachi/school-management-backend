@@ -50,12 +50,14 @@ export class MessagesService {
   }
 
   async contactAdministration(user: User, contactAdministrationDto: ContactAdministrationDto) {
-    const directorUser = await this.usersService.findDirectorForUser(user.id);
+    const directorUsers = await this.usersService.getAllDirectors();
+    const administratorUsers = await this.usersService.getAdministratorsOfClasses(user);
+
     return this.createMessage(
       {
         subject: contactAdministrationDto.subject,
         body: contactAdministrationDto.body,
-        recipients: [{ id: directorUser.id }],
+        recipients: [...directorUsers, ...administratorUsers],
         categoryId: 1,
         parentMessage: { id: null },
       },
@@ -244,7 +246,6 @@ export class MessagesService {
       })
       .getCount();
   }
-
 
   async getNumberOfUnreadMessagesByUser(userId: number): Promise<number> {
     const count = await this.messageRepository

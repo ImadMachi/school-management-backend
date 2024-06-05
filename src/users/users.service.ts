@@ -191,16 +191,30 @@ export class UsersService {
     return query.getOne();
   }
 
-  async findDirectorForUser(userId: number): Promise<User | null> {
-    const directorUser = await this.usersRepository.findOne({
+  async getAllDirectors(): Promise<User[]> {
+    return this.usersRepository.find({
       where: { role: { name: RoleName.Director } },
       relations: ['director'],
     });
+  }
 
-    if (!directorUser) {
-      throw new HttpException('Director not found', HttpStatus.NOT_FOUND);
+  async getAdministratorsOfClasses(user: User): Promise<User[]> {
+    if (user.role.name == RoleName.Parent) {
+      const administratorUsers = await this.usersRepository
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.role', 'role')
+        .leftJoinAndSelect('user.administrator', 'administrator')
+        .leftJoinAndSelect('administrator.classes', 'classe')
+        .leftJoinAndSelect('classe.students', 'student')
+        .leftJoinAndSelect('student.parent', 'parent')
+        .leftJoinAndSelect('parent.user', 'userx')
+        .where('userx.id = :id', { id: user.id })
+        .andWhere('role.name = :adminRole', { adminRole: RoleName.Administrator })
+        .getMany();
+
+      return administratorUsers;
     }
-    return directorUser;
+    return [];
   }
 
   async remove(id: number): Promise<User | null> {
