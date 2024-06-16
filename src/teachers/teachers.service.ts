@@ -42,7 +42,7 @@ export class TeachersService {
   }
 
   async createAccountForTeacher(id: number, createUserDto: CreateUserDto, file: Express.Multer.File) {
-    const teacher = await this.teacherRepository.findOne({ where: { id } });
+    const teacher = await this.teacherRepository.findOne({ where: { id } , relations : ['subjects']});
 
     if (!teacher) {
       throw new NotFoundException();
@@ -65,11 +65,26 @@ export class TeachersService {
       .getMany();
   }
 
+
   findOne(id: number) {
-    return this.teacherRepository.findOne({
-      where: { id },
-    });
+    return this.teacherRepository
+      .createQueryBuilder('teacher')
+      .where('teacher.id = :id', { id })
+      .leftJoinAndSelect('teacher.user', 'user')
+      .leftJoinAndSelect('teacher.subjects', 'subjects', 'subjects.disabled = :disabled', { disabled: false })
+      .andWhere((qb: SelectQueryBuilder<Teacher>) => {
+        qb.where('user.disabled = :disabled', { disabled: false }).orWhere('user.id IS NULL');
+      })
+      .andWhere('teacher.disabled = :disabled', { disabled: false })
+      .getOne();
   }
+
+  // findOne(id: number) {
+  //   return this.teacherRepository.findOne({
+  //     where: { id},
+  //     relations: ['user', 'subjects' ],
+  //   });
+  // }
 
   async update(id: number, updateTeacherDto: UpdateTeacherDto) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -77,7 +92,7 @@ export class TeachersService {
     await queryRunner.startTransaction();
     let teacher: Teacher;
     try {
-      teacher = await this.teacherRepository.findOne({ where: { id } });
+      teacher = await this.teacherRepository.findOne({ where: { id } , relations : ['subjects']});
       if (!teacher) {
         throw new NotFoundException();
       }
@@ -109,6 +124,7 @@ export class TeachersService {
   async remove(id: number) {
     const teacher = await this.teacherRepository.findOne({
       where: { id },
+      relations : ['subjects']
     });
 
     if (!teacher) {

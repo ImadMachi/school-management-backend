@@ -71,7 +71,7 @@ export class SubjectsService {
   findOne(id: number) {
     return this.subjectRepository.findOne({
       where: { id },
-      relations: ['teachers',],
+      relations: ['teachers'],
     });
   }
 
