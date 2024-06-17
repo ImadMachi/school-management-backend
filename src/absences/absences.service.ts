@@ -2,11 +2,12 @@ import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { CreateAbsenceDto } from './dto/create-absence.dto';
 import { UpdateAbsenceDto } from './dto/update-absence.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { Between, DataSource, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Absence } from '../absences/entities/absence.entity';
 import { AbsenceDay } from './entities/absence-day.entity';
 import { AbsenceSession } from './entities/absence-session.entity';
 import { UsersService } from 'src/users/users.service';
+import { endOfDay, endOfWeek, startOfDay, startOfWeek } from 'date-fns';
 
 @Injectable()
 export class AbsencesService {
@@ -19,7 +20,7 @@ export class AbsencesService {
     private absenceSessionRepository: Repository<AbsenceSession>,
     private dataSource: DataSource,
     private userService: UsersService,
-  ) {}
+  ) { }
 
   async create(createAbsenceDto: CreateAbsenceDto) {
     const newAbsence = await this.absenceRepository.insert(createAbsenceDto);
@@ -140,5 +141,88 @@ export class AbsencesService {
       .leftJoinAndSelect('session.user', 'user')
       .orderBy('absence.id', 'DESC')
       .getMany();
+  }
+
+  private getCurrentWeekRange() {
+    const now = new Date();
+    const start = startOfWeek(now, { weekStartsOn: 1 }); // Assuming week starts on Monday
+    const end = endOfWeek(now, { weekStartsOn: 1 });
+    return { start, end };
+  }
+
+  private getCurrentDayRange() {
+    const now = new Date();
+    const start = startOfDay(now);
+    const end = endOfDay(now);
+    return { start, end };
+  }
+
+  async getUserAbsenceAndReplacementCount(userId: number) {
+    const user = await this.userService.findOne(userId);
+    if (!user) {
+      throw new BadRequestException("User not found");
+    }
+
+    const { start: weekStart, end: weekEnd } = this.getCurrentWeekRange();
+    const { start: dayStart, end: dayEnd } = this.getCurrentDayRange();
+
+    // Total absence count
+    const totalAbsences = await this.absenceRepository.count({
+      where: { absentUser: user },
+    });
+
+    // Total replacement count
+    const totalReplacements = await this.absenceSessionRepository.count({
+      where: { user },
+    });
+
+    // Weekly absence count
+    const weeklyAbsences = await this.absenceRepository.count({
+      where: {
+        absentUser: user,
+        startDate: MoreThanOrEqual(weekStart),
+        endDate: LessThanOrEqual(weekEnd),
+      },
+    });
+
+    // Weekly replacement count
+    const weeklyReplacements = await this.absenceSessionRepository.count({
+      where: {
+        user,
+        absenceDay: {
+          date: Between(weekStart, weekEnd),
+        },
+      },
+      relations: ['absenceDay'],
+    });
+
+    // Daily absence count
+    const dailyAbsences = await this.absenceRepository.count({
+      where: {
+        absentUser: user,
+        startDate: MoreThanOrEqual(dayStart),
+        endDate: LessThanOrEqual(dayEnd),
+      },
+    });
+
+    // Daily replacement count
+    const dailyReplacements = await this.absenceSessionRepository.count({
+      where: {
+        user,
+        absenceDay: {
+          date: Between(dayStart, dayEnd),
+        },
+      },
+      relations: ['absenceDay'],
+    });
+
+    return {
+      totalAbsences,
+      totalReplacements,
+      weeklyAbsences,
+      weeklyReplacements,
+      dailyAbsences,
+      dailyReplacements,
+    };
   }
 }

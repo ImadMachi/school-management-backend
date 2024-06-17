@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, Req, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Req, NotFoundException, ParseIntPipe } from '@nestjs/common';
 import { AbsencesService } from './absences.service';
 import { CreateAbsenceDto } from './dto/create-absence.dto';
 import { UpdateAbsenceDto } from './dto/update-absence.dto';
@@ -34,5 +34,9 @@ export class AbsencesController {
       throw new NotFoundException('Absence record not found');
     }
     return absence;
+  }
+  @Get('user/:id/count')
+  async getUserAbsenceAndReplacementCount(@Param('id', ParseIntPipe) userId: number) {
+    return this.absencesService.getUserAbsenceAndReplacementCount(userId);
   }
 }

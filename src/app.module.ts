@@ -25,6 +25,7 @@ import { GroupsModule } from './groups/groups.module';
 import { AgentsModule } from './agent/agents.module';
 import { SubjectModule } from './subjects/subjects.module';
 import { AbsencesModule } from './absences/absences.module';
+import { StatisticsModule } from './statistics/statistics.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { AbsencesModule } from './absences/absences.module';
     AgentsModule,
     SubjectModule,
     AbsencesModule,
+    StatisticsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
