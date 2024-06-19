@@ -2,12 +2,11 @@ import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { CreateAbsenceDto } from './dto/create-absence.dto';
 import { UpdateAbsenceDto } from './dto/update-absence.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, DataSource, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Absence } from '../absences/entities/absence.entity';
 import { AbsenceDay } from './entities/absence-day.entity';
 import { AbsenceSession } from './entities/absence-session.entity';
 import { UsersService } from 'src/users/users.service';
-import { endOfDay, endOfWeek, startOfDay, startOfWeek } from 'date-fns';
 
 @Injectable()
 export class AbsencesService {
@@ -20,6 +19,8 @@ export class AbsencesService {
     private absenceSessionRepository: Repository<AbsenceSession>,
     private dataSource: DataSource,
     private userService: UsersService,
+    // @InjectRepository(User)
+    // private userRepository: Repository<User>,
   ) { }
 
   async create(createAbsenceDto: CreateAbsenceDto) {
@@ -143,86 +144,87 @@ export class AbsencesService {
       .getMany();
   }
 
-  private getCurrentWeekRange() {
-    const now = new Date();
-    const start = startOfWeek(now, { weekStartsOn: 1 }); // Assuming week starts on Monday
-    const end = endOfWeek(now, { weekStartsOn: 1 });
-    return { start, end };
-  }
+  
+  // async countUserAbsencesAndReplacements(userId: number) {
+  //   // Fetch all active absences for the user
+  //   const userAbsences = await this.absenceRepository.find({
+  //     where: { absentUser: { id: userId }, active: true },
+  //     relations: ['absenceDays', 'absenceDays.sessions'],
+  //   });
 
-  private getCurrentDayRange() {
-    const now = new Date();
-    const start = startOfDay(now);
-    const end = endOfDay(now);
-    return { start, end };
-  }
+  //   // Calculate total absences, justified/unjustified counts, and days absent
+  //   const totalAbsences = userAbsences.length;
+  //   const justifiedAbsences = userAbsences.filter(absence => absence.justified).length;
+  //   const unjustifiedAbsences = totalAbsences - justifiedAbsences;
+  //   const totalDaysAbsent = userAbsences.reduce((total, absence) => total + differenceInDays(absence.endDate, absence.startDate) + 1, 0);
+  //   const totalSessionsAbsent = userAbsences.reduce((total, absence) => total + absence.absenceDays.reduce((sum, day) => sum + day.sessions.length, 0), 0);
 
-  async getUserAbsenceAndReplacementCount(userId: number) {
-    const user = await this.userService.findOne(userId);
-    if (!user) {
-      throw new BadRequestException("User not found");
-    }
+  //   // Fetch all sessions where the user is a replacement
+  //   const userReplacements = await this.absenceSessionRepository.find({
+  //     where: { user: { id: userId } },
+  //     relations: ['absenceDay'],
+  //   });
 
-    const { start: weekStart, end: weekEnd } = this.getCurrentWeekRange();
-    const { start: dayStart, end: dayEnd } = this.getCurrentDayRange();
+  //   // Calculate total replacements, days, and sessions
+  //   const totalReplacements = userReplacements.length;
+  //   const uniqueReplacementDays = new Set(userReplacements.map(session => session.absenceDay.date.toDateString())).size;
+  //   const totalSessionsReplaced = userReplacements.length;
 
-    // Total absence count
-    const totalAbsences = await this.absenceRepository.count({
-      where: { absentUser: user },
+  //   return {
+  //     totalAbsences,
+  //     justifiedAbsences,
+  //     unjustifiedAbsences,
+  //     totalDaysAbsent,
+  //     totalSessionsAbsent,
+  //     totalReplacements,
+  //     uniqueReplacementDays,
+  //     totalSessionsReplaced,
+  //   };
+  // }
+
+  // async updateUserAbsenceCounts(userId: number) {
+  //   const stats = await this.countUserAbsencesAndReplacements(userId);
+
+  //   // Update user's absence and replacement counts
+  //   await this.userRepository.update(userId, {
+  //     totalAbsences: stats.totalAbsences,
+  //     justifiedAbsences: stats.justifiedAbsences,
+  //     unjustifiedAbsences: stats.unjustifiedAbsences,
+  //     dailyAbsences: stats.totalDaysAbsent,
+  //     totalReplacements: stats.totalReplacements,
+  //     dailyReplacements: stats.uniqueReplacementDays,
+  //     justifiedReplacements: 0, // To be determined if needed
+  //     unjustifiedReplacements: 0, // To be determined if needed
+  //   });
+  // }
+
+  async getTotalAbsencesPerDay(): Promise<{ date: string, count: number }[]> {
+    const absences = await this.absenceRepository.find({
+      select: ['startDate', 'endDate'],
     });
 
-    // Total replacement count
-    const totalReplacements = await this.absenceSessionRepository.count({
-      where: { user },
+    const absencesPerDay: Record<string, number> = {};
+
+    absences.forEach(absence => {
+      let currentDate = new Date(absence.startDate);
+      const endDate = new Date(absence.endDate);
+
+      while (currentDate <= endDate) {
+        const dateString = currentDate.toISOString().split('T')[0];
+
+        if (absencesPerDay[dateString]) {
+          absencesPerDay[dateString] += 1;
+        } else {
+          absencesPerDay[dateString] = 1;
+        }
+
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
     });
 
-    // Weekly absence count
-    const weeklyAbsences = await this.absenceRepository.count({
-      where: {
-        absentUser: user,
-        startDate: MoreThanOrEqual(weekStart),
-        endDate: LessThanOrEqual(weekEnd),
-      },
-    });
-
-    // Weekly replacement count
-    const weeklyReplacements = await this.absenceSessionRepository.count({
-      where: {
-        user,
-        absenceDay: {
-          date: Between(weekStart, weekEnd),
-        },
-      },
-      relations: ['absenceDay'],
-    });
-
-    // Daily absence count
-    const dailyAbsences = await this.absenceRepository.count({
-      where: {
-        absentUser: user,
-        startDate: MoreThanOrEqual(dayStart),
-        endDate: LessThanOrEqual(dayEnd),
-      },
-    });
-
-    // Daily replacement count
-    const dailyReplacements = await this.absenceSessionRepository.count({
-      where: {
-        user,
-        absenceDay: {
-          date: Between(dayStart, dayEnd),
-        },
-      },
-      relations: ['absenceDay'],
-    });
-
-    return {
-      totalAbsences,
-      totalReplacements,
-      weeklyAbsences,
-      weeklyReplacements,
-      dailyAbsences,
-      dailyReplacements,
-    };
+    return Object.keys(absencesPerDay).map(date => ({
+      date,
+      count: absencesPerDay[date],
+    }));
   }
 }

@@ -63,7 +63,7 @@ export default class AppSeeder implements Seeder {
     });
 
 
-    
+
     const customAgent1 = await agentFactory.save({
       firstName: 'Ahmed',
       lastName: 'Mohsin',
@@ -92,7 +92,7 @@ export default class AppSeeder implements Seeder {
       schoolYear: '2023-2024',
       teachers: [teachers[0], teachers[1]],
       students: [students[0], students[1], students[2], students[3], students[4]],
-      administrators: [administrators[0], administrators[1] , administrators[2]],
+      administrators: [administrators[0], administrators[1], administrators[2]],
       level: level1,
     });
 
@@ -109,7 +109,7 @@ export default class AppSeeder implements Seeder {
       schoolYear: '2023-2024',
       teachers: [teachers[2], teachers[3]],
       students: [students[0], students[1], students[2], students[3], students[4]],
-      administrators: [administrators[1],administrators[2]],
+      administrators: [administrators[1], administrators[2]],
       level: level2,
     });
 
@@ -118,7 +118,7 @@ export default class AppSeeder implements Seeder {
       schoolYear: '2022-2023',
       teachers: [teachers[4]],
       students: [students[0], students[1], students[2], students[3], students[4]],
-      administrators: [administrators[0],administrators[2]],
+      administrators: [administrators[0], administrators[2]],
       level: level3,
     });
 
@@ -424,6 +424,60 @@ export default class AppSeeder implements Seeder {
       absentUser: userTeacher1,
       startDate: new Date('2024-05-01'),
       endDate: new Date('2024-05-03'),
+    });
+
+    const absence2 = await absenceFactory.save({
+      absentUser: userTeacher1,
+      startDate: new Date('2024-05-10'),
+      endDate: new Date('2024-05-12'),
+    });
+
+    const absence3 = await absenceFactory.save({
+      absentUser: userTeacher2,
+      startDate: new Date('2024-05-20'),
+      endDate: new Date('2024-05-21'),
+    });
+
+    const absence4 = await absenceFactory.save({
+      absentUser: userAgent1,
+      startDate: new Date('2024-05-20'),
+      endDate: new Date('2024-05-21'),
+    });
+
+    const absence5 = await absenceFactory.save({
+      absentUser: userTeacher1,
+      startDate: new Date('2024-05-10'),
+      endDate: new Date('2024-05-25'),
+    });
+
+    const absence6 = await absenceFactory.save({
+      absentUser: userTeacher2,
+      startDate: new Date('2024-05-28'),
+      endDate: new Date('2024-05-30'),
+    });
+
+    const absence7 = await absenceFactory.save({
+      absentUser: userAgent1,
+      startDate: new Date('2024-06-01'),
+      endDate: new Date('2024-06-02'),
+    });
+
+    const absence8 = await absenceFactory.save({
+      absentUser: userTeacher1,
+      startDate: new Date('2024-06-05'),
+      endDate: new Date('2024-06-06'),
+    });
+
+    const absence9 = await absenceFactory.save({
+      absentUser: userAgent1,
+      startDate: new Date('2024-06-10'),
+      endDate: new Date('2024-06-11'),
+    });
+
+    const absence10 = await absenceFactory.save({
+      absentUser: userTeacher2,
+      startDate: new Date('2024-06-10'),
+      endDate: new Date('2024-06-16'),
     });
   }
 }

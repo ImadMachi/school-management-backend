@@ -15,6 +15,7 @@ import { Director } from 'src/director/entities/director.entity';
 import { Parent } from 'src/parents/entities/parent.entity';
 import { Teacher } from 'src/teachers/entities/teacher.entity';
 import { Agent } from 'src/agent/entities/agent.entity';
+import { stat } from 'fs';
 @Injectable()
 export class StatisticsService {
   constructor(
@@ -59,6 +60,9 @@ export class StatisticsService {
     statistics.levelsCount = await this.levelRepository.count();
     statistics.classesCount = await this.classRepository.count();
     statistics.absencesCount = await this.absenceRepository.count();
+    statistics.absenceTraitedCount = await this.absenceRepository.count({ where: { status: 'treated' } });
+    statistics.absenceNotTraitedCount = await this.absenceRepository.count({ where: { status: 'not treated' } });
+    statistics.absenceTraitingCount = await this.absenceRepository.count({ where: { status: 'treating' } });
 
     return statistics;
   }

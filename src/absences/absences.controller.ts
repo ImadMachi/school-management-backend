@@ -35,8 +35,14 @@ export class AbsencesController {
     }
     return absence;
   }
-  @Get('user/:id/count')
-  async getUserAbsenceAndReplacementCount(@Param('id', ParseIntPipe) userId: number) {
-    return this.absencesService.getUserAbsenceAndReplacementCount(userId);
+
+  // @Get('user/:id/count')
+  // async getUserAbsenceStats(@Param('id', ParseIntPipe) id: number) {
+  //   return this.absencesService.countUserAbsencesAndReplacements(id);
+  // }
+
+  @Get('stats/abs_day')
+  async getTotalAbsencesPerDay() {
+    return this.absencesService.getTotalAbsencesPerDay();
   }
 }

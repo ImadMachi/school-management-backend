@@ -34,7 +34,7 @@ export class User {
   email: string;
 
   @Column()
-  //@Exclude()
+  @Exclude()
   password: string;
 
   @Column({ default: false })
@@ -43,25 +43,8 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
-  // New fields for counts
-  @Column({ default: 0 })
-  totalAbsences: number;
-
-  @Column({ default: 0 })
-  totalReplacements: number;
-
-  @Column({ default: 0 })
-  dailyAbsences: number;
-
-  @Column({ default: 0 })
-  dailyReplacements: number;
-
-  @Column({ default: 0 })
-  weeklyAbsences: number;
-
-  @Column({ default: 0 })
-  weeklyReplacements: number;
-
+  @Column({ nullable: true, type: 'timestamptz' })
+  lastConnection: Date;
 
   @ManyToOne(() => Role)
   @Transform(({ value }) => value.name)

@@ -40,4 +40,13 @@ export class Statistics {
 
     @Column('int')
     absencesCount: number;
+
+    @Column('int')
+    absenceTraitedCount: number;
+
+    @Column('int')
+    absenceNotTraitedCount: number;
+
+    @Column('int')
+    absenceTraitingCount: number;
 }
