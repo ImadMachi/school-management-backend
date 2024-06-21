@@ -138,10 +138,10 @@ export default class AppSeeder implements Seeder {
 
     // Subjects
 
-    const subject1 = await subjectFactory.save({
-      name: 'French',
-      teachers: [teachers[0], teachers[1]],
-    });
+    // const subject1 = await subjectFactory.save({
+    //   name: 'French',
+    //   teachers: [teachers[0], teachers[1]],
+    // });
 
     // const subject2 = await subjectFactory.save({
     //   name: ' English',

@@ -27,14 +27,15 @@ export class CreateTeacherDto {
     @IsNotEmpty()
     sex: string;
 
-    @IsArray()
-    @ValidateNested()
-    @Type(() => Id)
-    subjects: Id[];
+    @IsNotEmpty()
+    subjects: string;
 
-    // @IsOptional()
+    // @IsArray()
+    // @ValidateNested()
+    // @Type(() => Id)
+    // subjects: Id[];
+
     @ValidateNested({ each: true })
     @Type(() => CreateUserDto)
     createUserDto: CreateUserDto;
 }
-

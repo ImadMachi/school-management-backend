@@ -1,6 +1,3 @@
-// update-teacher.dto.ts
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateTeacherDto } from './create-teacher.dto';
 import { IsArray, IsNotEmpty, IsNumber, IsOptional, ValidateNested } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 
@@ -10,8 +7,7 @@ class Id {
     id: number;
 }
 
-
-export class UpdateTeacherDto extends PartialType(CreateTeacherDto) {
+export class UpdateTeacherDto {
     @IsOptional()
     @IsNotEmpty()
     firstName: string;
@@ -36,8 +32,13 @@ export class UpdateTeacherDto extends PartialType(CreateTeacherDto) {
     @IsNotEmpty()
     sex: string;
 
-    @IsArray()
-    @ValidateNested()
-    @Type(() => Id)
-    subjects: Id[];
+    @IsOptional()
+    @IsNotEmpty()
+    subjects: string;
+
+
+//     @IsArray()
+//     @ValidateNested()
+//     @Type(() => Id)
+//     subjects: Id[];
 }
