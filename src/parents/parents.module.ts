@@ -1,14 +1,14 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ParentsController } from './parents.controller';
 import { ParentsService } from './parents.service';
 import { Parent } from './entities/parent.entity';
 import { CaslModule } from 'src/casl/casl.module';
 import { UsersModule } from 'src/users/users.module';
-import { StudentsModule } from 'src/students/students.module';
+import { Student } from 'src/students/entities/student.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Parent]), CaslModule, UsersModule, StudentsModule],
+  imports: [TypeOrmModule.forFeature([Parent, Student]), CaslModule, UsersModule],
   controllers: [ParentsController],
   providers: [ParentsService],
   exports: [ParentsService],

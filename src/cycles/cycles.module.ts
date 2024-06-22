@@ -10,5 +10,6 @@ import { LevelsModule } from 'src/levels/levels.module';
   imports: [TypeOrmModule.forFeature([Cycle]), CaslModule, LevelsModule],
   controllers: [CyclesController],
   providers: [CyclesService],
+  exports: [CyclesService],
 })
 export class CyclesModule {}

@@ -10,16 +10,16 @@ export class LevelsService {
   constructor(
     @InjectRepository(Level)
     private levelRepository: Repository<Level>,
-  ) { }
+  ) {}
 
-  async create(createLevelDto: CreateLevelDto) {
-    const existingLevel = await this.levelRepository
-      .createQueryBuilder('level')
-      .where('LOWER(level.name) = LOWER(:name)', { name: createLevelDto.name })
-      .getOne();
-    // if (existingLevel) {
-    //   throw new BadRequestException('Cette niveau existe déjà');
-    // }
+  async create(createLevelDto: CreateLevelDto, isImporting: boolean = false) {
+    if (isImporting) {
+      const existingLevel = await this.levelRepository.findOne({ where: { name: createLevelDto.name } });
+      if (existingLevel) {
+        return existingLevel;
+      }
+    }
+
     const newLevel = await this.levelRepository.save(createLevelDto);
 
     return this.levelRepository.findOne({
@@ -58,12 +58,12 @@ export class LevelsService {
 
   findAll() {
     const query = this.levelRepository
-      .createQueryBuilder('level')     
+      .createQueryBuilder('level')
       .leftJoinAndSelect('level.classes', 'classes', 'classes.disabled = :disabled', { disabled: false })
       .leftJoinAndSelect('level.cycle', 'cycle')
       .where((qb: SelectQueryBuilder<Level>) => {
-        qb.where('level.disabled = :disabled', { disabled: false })
-      })
+        qb.where('level.disabled = :disabled', { disabled: false });
+      });
 
     return query.getMany();
   }
@@ -86,5 +86,4 @@ export class LevelsService {
 
     return await this.levelRepository.save(levels);
   }
-
 }

@@ -1,4 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, Query, Request, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UploadedFile,
+  UseInterceptors,
+  Query,
+  Request,
+  Put,
+  HttpException,
+} from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -60,5 +74,18 @@ export class StudentsController {
   @CheckPolicies(new ManageStudentsPolicyHandler())
   remove(@Param('id') id: string) {
     return this.studentsService.remove(+id);
+  }
+
+  @Post('import')
+  @UseInterceptors(FileInterceptor('file'))
+  @CheckPolicies(new ManageStudentsPolicyHandler())
+  async importStudents(@UploadedFile() file: Express.Multer.File) {
+    let result = [];
+    try {
+      result = await this.studentsService.importStudents(file);
+    } catch (e) {
+      throw new HttpException(e.message, e.status);
+    }
+    return result;
   }
 }

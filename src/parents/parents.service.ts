@@ -6,26 +6,50 @@ import { UsersService } from 'src/users/users.service';
 import { CreateParentDto } from './dto/create-parent.dto';
 import { UpdateParentDto } from './dto/update-parent.dto';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { StudentsService } from 'src/students/students.service';
 import { User } from 'src/users/entities/user.entity';
+import { Student } from 'src/students/entities/student.entity';
 
 @Injectable()
 export class ParentsService {
   constructor(
     @InjectRepository(Parent)
     private parentRepository: Repository<Parent>,
+    @InjectRepository(Student)
+    private studentRepository: Repository<Student>,
     private dataSource: DataSource,
     private userService: UsersService,
-    private studentsService: StudentsService,
   ) {}
 
-  async create(createParentDto: CreateParentDto, createAccount: boolean, file: Express.Multer.File) {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+  async create(createParentDto: CreateParentDto, createAccount: boolean, file: Express.Multer.File, isImporting: boolean = false) {
     let parent: Parent;
     try {
       const { createUserDto, ...ParentDto } = createParentDto;
+
+      if (isImporting) {
+        const existingParent = await this.parentRepository.findOne({
+          where: {
+            fatherFirstName: ParentDto.fatherFirstName,
+            fatherLastName: ParentDto.fatherLastName,
+            motherFirstName: ParentDto.motherFirstName,
+            motherLastName: ParentDto.motherLastName,
+          },
+        });
+        if (existingParent) {
+          return existingParent;
+        }
+      }
+      const existingParent = await this.parentRepository.findOne({
+        where: {
+          fatherFirstName: ParentDto.fatherFirstName,
+          fatherLastName: ParentDto.fatherLastName,
+          motherFirstName: ParentDto.motherFirstName,
+          motherLastName: ParentDto.motherLastName,
+        },
+      });
+
+      if (existingParent) {
+        return this.findOne(existingParent.id);
+      }
 
       parent = this.parentRepository.create(ParentDto);
       await this.parentRepository.save(parent);
@@ -35,11 +59,8 @@ export class ParentsService {
         parent.user = user;
       }
     } catch (error) {
-      await queryRunner.rollbackTransaction();
-      await queryRunner.release();
       throw new HttpException(error.message, error.status);
     }
-    await queryRunner.release();
     return this.findOne(parent.id);
   }
 
@@ -125,7 +146,9 @@ export class ParentsService {
 
     // parent students
     for (const student of parent.students) {
-      await this.studentsService.nullifyParent(student.id);
+      const s = await this.studentRepository.findOne({ where: { id: student.id } });
+      student.parent = null;
+      await this.studentRepository.save(s);
     }
 
     parent.disabled = disabled;
@@ -144,4 +167,15 @@ export class ParentsService {
     }
     return this.parentRepository.delete(id);
   }
+
+  // async createAll(parents: CreateParentDto[]) {
+  //   const createdParents = [];
+
+  //   for (const parent of parents) {
+  //     const createdStudent = await this.create(parent, false, null);
+  //     createdParents.push(createdStudent);
+  //   }
+
+  //   return createdParents;
+  // }
 }

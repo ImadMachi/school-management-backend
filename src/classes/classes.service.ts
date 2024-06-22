@@ -6,6 +6,7 @@ import { Class } from './entities/class.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { RoleName } from 'src/auth/enums/RoleName';
+import { Student } from 'src/students/entities/student.entity';
 
 @Injectable()
 export class ClassesService {
@@ -14,17 +15,33 @@ export class ClassesService {
     private classRepository: Repository<Class>,
   ) {}
 
-  async create(createClassDto: CreateClassDto) {
-    const existingClass = await this.classRepository
-      .createQueryBuilder('class')
-      .where('LOWER(class.name) = LOWER(:name)', { name: createClassDto.name })
-      .getOne();
-    // if (existingClass) {
-    //   throw new BadRequestException('Cette classe existe déjà');
-    // }
+  async create(createClassDto: CreateClassDto, isImporting: boolean = false) {
+    if (isImporting) {
+      const existingClass = await this.classRepository.findOne({ where: { name: createClassDto.name } });
+      if (existingClass) {
+        return existingClass;
+      }
+    }
     const newClass = await this.classRepository.save(createClassDto);
     return this.classRepository.findOne({
       where: { id: newClass.id },
+      relations: ['administrators', 'teachers', 'students', 'level'],
+    });
+  }
+
+  async addStudentToClass(classId: number, studentId: number) {
+    const classe = await this.classRepository.findOne({
+      where: { id: classId },
+      relations: ['students'],
+    });
+    if (!classe) {
+      throw new BadRequestException("Cette classe n'existe pas");
+    }
+
+    classe.students.push({ id: studentId } as Student);
+    await this.classRepository.save(classe);
+    return this.classRepository.findOne({
+      where: { id: classId },
       relations: ['administrators', 'teachers', 'students', 'level'],
     });
   }

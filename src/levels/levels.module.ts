@@ -10,5 +10,6 @@ import { ClassesModule } from 'src/classes/classes.module';
   imports: [TypeOrmModule.forFeature([Level]), CaslModule, ClassesModule],
   controllers: [LevelsController],
   providers: [LevelsService],
+  exports: [LevelsService],
 })
 export class LevelsModule {}

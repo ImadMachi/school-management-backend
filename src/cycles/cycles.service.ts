@@ -4,23 +4,21 @@ import { UpdateCycleDto } from './dto/update-cycle.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Cycle } from './entities/cycle.entity';
-import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class CyclesService {
   constructor(
     @InjectRepository(Cycle)
     private cycleRepository: Repository<Cycle>,
-  ) { }
+  ) {}
 
-  async create(createCycleDto: CreateCycleDto) {
-    const existingCycle = await this.cycleRepository
-      .createQueryBuilder('cycle')
-      .where('LOWER(cycle.name) = LOWER(:name)', { name: createCycleDto.name })
-      .getOne();
-    // if (existingCycle) {
-    //   throw new BadRequestException('Ce cycle existe déjà');
-    // }
+  async create(createCycleDto: CreateCycleDto, isImporting: boolean = false) {
+    if (isImporting) {
+      const existingCycle = await this.cycleRepository.findOne({ where: { name: createCycleDto.name } });
+      if (existingCycle) {
+        return existingCycle;
+      }
+    }
     const newCycle = await this.cycleRepository.save(createCycleDto);
     return this.cycleRepository.findOne({
       where: { id: newCycle.id },
@@ -61,12 +59,11 @@ export class CyclesService {
       .createQueryBuilder('cycle')
       .leftJoinAndSelect('cycle.levels', 'levels', 'levels.disabled = :disabled', { disabled: false })
       .where((qb: SelectQueryBuilder<Cycle>) => {
-        qb.where('cycle.disabled = :disabled', { disabled: false })
-      })
+        qb.where('cycle.disabled = :disabled', { disabled: false });
+      });
 
     return query.getMany();
   }
-
 
   findOne(id: number) {
     return this.cycleRepository.findOne({

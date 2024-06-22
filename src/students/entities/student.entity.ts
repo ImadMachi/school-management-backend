@@ -21,7 +21,7 @@ export class Student {
   @Column({ type: 'timestamp', nullable: true })
   dateOfBirth: Date;
 
-  @Column()
+  @Column({ nullable: true })
   sex: string;
 
   @Column({ default: false })
