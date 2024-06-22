@@ -7,6 +7,7 @@ import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class TeachersService {
