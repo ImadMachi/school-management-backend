@@ -4,7 +4,6 @@ import { UpdateSubjectDto } from './dto/update-subject.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Subject } from './entities/subject.entity';
 import { Repository, DataSource } from 'typeorm';
-import { Teacher } from 'src/teachers/entities/teacher.entity';
 
 @Injectable()
 export class SubjectsService {
@@ -18,13 +17,13 @@ export class SubjectsService {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    
+
     try {
       const existingSubject = await this.subjectRepository
         .createQueryBuilder('subject')
         .where('LOWER(subject.name) = LOWER(:name)', { name: createSubjectDto.name })
         .getOne();
-        
+
       if (existingSubject) {
         throw new BadRequestException('Subject already exists');
       }
@@ -39,11 +38,10 @@ export class SubjectsService {
         // teachers,
       });
       await this.subjectRepository.save(newSubject);
-      
+
       await queryRunner.commitTransaction();
       return this.subjectRepository.findOne({
         where: { id: newSubject.id },
-        relations: ['teachers'],
       });
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -76,11 +74,10 @@ export class SubjectsService {
         // teachers,
       });
       await this.subjectRepository.save(subjectToUpdate);
-      
+
       await queryRunner.commitTransaction();
       return this.subjectRepository.findOne({
         where: { id: subjectToUpdate.id },
-        relations: ['teachers'],
       });
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -100,7 +97,7 @@ export class SubjectsService {
       if (affected === 0) {
         throw new NotFoundException('Subject not found');
       }
-      
+
       await queryRunner.commitTransaction();
       return id;
     } catch (error) {
@@ -112,15 +109,12 @@ export class SubjectsService {
   }
 
   findAll() {
-    return this.subjectRepository.find({
-      relations: ['teachers'],
-    });
+    return this.subjectRepository.find({});
   }
 
   findOne(id: number) {
     return this.subjectRepository.findOne({
       where: { id },
-      relations: ['teachers'],
     });
   }
 

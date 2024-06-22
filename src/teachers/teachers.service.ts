@@ -30,7 +30,7 @@ export class TeachersService {
       await this.teacherRepository.save(teacher);
 
       if (createAccount && createUserDto) {
-        const user = await this.userService.createForStudent(createUserDto, teacher, file);
+        const user = await this.userService.createForTeacher(createUserDto, teacher, file);
         teacher.user = user;
       }
     } catch (error) {
@@ -39,6 +39,7 @@ export class TeachersService {
       throw new HttpException(error.message, error.status);
     }
     await queryRunner.release();
+
     return this.findOne(teacher.id);
   }
 

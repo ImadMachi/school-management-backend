@@ -24,7 +24,7 @@ import { CreateUserDto } from 'src/users/dto/create-user.dto';
 @Controller('teachers')
 @UseGuards(PoliciesGuard)
 export class TeachersController {
-  constructor(private readonly teachersService: TeachersService) { }
+  constructor(private readonly teachersService: TeachersService) {}
 
   @Post()
   @UseInterceptors(FileInterceptor('profile-images'))

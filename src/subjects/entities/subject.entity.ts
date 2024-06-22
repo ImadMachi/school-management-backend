@@ -1,5 +1,4 @@
-import { Teacher } from 'src/teachers/entities/teacher.entity';
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn, JoinTable } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Subject {
@@ -11,8 +10,4 @@ export class Subject {
 
   @Column({ default: false })
   disabled: boolean;
-
-  // @ManyToMany(() => Teacher, (teacher) => teacher.subjects)
-  // @JoinTable()
-  // teachers: Teacher[];
 }

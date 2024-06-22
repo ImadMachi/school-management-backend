@@ -1,6 +1,6 @@
 import { Teacher } from '../../teachers/entities/teacher.entity';
 import { setSeederFactory } from 'typeorm-extension';
-import { arabicFirstNames,arabicLastNames } from '../dummyNames';
+import { arabicFirstNames, arabicLastNames } from '../dummyNames';
 
 function getRandomElement(array) {
   const randomIndex = Math.floor(Math.random() * array.length);
@@ -15,7 +15,6 @@ const teacherFactory = setSeederFactory(Teacher, (faker) => {
   teacher.dateOfBirth = faker.date.past(20);
   teacher.dateOfEmployment = faker.date.past(10);
   teacher.sex = faker.helpers.arrayElement(['mâle', 'femelle']);
-  teacher.subjects = faker.helpers.arrayElement(['french', 'english', 'arabic']);
   return teacher;
 });
 

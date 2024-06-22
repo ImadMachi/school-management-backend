@@ -1,7 +1,6 @@
-import { Exclude, Expose } from 'class-transformer';
+import { Expose } from 'class-transformer';
 import { User } from '../../users/entities/user.entity';
 import { Column, Entity, ManyToMany, OneToOne, PrimaryGeneratedColumn, JoinTable } from 'typeorm';
-import { Subject } from 'src/subjects/entities/subject.entity';
 import { Class } from 'src/classes/entities/class.entity';
 
 @Entity()
@@ -27,9 +26,6 @@ export class Teacher {
   @Column()
   sex: string;
 
-  @Column()
-  subjects: string;
-
   @Column({ default: false })
   disabled: boolean;
 
@@ -39,11 +35,6 @@ export class Teacher {
     eager: true,
   })
   user: User;
-
-  // @ManyToMany(() => Subject, (subject) => subject.teachers)
-  // @JoinTable()
-  // subjects: Subject[];
-
 
   @ManyToMany(() => Class, (cls) => cls.teachers)
   classes: Class[];
