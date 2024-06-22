@@ -68,7 +68,7 @@ export class StudentsService {
   findAll() {
     return this.studentRepository
       .createQueryBuilder('student')
-      .leftJoinAndSelect('student.classe', 'classe')
+      .leftJoinAndSelect('student.classe', 'classe', 'classe.disabled = :disabled', { disabled: false })
       .leftJoinAndSelect('student.parent', 'parent', 'parent.disabled = :disabled', { disabled: false })
       .leftJoinAndSelect('student.user', 'user')
       .andWhere('student.disabled = :disabled', { disabled: false })
@@ -96,7 +96,7 @@ export class StudentsService {
       this.studentRepository
         .createQueryBuilder('student')
         .where('student.id = :id', { id })
-        .leftJoinAndSelect('student.classe', 'classe')
+        .leftJoinAndSelect('student.classe', 'classe', 'classe.disabled = :disabled', { disabled: false })
         .leftJoinAndSelect('student.parent', 'parent', 'parent.disabled = :disabled', { disabled: false })
         // .leftJoinAndSelect('student.user', 'user')
         // .andWhere((qb: SelectQueryBuilder<Student>) => {

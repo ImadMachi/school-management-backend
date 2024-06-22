@@ -1,8 +1,8 @@
 import { Exclude, Expose } from 'class-transformer';
 import { User } from '../../users/entities/user.entity';
-import { Column, Entity, ManyToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Class } from 'src/classes/entities/class.entity';
+import { Column, Entity, ManyToMany, OneToOne, PrimaryGeneratedColumn, JoinTable } from 'typeorm';
 import { Subject } from 'src/subjects/entities/subject.entity';
+import { Class } from 'src/classes/entities/class.entity';
 
 @Entity()
 export class Teacher {
@@ -27,6 +27,9 @@ export class Teacher {
   @Column()
   sex: string;
 
+  @Column()
+  subjects: string;
+
   @Column({ default: false })
   disabled: boolean;
 
@@ -37,11 +40,13 @@ export class Teacher {
   })
   user: User;
 
+  // @ManyToMany(() => Subject, (subject) => subject.teachers)
+  // @JoinTable()
+  // subjects: Subject[];
+
+
   @ManyToMany(() => Class, (cls) => cls.teachers)
   classes: Class[];
-
-  @ManyToMany(() => Subject, (subject) => subject.teachers)
-  subjects: Subject[];
 
   @Expose()
   get userId() {

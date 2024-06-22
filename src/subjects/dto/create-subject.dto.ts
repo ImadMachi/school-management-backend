@@ -12,10 +12,10 @@ export class CreateSubjectDto {
   @IsString()
   name: string;
 
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => Id)
-  teachers: Id[];
+  // @IsArray()
+  // @ValidateNested({ each: true })
+  // @Type(() => Id)
+  // teachers: Id[];
 
   // @IsArray()
   // @ValidateNested({ each: true })

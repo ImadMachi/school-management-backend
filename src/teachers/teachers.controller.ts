@@ -24,7 +24,7 @@ import { CreateUserDto } from 'src/users/dto/create-user.dto';
 @Controller('teachers')
 @UseGuards(PoliciesGuard)
 export class TeachersController {
-  constructor(private readonly teachersService: TeachersService) {}
+  constructor(private readonly teachersService: TeachersService) { }
 
   @Post()
   @UseInterceptors(FileInterceptor('profile-images'))
@@ -66,6 +66,7 @@ export class TeachersController {
   remove(@Param('id') id: string) {
     return this.teachersService.remove(+id);
   }
+
   @Put(':id/status')
   async updateTeacherStatus(@Param('id') id: number, @Body('disabled') disabled: boolean, @Request() req) {
     return this.teachersService.updateTeacherStatus(id, disabled, req.user);

@@ -15,6 +15,7 @@ const teacherFactory = setSeederFactory(Teacher, (faker) => {
   teacher.dateOfBirth = faker.date.past(20);
   teacher.dateOfEmployment = faker.date.past(10);
   teacher.sex = faker.helpers.arrayElement(['mâle', 'femelle']);
+  teacher.subjects = faker.helpers.arrayElement(['french', 'english', 'arabic']);
   return teacher;
 });
 
